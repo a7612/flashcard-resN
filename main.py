@@ -40,7 +40,7 @@ class QuizGame:
         with open(filepath, "r", encoding="utf-8") as fh:
             return [
                 (qid, ans.strip(), q.strip())
-                for line in fh if (parts := line.strip().split(",", 2)) and len(parts) == 3
+                for line in fh if (parts := line.strip().split(";", 2)) and len(parts) == 3
                 for qid, ans, q in [parts]
             ]
 

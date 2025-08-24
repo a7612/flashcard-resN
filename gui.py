@@ -50,7 +50,7 @@ class QuizManager:
         qs = []
         with path.open(encoding="utf-8") as f:
             for line in f:
-                parts = line.rstrip("\n").split(",", 2)
+                parts = line.rstrip("\n").split(";", 2)
                 if len(parts) == 3:
                     qid, ans, q = parts
                     qs.append((qid, ans.strip(), q.strip()))
