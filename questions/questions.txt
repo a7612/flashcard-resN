@@ -1,5 +1,1 @@
-0,12,Kết quả của 5+7 là bao nhiêu?
-1,Da Vinci,Họa sĩ vẽ Mona Lisa là ai?
-2,Python,Ngôn ngữ lập trình phổ biến cho AI?
-3,Thành phố Hồ Chí Minh,Thành phố lớn nhất của Việt Nam là gì?
-4,Thái Bình Dương,Đại dương lớn nhất thế giới?
+1,1,1
