@@ -1,0 +1,100 @@
+0,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+1,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+2,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+3,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+4,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+5,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+6,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+7,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+8,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+9,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
+10,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+11,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+12,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+13,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+14,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+15,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+16,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+17,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+18,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+19,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
+20,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+21,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+22,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+23,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+24,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+25,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+26,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+27,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+28,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+29,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
+30,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+31,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+32,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+33,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+34,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+35,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+36,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+37,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+38,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+39,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
+40,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+41,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+42,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+43,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+44,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+45,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+46,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+47,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+48,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+49,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
+50,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+51,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+52,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+53,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+54,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+55,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+56,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+57,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+58,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+59,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
+60,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+61,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+62,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+63,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+64,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+65,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+66,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+67,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+68,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+69,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
+70,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+71,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+72,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+73,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+74,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+75,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+76,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+77,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+78,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+79,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
+80,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+81,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+82,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+83,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+84,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+85,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+86,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+87,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+88,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+89,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
+90,Tính bảo mật (Confidentiality),Nguyên tắc nào đảm bảo rằng thông tin chỉ được truy cập bởi những người dùng được ủy quyền?
+91,Tính toàn vẹn (Integrity),Nguyên tắc nào đảm bảo dữ liệu không bị thay đổi hoặc giả mạo?
+92,Tính sẵn sàng (Availability),Nguyên tắc nào đảm bảo hệ thống và dữ liệu luôn sẵn sàng khi cần thiết?
+93,Nguyên tắc đặc quyền tối thiểu,Nguyên tắc nào quy định rằng người dùng chỉ được cấp quyền tối thiểu cần thiết để thực hiện công việc của họ?
+94,Phòng thủ nhiều lớp,Khái niệm nào nói về việc sử dụng nhiều lớp kiểm soát bảo mật khác nhau?
+95,Phishing (Lừa đảo trực tuyến),Hình thức tấn công kỹ nghệ xã hội nào sử dụng email để lừa nạn nhân tiết lộ thông tin?
+96,Tailgating (Đi theo sau),Hình thức tấn công vật lý nào liên quan đến việc đi theo ai đó vào khu vực hạn chế mà không được phép?
+97,Rủi ro,Thuật ngữ nào mô tả khả năng một mối đe dọa khai thác điểm yếu?
+98,Mối đe dọa,Thuật ngữ nào mô tả bất kỳ tình huống hoặc sự kiện nào có khả năng gây tác động tiêu cực đến tài sản?
+99,Lỗ hổng,Thuật ngữ nào mô tả điểm yếu có thể bị khai thác bởi mối đe dọa?
