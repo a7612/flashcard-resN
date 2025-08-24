@@ -1,0 +1,50 @@
+1,Access Control,Khái niệm nào giúp giới hạn quyền truy cập hệ thống và dữ liệu?
+2,Access Logs,Dữ liệu nào ghi lại lịch sử đăng nhập và truy cập hệ thống?
+3,Active Directory,Dịch vụ nào của Microsoft quản lý người dùng và tài nguyên trong mạng?
+4,Antivirus,Phần mềm nào giúp phát hiện và loại bỏ mã độc?
+5,Asymmetric Encryption,Hình thức mã hóa nào dùng cặp khóa công khai và khóa bí mật?
+6,AWS,Nền tảng điện toán đám mây phổ biến mà nhiều tổ chức đang di chuyển lên là gì?
+7,Azure,Nền tảng điện toán đám mây của Microsoft là gì?
+8,Backup,Thực hành nào đảm bảo dữ liệu có thể phục hồi khi xảy ra sự cố?
+9,Common Attack Vectors,Cụm từ nào chỉ những phương thức mà kẻ tấn công sử dụng để khai thác hệ thống?
+10,Computer Hardware,Yếu tố nào cần hiểu rõ để nắm bắt cách hệ thống máy tính hoạt động?
+11,Cybersecurity Concepts,Tập hợp kiến thức bao gồm mã hóa, kiểm soát truy cập và lỗ hổng thường gặp gọi là gì?
+12,Database Management,Kỹ năng nào cần thiết để xử lý và bảo vệ dữ liệu trong tổ chức?
+13,DDoS Attack,Hình thức tấn công nào làm tê liệt dịch vụ bằng cách gửi lượng lớn lưu lượng truy cập?
+14,Digital Certificate,Chứng chỉ số nào xác minh danh tính trong giao tiếp an toàn?
+15,Encryption,Kỹ thuật nào được sử dụng để bảo mật dữ liệu bằng cách mã hóa?
+16,Firewall,Thiết bị hoặc phần mềm nào được dùng để lọc và kiểm soát lưu lượng mạng?
+17,Group Policy,Cơ chế nào trong Windows cho phép quản trị viên áp đặt thiết lập bảo mật?
+18,Hashing,Kỹ thuật nào biến dữ liệu thành chuỗi giá trị duy nhất không thể đảo ngược?
+19,Incident Response,Kỹ năng nào giúp chuyên gia bảo mật phản ứng khi có sự cố an ninh xảy ra?
+20,Intrusion Detection System,Hệ thống nào giúp phát hiện các hành vi bất thường trong mạng?
+21,Intrusion Prevention System,Hệ thống nào không chỉ phát hiện mà còn ngăn chặn tấn công?
+22,JavaScript,Ngôn ngữ lập trình thường dùng trong phát triển web và khai thác lỗ hổng web là gì?
+23,Least Privilege,Nguyên tắc nào đảm bảo người dùng chỉ có quyền cần thiết để làm việc?
+24,Linux,Hệ điều hành mã nguồn mở phổ biến trong môi trường bảo mật là gì?
+25,Log Analysis,Khả năng nào giúp chuyên gia an ninh mạng hiểu hoạt động hệ thống thông qua nhật ký?
+26,Malware,Từ nào dùng để chỉ chung phần mềm độc hại như virus, worm, trojan?
+27,Networking,Kỹ năng nào cung cấp nền tảng về TCP/IP, mô hình OSI và các giao thức internet?
+28,Patch Management,Quy trình nào giúp cập nhật và vá lỗi phần mềm nhằm giảm thiểu rủi ro?
+29,Patch Tuesday,Sự kiện nào Microsoft thường xuyên phát hành bản vá bảo mật?
+30,Penetration Testing,Hoạt động nào mô phỏng tấn công để kiểm tra độ an toàn của hệ thống?
+31,Phishing,Hình thức tấn công nào thường dùng email giả mạo để đánh cắp thông tin?
+32,Port Scanning,Kỹ thuật nào được kẻ tấn công dùng để tìm cổng dịch vụ mở trên hệ thống?
+33,PowerShell,Công cụ dòng lệnh mạnh mẽ nào trong Windows thường dùng để quản trị và tự động hóa?
+34,Public Key Infrastructure,Hệ thống nào hỗ trợ quản lý và phân phối chứng chỉ số?
+35,Python,Ngôn ngữ lập trình được ưa chuộng để tự động hóa và viết script trong an ninh mạng là gì?
+36,Risk Assessment,Quá trình nào đánh giá mức độ rủi ro và ảnh hưởng của mối đe dọa?
+37,Security Policy,Tài liệu nào quy định các nguyên tắc và quy tắc bảo mật trong tổ chức?
+38,Social Engineering,Kỹ thuật nào khai thác yếu tố con người để lấy thông tin trái phép?
+39,Software,Thành phần nào cùng với phần cứng tạo nên hệ thống máy tính hoàn chỉnh?
+40,SQL,Ngôn ngữ được sử dụng để quản lý và truy vấn cơ sở dữ liệu là gì?
+41,Strong Password,Yếu tố nào cần thiết để bảo vệ tài khoản khỏi bị truy cập trái phép?
+42,Symmetric Encryption,Hình thức mã hóa nào dùng cùng một khóa cho cả mã hóa và giải mã?
+43,Threat Modeling,Kỹ thuật nào giúp dự đoán và đánh giá rủi ro bảo mật tiềm ẩn?
+44,Troubleshooting,Kỹ năng nào cần thiết để phát hiện và xử lý sự cố hệ thống?
+45,Two-Factor Authentication,Cơ chế nào thêm một lớp xác thực ngoài mật khẩu?
+46,VPN,Kỹ thuật nào mã hóa kết nối và bảo vệ dữ liệu khi truy cập mạng từ xa?
+47,Vulnerability Identification,Khả năng nào cho phép phát hiện các điểm yếu trong hệ thống?
+48,Web Technologies,Kiến thức cơ bản nào cần có để hiểu cách hoạt động của ứng dụng web?
+49,Windows,Hệ điều hành được sử dụng rộng rãi và quan trọng trong an ninh mạng là gì?
+50,Zero-Day Vulnerability,Lỗ hổng nào chưa có bản vá khi bị phát hiện?

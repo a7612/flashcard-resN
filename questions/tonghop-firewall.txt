@@ -1,0 +1,100 @@
+1,ACL,Trong Cisco ASA, danh sách điều khiển truy cập được gọi là gì?
+2,Application Firewall,Firewall nào có thể kiểm soát dữ liệu ở lớp ứng dụng?
+3,Application Firewall,Loại firewall nào có khả năng phân tích HTTP request/response?
+4,Application Layer,Firewall proxy hoạt động ở lớp nào trong OSI?
+5,Default Deny,Nguyên tắc cấu hình firewall an toàn nhất: Default Allow hay Default Deny?
+6,Default Gateway,Firewall thường đặt gần vị trí nào trong mạng nội bộ?
+7,DMZ,Vùng mạng nào thường được tạo để chứa server public nhằm tách biệt khỏi mạng nội bộ?
+8,DMZ,Web server public thường được đặt trong vùng nào của firewall?
+9,DPI,Viết tắt của kỹ thuật kiểm tra gói tin sâu là gì?
+10,False,Firewall có thể ngăn chặn toàn bộ các tấn công Zero-Day? (True/False)
+11,False,Firewall Layer 3 có thể phân tích payload chi tiết trong gói tin? (True/False)
+12,False,Firewall thay thế hoàn toàn được antivirus? (True/False)
+13,False,Firewall truyền thống có khả năng chống lại tấn công SQL Injection? (True/False)
+14,False,Firewall ở layer 3/4 có thể phân tích dữ liệu trong HTTPS payload? (True/False)
+15,False,Firewall có thể bảo vệ hệ thống trước malware đã được tải về? (True/False)
+16,False,Firewall có thể tự động vá lỗi bảo mật trong hệ điều hành? (True/False)
+17,False,Firewall luôn có khả năng chống lại DDoS attack hiệu quả tuyệt đối? (True/False)
+18,False,Firewall có thể thay thế hoàn toàn VPN trong việc bảo mật kết nối từ xa? (True/False)
+19,False,Firewall ở lớp Network có thể phân tích file đính kèm trong email? (True/False)
+20,False,Firewall luôn tự động nhận diện chính xác toàn bộ ứng dụng? (True/False)
+21,False,Firewall đảm bảo an toàn tuyệt đối cho mạng? (True/False)
+22,False,Firewall không cần cập nhật rule hoặc firmware thường xuyên? (True/False)
+23,False,Firewall có thể phát hiện và loại bỏ virus trong file PDF tải xuống? (True/False)
+24,False,Firewall luôn có thể phân biệt được lưu lượng hợp lệ và tấn công trong DoS? (True/False)
+25,False,Firewall truyền thống có thể giải mã và kiểm tra traffic HTTPS mặc định? (True/False)
+26,False,Firewall có thể thay thế hoàn toàn IDS/IPS? (True/False)
+27,False,Firewall IPv4 tự động áp dụng cho IPv6 traffic? (True/False)
+28,False,Firewall có thể chống phishing email hiệu quả tuyệt đối? (True/False)
+29,Host-based Firewall,Loại firewall nào cài trực tiếp trên từng máy tính?
+30,Hybrid Firewall,Loại firewall kết hợp packet filtering, stateful và proxy?
+31,IDS/IPS,Thiết bị nào thường kết hợp với firewall để phát hiện và ngăn chặn tấn công?
+32,Inbound Filtering,Chức năng firewall kiểm soát traffic đi vào hệ thống gọi là gì?
+33,IP Address,Firewall thường dựa vào yếu tố nào đầu tiên để lọc traffic?
+34,IP Spoofing,Firewall có thể được cấu hình để ngăn chặn kiểu tấn công nào liên quan giả mạo địa chỉ?
+35,Network Address Translation,Chức năng NAT trên firewall viết đầy đủ là gì?
+36,Network Firewall,Loại firewall nào bảo vệ toàn bộ hệ thống mạng thay vì chỉ 1 máy tính?
+37,Next Generation Firewall,Loại firewall nào tích hợp tính năng IPS, DPI, Application Control?
+38,Next Generation Firewall,Loại firewall nào có thể nhận diện ứng dụng (App-ID)?
+39,Next Generation Firewall,Loại firewall nào có khả năng lọc theo user identity?
+40,Next Generation Firewall,Loại firewall nào hỗ trợ phân tích User-Agent trong HTTP?
+41,Outbound Filtering,Chức năng firewall kiểm soát traffic đi ra ngoài Internet gọi là gì?
+42,Packet Filter,Loại firewall hoạt động dựa trên kiểm tra header của gói tin?
+43,Packet Filtering,Loại firewall cơ bản nhất?
+44,Packet Filtering Firewall,Loại firewall nào hoạt động ở lớp Network của mô hình OSI?
+45,Port 110,Firewall muốn cho phép dịch vụ POP3 cần mở cổng nào?
+46,Port 135,Firewall muốn cho phép RPC cần mở cổng nào?
+47,Port 143,Firewall muốn cho phép dịch vụ IMAP cần mở cổng nào?
+48,Port 161,Firewall muốn cho phép SNMP cần mở cổng nào?
+49,Port 1723,Firewall muốn cho phép PPTP VPN cần mở port nào?
+50,Port 1812,Firewall muốn cho phép RADIUS authentication cần mở port nào?
+51,Port 1813,Firewall muốn cho phép RADIUS accounting cần mở port nào?
+52,Port 2049,Firewall muốn cho phép NFS traffic cần mở port nào?
+53,Port 21,Firewall muốn cho phép FTP cần mở cổng nào?
+54,Port 22,Firewall muốn cho phép SSH cần mở cổng nào?
+55,Port 23,Firewall muốn cho phép Telnet cần mở cổng nào?
+56,Port 25,Muốn cho phép dịch vụ SMTP, firewall cần mở port nào?
+57,Port 3389,Firewall muốn cho phép Remote Desktop (RDP) cần mở cổng nào?
+58,Port 389,Firewall muốn cho phép LDAP cần mở cổng nào?
+59,Port 443,Firewall muốn cho phép HTTPS traffic cần mở cổng nào?
+60,Port 445,Firewall muốn cho phép SMB traffic cần mở cổng nào?
+61,Port 4500,Firewall muốn cho phép IPsec NAT-T cần mở port nào?
+62,Port 500,Firewall muốn cho phép IKE (VPN) cần mở port nào?
+63,Port 5060,Firewall muốn cho phép SIP (VoIP) cần mở port nào?
+64,Port 514,Firewall muốn cho phép Syslog traffic cần mở cổng nào?
+65,Port 53,Firewall muốn cho phép DNS queries cần mở cổng nào?
+66,Port 67,Firewall muốn cho phép DHCP server cần mở port nào?
+67,Port 68,Firewall muốn cho phép DHCP client cần mở port nào?
+68,Port 69,Firewall muốn cho phép TFTP cần mở port nào?
+69,Port 80,Firewall muốn cho phép HTTP traffic cần mở cổng nào?
+70,Proxy Firewall,Firewall nào hoạt động như trung gian nhận request từ client rồi gửi đến server?
+71,Proxy Firewall,Loại firewall nào có thể ẩn địa chỉ IP thật của client?
+72,Rule Order,Trong firewall ACL, yếu tố nào quyết định thứ tự xử lý rule?
+73,SSL Inspection,Tính năng firewall để phân tích HTTPS traffic gọi là gì?
+74,Stateful Firewall,Firewall nào có khả năng ghi nhớ trạng thái của kết nối?
+75,Stateful Firewall,Loại firewall nào phân biệt được traffic hợp lệ trong một phiên (session)?
+76,Stateful Inspection,Tên khác của Stateful Firewall là gì?
+77,Stateless Firewall,Loại firewall nào không ghi nhớ trạng thái kết nối?
+78,Transparent Firewall,Firewall nào có thể triển khai mà không cần thay đổi IP schema của mạng?
+79,Transparent Mode,Chế độ firewall nào cho phép hoạt động như bridge?
+80,True,NAT có thể được triển khai trên firewall? (True/False)
+81,True,Firewall có thể log lại các kết nối đến và đi? (True/False)
+82,True,Firewall có thể lọc traffic theo giao thức (protocol) như TCP/UDP/ICMP? (True/False)
+83,True,Firewall có thể lọc traffic theo MAC Address? (True/False)
+84,True,Firewall có thể hạn chế băng thông cho một số kết nối nhất định? (True/False)
+85,True,Firewall có thể tạo log để phân tích hành vi traffic sau này? (True/False)
+86,True,Firewall có thể chặn ICMP Ping để ẩn hệ thống khỏi bị scan? (True/False)
+87,True,Firewall có thể lọc dựa trên địa chỉ IP nguồn và đích? (True/False)
+88,True,Firewall có thể áp dụng chính sách theo giờ hoặc ngày? (True/False)
+89,True,Firewall có thể chặn website dựa trên URL hoặc domain? (True/False)
+90,True,Firewall có thể phát hiện port scanning nếu được cấu hình đúng? (True/False)
+91,True,Firewall có thể chặn traffic từ một quốc gia cụ thể bằng GeoIP filtering? (True/False)
+92,True,Firewall có thể kiểm soát lưu lượng peer-to-peer như BitTorrent? (True/False)
+93,True,Firewall có thể giới hạn số lượng kết nối đồng thời từ một IP? (True/False)
+94,True,Firewall có thể lọc gói tin IPv6? (True/False)
+95,True,Firewall có thể tích hợp với Active Directory để áp chính sách theo user? (True/False)
+96,True,Firewall là lớp phòng thủ quan trọng nhưng cần kết hợp với các biện pháp bảo mật khác? (True/False)
+97,UTM,Loại thiết bị kết hợp firewall, IPS, antivirus, VPN gọi là gì?
+98,VPN Firewall,Loại firewall nào thường dùng để bảo mật kết nối từ xa?
+99,Zone Based Firewall,Kỹ thuật firewall trong Cisco IOS mới hơn ACL truyền thống?
+100,Zone Policy,Firewall có thể nhóm interface thành vùng và áp dụng chính sách theo vùng gọi là gì?
