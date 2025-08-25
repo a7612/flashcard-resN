@@ -1,0 +1,26 @@
+1;Access Maintenance;Once access is gained, hackers need to keep that access for future exploitation and assaults, by securing their exclusive access with backdoors, rootkits and Trojans
+2;Active, Passive;Types of reconnaissance are?
+3;All networks across device are assigned a number that is unique, which is termed as MAC or Media Access Control address. This address may be a personal mailbox on the net. The network router identifies it. The amount may be modified anytime. All device get their distinctive information processing address, so they can be located easily on a given laptop and network. Whoever is aware of your distinctive information processing address, will contact you throught it;Differentiate between a MAC and an IP Address?
+4;Black box(No previous knowledge of network), White box(Knowledge of remote network);What are the types of penetration testing?
+5;Black hat;One who performs hacking(penetrations or exploitation) without authority and with malicious intent.
+6;Black hat - One who performs hacking(penetrations or exploitation) without authority and with malicious intent.;Who is known as a black hat?
+7;Covering tracks;Once hackers have possessed the capacity to pick up and maintain access, they cover their tracks and to keep away from getting detected. This likewise enables them to proceed with the utilization of the hacked framework and keep themselves away from legitimate activities
+8;Ethical Hacking;Which of the following is legal?
+9;Ethical Hacking is when the indivudual is allowed to hack the system with the permission of the merchandiseowner to search out for weaknesses in an excceding system and later fix them.;Can you explain, What is Ethical Hacking?
+10;False;Black box testing means having knowleged of the network.
+11;Generating Reports;Which of the following is not a step in the stages of Hacking?
+12;Getting access;This is where the real hacking happens.The hacker attempts to exploit data found amid the surveillance and Scanning stage to get access
+13;Grey hat;One who performs hacking(penetration or exploitation) without authority but without malicious intent. They perform the activity for bounty programs or security testing, without getting authorized to do so.
+14;Grey hat - One who performs hacking(penetration or exploitation) without authority but without malicious intent. They perform the activity for bounty programs or security testing, without getting authorized to do so.;Who is known as a gray hat?
+15;Hacking - It defines the illegal way of accessing the system (Unauthorized Access) / Ethical hacking - Legal way of accessing the system (Penetration testing);Difference between Hacking vs Ethical Hacking.
+16;Hacking, or targer on a machine, should have the following 5 phases;What are the hacking stage? Explain each stage.
+17;MAC Address;All networks across devices are assigned a number that is unique and is called ___
+18;Passive reconnaissance is nothing but to gain info regarding targeted computers and networks while not actively participating with the systems. In active reconnaissance, in distinction, the attacker engages with the target system, usually conducting a port scan to find any open ports.;What is active and passive reconnaissance?
+19;Scanning;This stage includes exploiting the data accumulated amid the Surveillance stage and utilizing it to inspect the casualty. The hacker can utilize computerized devices amid the scanning stage, which can incorporate port scanners, mappers and vulnerability scanners
+20;Surveillance/Recon;This is the principal stage where the hacker endeavors to gather as much data as possible about the target
+21;True;Ethical Hacking is when the individual is allowed to hack the systems with permission.
+22;VA - Vulnerability Assessment;A process to identify the weaknesses and loopholes.
+23;Vulnerability Assessment is process to identify the weaknesses and loopholes in the system, server, or asset. Mostly it is an automated process that can be indentified with different tools available in the market / Penetration testing is a process to exploit the vulnerabilities which are identified in VA(Vulnerability Assessment). It can be performed in both manual and automated ways. Manually we can perform, based on the information gathered of server details, version frameword, etc.;What is the difference between VA(Vulnerability Assessment) and PT(Penetration testing)?
+24;White Hat;Who is termed as the "Good Hackers"?
+25;White hat;Authorised penetration tester
+26;White hat - Authorised penetration tester;Who is known as a white hat?

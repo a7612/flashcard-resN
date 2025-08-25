@@ -40,7 +40,7 @@ class QuizGame:
         with open(filepath, "r", encoding="utf-8") as fh:
             return [
                 (qid, ans.strip(), q.strip())
-                for line in fh if (parts := line.strip().split(",", 2)) and len(parts) == 3
+                for line in fh if (parts := line.strip().split(";", 2)) and len(parts) == 3
                 for qid, ans, q in [parts]
             ]
 
@@ -49,7 +49,7 @@ class QuizGame:
         questions.sort(key=lambda x: x[1].lower())
         with open(filepath, "w", encoding="utf-8") as fh:
             for i, (_, ans, q) in enumerate(questions, 1):
-                fh.write(f"{i},{ans},{q}\n")
+                fh.write(f"{i};{ans};{q}\n")
 
     def show_questions(self, filepath):
         questions = self.load_questions_from_file(filepath)
