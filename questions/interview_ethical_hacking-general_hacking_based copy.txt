@@ -1,0 +1,20 @@
+1;Access Maintenance;Once access is gained, hackers need to keep that access for future exploitation and assaults, by securing their exclusive access with backdoors, rootkits and Trojans
+2;Active, Passive;Types of reconnaissance are?
+3;Black hat;One who performs hacking(penetrations or exploitation) without authority and with malicious intent.
+4;Black hat - One who performs hacking(penetrations or exploitation) without authority and with malicious intent.;Who is known as a black hat?
+5;Covering tracks;Once hackers have possessed the capacity to pick up and maintain access, they cover their tracks and to keep away from getting detected. This likewise enables them to proceed with the utilization of the hacked framework and keep themselves away from legitimate activities
+6;Ethical Hacking;Which of the following is legal?
+7;Ethical Hacking is when the indivudual is allowed to hack the system with the permission of the merchandiseowner to search out for weaknesses in an excceding system and later fix them.;Can you explain, What is Ethical Hacking?
+8;Generating Reports;Which of the following is not a step in the stages of Hacking?
+9;Getting access;This is where the real hacking happens.The hacker attempts to exploit data found amid the surveillance and Scanning stage to get access
+10;Grey hat;One who performs hacking(penetration or exploitation) without authority but without malicious intent. They perform the activity for bounty programs or security testing, without getting authorized to do so.
+11;Grey hat - One who performs hacking(penetration or exploitation) without authority but without malicious intent. They perform the activity for bounty programs or security testing, without getting authorized to do so.;Who is known as a gray hat?
+12;Hacking - It defines the illegal way of accessing the system (Unauthorized Access) / Ethical hacking - Legal way of accessing the system (Penetration testing);Difference between Hacking vs Ethical Hacking.
+13;Hacking, or targer on a machine, should have the following 5 phases;What are the hacking stage? Explain each stage.
+14;Passive reconnaissance is nothing but to gain info regarding targeted computers and networks while not actively participating with the systems. In active reconnaissance, in distinction, the attacker engages with the target system, usually conducting a port scan to find any open ports.;What is active and passive reconnaissance?
+15;Scanning;This stage includes exploiting the data accumulated amid the Surveillance stage and utilizing it to inspect the casualty. The hacker can utilize computerized devices amid the scanning stage, which can incorporate port scanners, mappers and vulnerability scanners
+16;Surveillance/Recon;This is the principal stage where the hacker endeavors to gather as much data as possible about the target
+17;True;Ethical Hacking is when the individual is allowed to hack the systems with permission.
+18;White hat;Who is termed as the "Good Hackers"?
+19;White hat;Authorised penetration tester
+20;White hat - Authorised penetration tester;Who is known as a white hat?
