@@ -1,8 +1,8 @@
 import os
 import random
 
-QUESTIONS_DIR = "questions"
-MAX_QUESTIONS = 20
+QUESTIONS_DIR = "questions"   # 📂 Thư mục chứa file câu hỏi
+MAX_QUESTIONS = 20            # 🎯 Số câu hỏi tối đa mỗi lần chơi
 
 
 class QuizGame:
@@ -10,8 +10,9 @@ class QuizGame:
         self.questions_dir = questions_dir
         os.makedirs(self.questions_dir, exist_ok=True)
 
-    # ----- file helpers -----
+    # ================= FILE HELPERS =================
     def list_files(self, show_count=True):
+        """📂 Liệt kê các file câu hỏi (.txt) trong thư mục questions"""
         files = [f for f in os.listdir(self.questions_dir) if f.endswith(".txt")]
         if not files:
             print("⚠️ Không có file câu hỏi nào.")
@@ -25,6 +26,7 @@ class QuizGame:
         return files
 
     def choose_file(self, action="chọn"):
+        """👉 Cho phép chọn 1 file theo số thứ tự"""
         files = self.list_files()
         if not files:
             return None
@@ -35,6 +37,7 @@ class QuizGame:
         return os.path.join(self.questions_dir, files[int(idx) - 1])
 
     def load_questions_from_file(self, filepath):
+        """📖 Đọc dữ liệu câu hỏi từ file (định dạng: id;answer;question)"""
         if not os.path.exists(filepath):
             return []
         with open(filepath, "r", encoding="utf-8") as fh:
@@ -45,13 +48,14 @@ class QuizGame:
             ]
 
     def save_questions(self, filepath, questions):
-        # sort theo đáp án (case-insensitive) rồi reindex ID từ 1
+        """💾 Ghi danh sách câu hỏi ra file (sort theo đáp án, re-index ID)"""
         questions.sort(key=lambda x: x[1].lower())
         with open(filepath, "w", encoding="utf-8") as fh:
             for i, (_, ans, q) in enumerate(questions, 1):
                 fh.write(f"{i};{ans};{q}\n")
 
     def show_questions(self, filepath):
+        """📋 Hiển thị toàn bộ câu hỏi trong file"""
         questions = self.load_questions_from_file(filepath)
         if not questions:
             print("❌ File trống.")
@@ -61,8 +65,9 @@ class QuizGame:
             print(f" {qid}) {q}   [Đáp án: {ans}]")
         return questions
 
-    # ----- add / delete -----
+    # ================= ADD / DELETE =================
     def add_question(self):
+        """➕ Thêm câu hỏi mới vào 1 file đã chọn"""
         filepath = self.choose_file("thêm")
         if not filepath:
             return
@@ -80,6 +85,7 @@ class QuizGame:
         print(f"\n➕ Đã thêm câu hỏi mới vào file **{os.path.basename(filepath)}**.")
 
     def delete_question(self):
+        """🗑️ Xoá câu hỏi theo ID"""
         filepath = self.choose_file("xoá")
         if not filepath:
             return
@@ -96,15 +102,18 @@ class QuizGame:
         self.save_questions(filepath, new_questions)
         print(f"\n🗑️ Đã xoá câu hỏi ID {del_id} trong file **{os.path.basename(filepath)}**.")
 
-    # ----- quiz helpers -----
+    # ================= QUIZ HELPERS =================
     def _build_options(self, correct, pool_answers, num_choices):
-        pool = list(set(pool_answers) - {correct})
+        """🔀 Sinh ngẫu nhiên đáp án (loại bỏ 'Đúng/Sai' cho câu hỏi thường)"""
+        # bỏ True/False/Đúng/Sai khỏi pool để không generate nhầm
+        pool = list(set(pool_answers) - {correct, "Đúng", "Sai", "dung", "sai"})
         wrongs = random.sample(pool, min(num_choices - 1, len(pool)))
         opts = wrongs + [correct]
         random.shuffle(opts)
         return opts
 
     def _prepare_quiz_pool(self, questions):
+        """📊 Lấy ra danh sách câu hỏi để chơi (tối đa MAX_QUESTIONS)"""
         if not questions:
             return []
         if len(questions) >= MAX_QUESTIONS:
@@ -112,6 +121,7 @@ class QuizGame:
         return (questions * ((MAX_QUESTIONS // len(questions)) + 1))[:MAX_QUESTIONS]
 
     def _check_answer(self, choice, mapping, correct):
+        """✔️ Kiểm tra câu trả lời"""
         picked = mapping.get(choice.lower(), choice.strip().lower())
         if picked.lower() == correct.lower():
             print("✅ Chính xác!\n")
@@ -120,44 +130,63 @@ class QuizGame:
         return False
 
     def _play_quiz(self, questions, num_choices=4):
+        """🎮 Chơi quiz theo danh sách câu hỏi"""
         if not questions:
             print("❌ Không có câu hỏi.")
             return
+
         all_answers = [ans for _, ans, _ in questions]
         quiz_pool = self._prepare_quiz_pool(questions)
         score = 0
+
         for idx, (_, correct, q) in enumerate(quiz_pool, 1):
-            opts = self._build_options(correct, all_answers, num_choices)
+            # 👉 Nếu câu hỏi là dạng True/False → chỉ hiện Đúng/Sai
+            if "nhận định đúng sai" in q.lower():
+                opts = ["Đúng", "Sai"]
+            else:
+                opts = self._build_options(correct, all_answers, num_choices)
+            
             letters = [chr(ord("a") + i) for i in range(len(opts))]
             mapping = {letters[i]: opts[i] for i in range(len(opts))}
 
+            # --- Xuất câu hỏi + đáp án ---
             print(f"\n{idx}. ❓ {q}")
             for l in letters:
                 print(f"   {l}) {mapping[l]}")
 
-            choice = input("👉 Chọn (a/b/c... hoặc gõ đáp án): ").strip()
+            # --- Input ---
+            if "nhận định đúng sai" in q.lower():
+                choice = input("👉 Chọn (a/b hoặc gõ Đúng/Sai): ").strip()
+            else:
+                choice = input("👉 Chọn (a/b/c... hoặc gõ đáp án): ").strip()
+
             if self._check_answer(choice, mapping, correct):
                 score += 1
 
+        # --- Kết quả ---
         percent = (score / len(quiz_pool)) * 100
         print("\n🌟 Tổng kết 🌟")
         print(f"   Điểm số: {score}/{len(quiz_pool)}")
         print(f"   Tỉ lệ chính xác: {percent:.1f}%\n")
 
+    # ================= PLAY MODES =================
     def play_file(self):
+        """🎯 Chơi quiz theo 1 file"""
         filepath = self.choose_file("chơi")
         if filepath:
             self._play_quiz(self.load_questions_from_file(filepath), num_choices=4)
 
     def play_all(self):
+        """🌍 Chơi quiz toàn bộ file"""
         files = self.list_files(show_count=False)
         all_questions = []
         for f in files:
             all_questions.extend(self.load_questions_from_file(os.path.join(self.questions_dir, f)))
         self._play_quiz(all_questions, num_choices=8)
 
-    # ----- main menu -----
+    # ================= MAIN MENU =================
     def menu(self):
+        """📌 Menu chính"""
         while True:
             print("\n===== 📚 QUIZ GAME =====")
             print("1. 🎯 Chơi theo bộ")
@@ -176,5 +205,6 @@ class QuizGame:
                 case _: print("⚠️ Lựa chọn không hợp lệ.")
 
 
+# ================= RUN =================
 if __name__ == "__main__":
     QuizGame().menu()
