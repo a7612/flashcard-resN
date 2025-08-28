@@ -4,6 +4,9 @@ import random
 QUESTIONS_DIR = "questions"   # 📂 Thư mục chứa file câu hỏi
 MAX_QUESTIONS = 20            # 🎯 Số câu hỏi tối đa mỗi lần chơi
 
+def clearsrc():
+    # Nếu là Windows thì dùng 'cls', còn Linux/macOS thì dùng 'clear'
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 class QuizGame:
     def __init__(self, questions_dir=QUESTIONS_DIR):
@@ -49,6 +52,7 @@ class QuizGame:
 
     def save_questions(self, filepath, questions):
         """💾 Ghi danh sách câu hỏi ra file (sort theo đáp án, re-index ID)"""
+        questions.sort(key=lambda x: x[2].lower())
         questions.sort(key=lambda x: x[1].lower())
         with open(filepath, "w", encoding="utf-8") as fh:
             for i, (_, ans, q) in enumerate(questions, 1):
@@ -124,10 +128,13 @@ class QuizGame:
         """✔️ Kiểm tra câu trả lời"""
         picked = mapping.get(choice.lower(), choice.strip().lower())
         if picked.lower() == correct.lower():
+            clearsrc()
             print("✅ Chính xác!\n")
             return True
-        print(f"❌ Sai rồi! Đáp án đúng là: {correct}\n")
-        return False
+        else:
+            clearsrc()
+            print(f"❌ Sai rồi! Đáp án đúng là: {correct}\n")
+            return False
 
     def _play_quiz(self, questions, num_choices=4):
         """🎮 Chơi quiz theo danh sách câu hỏi"""
@@ -141,6 +148,7 @@ class QuizGame:
 
         for idx, (_, correct, q) in enumerate(quiz_pool, 1):
             # 👉 Nếu câu hỏi là dạng True/False → chỉ hiện Đúng/Sai
+            
             if "nhận định đúng sai" in q.lower():
                 opts = ["Đúng", "Sai"]
             else:
@@ -150,15 +158,16 @@ class QuizGame:
             mapping = {letters[i]: opts[i] for i in range(len(opts))}
 
             # --- Xuất câu hỏi + đáp án ---
-            print(f"\n{idx}. ❓ {q}")
+            
+            print(f"\n{idx}. ❓ {q}\n")
             for l in letters:
                 print(f"   {l}) {mapping[l]}")
 
             # --- Input ---
             if "nhận định đúng sai" in q.lower():
-                choice = input("👉 Chọn (a/b hoặc gõ Đúng/Sai): ").strip()
+                choice = input("\n👉 Chọn (a/b hoặc gõ Đúng/Sai): ").strip()
             else:
-                choice = input("👉 Chọn (a/b/c... hoặc gõ đáp án): ").strip()
+                choice = input("\n👉 Chọn (a/b/c... hoặc gõ đáp án): ").strip()
 
             if self._check_answer(choice, mapping, correct):
                 score += 1
