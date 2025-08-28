@@ -1,0 +1,14 @@
+1;Cross-Site Request Forgery (CSRF);Common Weakness Enumeration (CWE) id 352 có tên chính thức là gì?
+2;Improper Authentication;Common Weakness Enumeration (CWE) id 287 có tên chính thức là gì?
+3;Improper Control of Generation of Code (Code Injection);Common Weakness Enumeration (CWE) id 94 có tên chính thức là gì?
+4;Improper Input Validation;Common Weakness Enumeration (CWE) id 20 có tên chính thức là gì?
+5;Improper Limitation of a Pathname to a Restricted Directory (Path Traversal);Common Weakness Enumeration (CWE) id 22 có tên chính thức là gì?
+6;Improper Neutralization of Input During Web Page Generation (Cross-site Scripting);Common Weakness Enumeration (CWE) id 79 có tên chính thức là gì?
+7;Improper Neutralization of Special Elements used in a Command (Command Injection);Common Weakness Enumeration (CWE) id 77 có tên chính thức là gì?
+8;Improper Neutralization of Special Elements used in an SQL Command (SQL Injection);Common Weakness Enumeration (CWE) id 89 có tên chính thức là gì?
+9;Improper Neutralization of Special Elements used in as OS Command (OS Command Injection);Common Weakness Enumeration (CWE) id 78 có tên chính thức là gì?
+10;Missing Authorization;Common Weakness Enumeration (CWE) id 862 có tên chính thức là gì?
+11;Out-of-bound Read;Common Weakness Enumeration (CWE) id 125 có tên chính thức là gì?
+12;Out-of-bounds Write;Common Weakness Enumeration (CWE) id 787 có tên chính thức là gì?
+13;Unrestricted Upload of File with Dangerous Type;Common Weakness Enumeration (CWE) id 434 có tên chính thức là gì?
+14;Use After Free;Common Weakness Enumeration (CWE) id 416 có tên chính thức là gì?
