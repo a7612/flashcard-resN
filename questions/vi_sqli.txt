@@ -1,0 +1,5 @@
+1;Ghép thêm truy vấn để lộ dữ liệu từ bảng khác;SQL Injection dạng "Union-based" thường được hacker dùng để?
+2;Sai;Nhận định đúng sai - SQL Injection (SQLi) là lỗi do người dùng nhập dữ liệu vượt quá giới hạn bộ nhớ.
+3;Sai;Nhận định đúng sai - SQL Injection (SQLi) là lỗi do sai logic code.
+4;Sai;Nhận định đúng sai - SQL Injection (SQLi) là lỗi kết nối cơ sở dữ liệu bị mất.
+5;Đúng;Nhận định đúng sai - SQL Injection (SQLi) là lỗ hỏng khi ứng dụng không xử lý đúng dữ liệu đầu vào, cho phép chèn lệnh SQL độc hại.
