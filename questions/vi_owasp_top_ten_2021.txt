@@ -1,0 +1,13 @@
+1;Broken Access Control;Lỗ hỏng bảo mật A01:2021 trong OWASP Top 10 là gì?
+2;Cryptographic Failures;Lỗ hỏng bảo mật A02:2021 trong OWASP Top 10 là gì?
+3;Identification and Authentication Failures;Lỗ hỏng bảo mật A07:2021 trong OWASP Top 10 là gì?
+4;Injection;Lỗ hỏng bảo mật A03:2021 trong OWASP Top 10 là gì?
+5;Insecure Design;Lỗ hỏng bảo mật A04:2021 trong OWASP Top 10 là gì?
+6;Insecure Design;Lỗ hỏng bảo mật nào được thêm mới trong OWASP Top 10 là gì?
+7;Security Logging and Monitoring Failures;Lỗ hỏng bảo mật A09:2021 trong OWASP Top 10 là gì?
+8;Security Misconfiguration;Lỗ hỏng bảo mật A05:2021 trong OWASP Top 10 là gì?
+9;Software and Data Integrity Failures;Lỗ hỏng bảo mật A08:2021 trong OWASP Top 10 là gì?
+10;Software and Data Integrity Failures;Lỗ hỏng bảo mật nào được thêm mới trong OWASP Top 10 là gì?
+11;SSRF (Server-Side Request Forgery);Lỗ hỏng bảo mật A10:2021 trong OWASP Top 10 là gì?
+12;SSRF (Server-Side Request Forgery);Lỗ hỏng bảo mật nào được thêm mới trong OWASP Top 10 là gì?
+13;Vulnerable and Outdated Component;Lỗ hỏng bảo mật A06:2021 trong OWASP Top 10 là gì?

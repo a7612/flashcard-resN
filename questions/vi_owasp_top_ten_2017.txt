@@ -1,0 +1,10 @@
+1;Broken Access Control;Lỗ hỏng bảo mật A05:2017 trong OWASP Top 10 là gì?
+2;Broken Authentication;Lỗ hỏng bảo mật A02:2017 trong OWASP Top 10 là gì?
+3;Injection;Lỗ hỏng bảo mật A01:2017 trong OWASP Top 10 là gì?
+4;Insecure Deserialization;Lỗ hỏng bảo mật A08:2017 trong OWASP Top 10 là gì?
+5;Insufficient Logging and Monitoring;Lỗ hỏng bảo mật A10:2017 trong OWASP Top 10 là gì?
+6;Security Misconfiguration;Lỗ hỏng bảo mật A06:2017 trong OWASP Top 10 là gì?
+7;Sensitive Data Exposure;Lỗ hỏng bảo mật A03:2017 trong OWASP Top 10 là gì?
+8;Using Components with Known Vulnerabilities;Lỗ hỏng bảo mật A09:2017 trong OWASP Top 10 là gì?
+9;XSS (Cross-Site Scripting);Lỗ hỏng bảo mật A07:2017 trong OWASP Top 10 là gì?
+10;XXE (XML External Entities);Lỗ hỏng bảo mật A04:2017 trong OWASP Top 10 là gì?
