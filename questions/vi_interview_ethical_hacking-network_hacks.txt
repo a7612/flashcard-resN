@@ -1,9 +1,0 @@
-How can you avoid ARP poisoning?
-ARP poisoning is a type of network attack that can be resolved through these techniques:
-+ Using Packet filtering: Packet filters can filter out and block packets with clashing source address Data
-+ Keeping away from the trust relationship: Organizations ought to develop to develop a protocol that depends on trust relationships, as little as they can.
-+ Utilize ARP spoofing software: Some programs access and certify information before it is transmitted and blocks any information that is spoofed
-
-ARP poisoning is a type of network attack - True
-
-What is network sniffing?
