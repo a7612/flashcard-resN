@@ -1,15 +1,9 @@
 import os
 import random
 import string
+from config import *
 
 # ====== CONFIG ======
-QUESTIONS_DIR = "questions"
-MAX_NORMAL_QUESTIONS = 20   # số câu hỏi khi chơi 1 file
-MAX_ALL_QUESTIONS = 50      # số câu hỏi khi chơi tất cả
-
-MAX_GENERATE_NORMAL_QUESTIONS = 4   # số đáp án khi chơi 1 file
-MAX_GENERATE_ALL_QUESTIONS = 12     # số đáp án khi chơi all
-
 
 def clearsrc():
     """Xoá màn hình console (tương thích Windows/Linux)."""
@@ -34,7 +28,7 @@ class QuizGame:
             print("⚠️ Không có file câu hỏi.")
             return []
         if show:
-            print("\n📂 Danh sách file:")
+            print(f"{BRIGHT_GREEN}\n📂 Danh sách file:{RESET}")
             for i, f in enumerate(files, 1):
                 path = os.path.join(self.qdir, f)
                 count = sum(1 for _ in open(path, encoding="utf-8"))
@@ -70,8 +64,7 @@ class QuizGame:
             return []
         print("\n📋 Câu hỏi:")
         for i, (qid, a, q) in enumerate(data, 1):
-            print(f" {i}) {q}   [Đáp án: {a}]")
-        print(" exit() 🔙 Quay lại")
+            print(f"{BRIGHT_CYAN} {i}) {q}   {GREEN}[Đáp án: {a}]{RESET}")
         return data
 
     # ========== QUESTION CRUD ==========
@@ -84,7 +77,7 @@ class QuizGame:
 
         if mode == "thêm":
             while True:
-                q = input("\n❓ Nhập câu hỏi (hoặc gõ exit() để quay lại): ").strip()
+                q = input(f"\n{GREEN}❓ Nhập câu hỏi (hoặc gõ {RED}exit(){GREEN} để quay lại):{RESET} ").strip()
                 if q.lower() == "exit()":
                     break
                 a = input("✅ Nhập đáp án: ").strip()
@@ -97,7 +90,7 @@ class QuizGame:
 
         elif mode == "xoá":
             while True:
-                idx = input("\n🗑️ Nhập ID câu hỏi cần xoá (hoặc gõ exit() để quay lại): ").strip()
+                idx = input(f"\n{GREEN}🗑️ Nhập ID câu hỏi cần xoá (hoặc gõ {RED}exit(){GREEN} để quay lại):{RESET} ").strip()
                 if idx.lower() == "exit()":
                     break
                 if idx.isdigit() and 1 <= int(idx) <= len(data):
@@ -112,7 +105,7 @@ class QuizGame:
 
         elif mode == "sửa":
             while True:
-                idx = input("\n✏️ Nhập ID câu hỏi cần sửa (hoặc gõ exit() để quay lại): ").strip()
+                idx = input(f"\n{GREEN}✏️ Nhập ID câu hỏi cần sửa (hoặc gõ {RED}exit(){GREEN} để quay lại):{RESET} ").strip()
                 if idx.lower() == "exit()":
                     break
                 if idx.isdigit() and 1 <= int(idx) <= len(data):
@@ -130,10 +123,10 @@ class QuizGame:
         while True:
             clearsrc()
             print("\n===== 📋 QUẢN LÝ CÂU HỎI =====")
-            print(" 1) ➕ Thêm câu hỏi")
-            print(" 2) 🗑️ Xoá câu hỏi")
-            print(" 3) ✏️ Sửa câu hỏi")
-            print(" Hoặc nhập exit() 🔙 quay lại.")
+            print(f" {GREEN}1) ➕ Thêm câu hỏi{RESET}")
+            print(f" {RED}2) 🗑️ Xoá câu hỏi{RESET}")
+            print(f" {YELLOW}3) ✏️ Sửa câu hỏi{RESET}")
+            print(f" {GREEN}Hoặc nhập {RED}exit(){GREEN} 🔙 quay lại.{RESET}")
             ch = input("\n👉 Nhập lựa chọn: ").strip()
             if ch == "1": self._crud("thêm")
             elif ch == "2": self._crud("xoá")
@@ -148,13 +141,16 @@ class QuizGame:
         """Menu quản lý tệp tin: tạo, xoá, đổi tên file."""
         while True:
             clearsrc()
+            path = self._list_files()
             print("\n===== 📂 QUẢN LÝ TỆP TIN =====")
-            print(" 1) ➕ Tạo file")
-            print(" 2) 🗑️ Xoá file")
-            print(" 3) ✏️ Đổi tên file")
-            print(" Hoặc nhập exit() 🔙 quay lại.")
+            print(f" {GREEN}1) ➕ Tạo file{RESET}")
+            print(f" {RED}2) 🗑️ Xoá file{RESET}")
+            print(f" {YELLOW}3) ✏️ Đổi tên file{RESET}")
+            print(f" {GREEN}Hoặc nhập {RED}exit(){GREEN} 🔙 quay lại.{RESET}")
             ch = input("\n👉 Nhập lựa chọn: ").strip()
             if ch == "1":
+                path = self._list_files()
+                print("\n")
                 name = input("📄 Nhập tên file mới: ").strip()
                 if name:
                     filepath = os.path.join(self.qdir, f"{name}.txt")
@@ -189,10 +185,11 @@ class QuizGame:
         return random.sample(pool, min(n - 1, len(pool))) + [correct]
 
     def play_all(self):
-        data = []
-        for f in self._files():
-            data += self._load(os.path.join(self.qdir, f))
-        self._quiz(data, n_opts=MAX_GENERATE_ALL_QUESTIONS, max_qs=MAX_ALL_QUESTIONS)
+        """Chơi quiz với tất cả các file trong thư mục, random lẫn lộn."""
+        files = self._files()
+        data = [q for f in files for q in self._load(os.path.join(self.qdir, f))]
+        random.shuffle(data)  # 👉 xáo trộn toàn bộ câu hỏi từ nhiều file
+        self._quiz(data, n_opts=MAX_GENERATE_ALL_ANSWERS, max_qs=MAX_GENERATE_ALL_QUESTIONS)
 
     def _quiz(self, data, n_opts=None, max_qs=None):
         """Chạy quiz với danh sách câu hỏi cho trước."""
@@ -217,25 +214,25 @@ class QuizGame:
             pick = input("👉 Nhập đáp án: ").lower()
             if mapping.get(pick, "").lower() == a.lower():
                 score += 1
-                print("✅ Chính xác!")
+                print(f"{GREEN}✅ Chính xác!{RESET}")
             else:
                 wrong += 1
-                print(f"❌ Sai! Đáp án đúng: {a}")
+                print(f"{RED}❌ Sai!{RESET} Đáp án đúng: {a}")
 
-        print("\n" + "="*50+"\n" + "="*50)
+        print("\n" + "="*50)
         print("🎯 Hoàn thành Quiz!")
-        print(f"✅ Đúng: {score}")
-        print(f"❌ Sai: {wrong}")
-        print(f"📊 Kết quả: {score}/{len(pool)} đúng")
-        print(f"🔥 Tỉ lệ chính xác: {score/len(pool)*100:.1f}%")
+        print(f"{GREEN}✅ Đúng: {score}{RESET}")
+        print(f"{RED}❌ Sai: {wrong}{RESET}")
+        print(f"{BG_RED}📊 Kết quả: {score}/{len(pool)} đúng{RESET}")
+        print(f"{BG_RED}🔥 Tỉ lệ chính xác: {score/len(pool)*100:.1f}%{RESET}")
 
     def play_file(self):
         """Chơi quiz từ một file cụ thể."""
         path = self._choose_file("chơi")
         if path:
             self._quiz(self._load(path),
-                    n_opts=MAX_GENERATE_NORMAL_QUESTIONS,
-                    max_qs=MAX_NORMAL_QUESTIONS)
+                    n_opts=MAX_GENERATE_NORMAL_ANSWERS,
+                    max_qs=MAX_GENERATE_NORMAL_QUESTIONS)
 
     # ========== MENU ==========
     def menu(self):
@@ -248,12 +245,12 @@ class QuizGame:
             "0": lambda: print("👋 Tạm biệt!"),
         }
         while True:
-            print("\n===== 📚 QUIZ GAME =====")
-            print(" 1) 🎯 Chơi theo bộ")
-            print(" 2) 🌍 Chơi toàn bộ")
-            print(" 3) 📋 Quản lý câu hỏi")
-            print(" 4) 📂 Quản lý tệp tin")
-            print(" 0) 🚪 Thoát")
+            print(f"{BLUE}\n===== 📚 FLASHCARD QUIZ GAME ====={RESET}")
+            print(f"{CYAN}1) 🎯 Chơi theo bộ{RESET}")
+            print(f"{CYAN}2) 🌍 Chơi tất cả{RESET}")
+            print(f"{BRIGHT_YELLOW}3) 📋 Quản lý câu hỏi{RESET}")
+            print(f"{BRIGHT_YELLOW}4) 📂 Quản lý tệp tin{RESET}")
+            print(f"{BRIGHT_YELLOW}0) 🚪 Thoát{RESET}")
             ch = input("\n👉 Nhập lựa chọn: ").strip()
             if ch == "0":
                 break

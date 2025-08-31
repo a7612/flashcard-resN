@@ -1,22 +1,34 @@
-1;Confused Deputy (Unintended Proxy or Intermediary);CWE (Common Weakness Enumeration) 447 tên chính thức là gì?
-2;CSRF (Cross-Site Request Forgery);CWE (Common Weakness Enumeration) 352 có tên chính thức là gì?
-3;Exposure of Information Through Directory Listing;CWE (Common Weakness Enumeration) 548 tên chính thức là gì?
-4;Exposure of Private Personal Information to an Unauthorized Actor;CWE (Common Weakness Enumeration) 359 có tên chính thức là gì?
-5;Exposure of Sensitive Information Through Sent Data;CWE (Common Weakness Enumeration) 201 có tên chính thức là gì?
-6;Exposure of Sensitive Information to an Unauthorized Actor;CWE (Common Weakness Enumeration) 200 có tên chính thức là gì?
-7;Exposure of Sensitive System Information to an Unauthorized Control Sphere;CWE (Common Weakness Enumeration) 497 tên chính thức là gì?
-8;Forced Browsing (Direct Request);CWE (Common Weakness Enumeration) 425 có tên chính thức là gì?
-9;Improper Access Control;CWE (Common Weakness Enumeration) 284 có tên chính thức là gì?
-10;Improper Authorization;CWE (Common Weakness Enumeration) 285 có tên chính thức là gì?
-11;Inclusion of Sensitive Information in Source Code;CWE (Common Weakness Enumeration) 540 tên chính thức là gì?
-12;Incorrect Default Permissions;CWE (Common Weakness Enumeration) 276 có tên chính thức là gì?
-13;Insecure Temporary File;CWE (Common Weakness Enumeration) 377 có tên chính thức là gì?
-14;Insertion of Sensitive Information into Externally-Accessible File or Directory;CWE (Common Weakness Enumeration) 538 tên chính thức là gì?
-15;Link Following (Improper Link Resolution Before File Access);CWE (Common Weakness Enumeration) 59 có tên chính thức là gì?
-16;Path Traversal (Improper Limitation of a Pathname to a Restricted Directory);CWE (Common Weakness Enumeration) 22 có tên chính thức là gì?
-17;Path Traversal: '.../...//';CWE (Common Weakness Enumeration) 35 có tên chính thức là gì?
-18;Permission Issues;CWE (Common Weakness Enumeration) 275 có tên chính thức là gì?
-19;Permissions, Privileges, and Access Controls (should no longer be used);CWE (Common Weakness Enumeration) 264 có tên chính thức là gì?
-20;Relative Path Traversal;CWE (Common Weakness Enumeration) 23 có tên chính thức là gì?
-21;Resource Leak (Transmission of Private Resources into a New Sphere);CWE (Common Weakness Enumeration) 402 có tên chính thức là gì?
-22;Storage of File with Sensitive Data Under Web Root;CWE (Common Weakness Enumeration) 219 có tên chính thức là gì?
+1;Authorization Bypass Through User-Controlled Key (Bypass ủy quyền thông qua khóa do người dùng kiểm soát);CWE (Common Weakness Enumeration) 639 có tên chính thức là gì?
+2;Authorization Bypass Through User-Controlled SQL Primary Key (Bypass ủy quyền thông qua khóa chính SQL do người dùng kiểm soát);CWE (Common Weakness Enumeration) 566 có tên chính thức là gì?
+3;Confused Deputy - Unintended Proxy or Intermediary (Deputy bị lợi dụng - Đóng vai trò proxy/trung gian ngoài ý muốn);CWE (Common Weakness Enumeration) 447 tên chính thức là gì?
+4;CSRF (Cross-Site Request Forgery - Giả mạo yêu cầu liên trang);CWE (Common Weakness Enumeration) 352 có tên chính thức là gì?
+5;Exposure of Information Through Directory Listing (Lộ thông tin thông qua liệt kê thư mục);CWE (Common Weakness Enumeration) 548 tên chính thức là gì?
+6;Exposure of Private Personal Information to an Unauthorized Actor (Lộ thông tin cá nhân riêng tư cho tác nhân không được phép);CWE (Common Weakness Enumeration) 359 có tên chính thức là gì?
+7;Exposure of Resource to Wrong Sphere (Tài nguyên bị lộ ra phạm vi sai);CWE (Common Weakness Enumeration) 668 có tên chính thức là gì?
+8;Exposure of Sensitive Information Through Sent Data (Lộ thông tin nhạy cảm qua dữ liệu được gửi đi);CWE (Common Weakness Enumeration) 201 có tên chính thức là gì?
+9;Exposure of Sensitive Information to an Unauthorized Actor (Lộ thông tin nhạy cảm cho tác nhân không được phép);CWE (Common Weakness Enumeration) 200 có tên chính thức là gì?
+10;Exposure of Sensitive System Information to an Unauthorized Control Sphere (Lộ thông tin hệ thống nhạy cảm cho phạm vi điều khiển không được phép);CWE (Common Weakness Enumeration) 497 tên chính thức là gì?
+11;Exposure of WSDL File Containing Sensitive Information (Lộ tập tin WSDL chứa thông tin nhạy cảm);CWE (Common Weakness Enumeration) 651 có tên chính thức là gì?
+12;Files or Directories Accessible to External Parties (Tập tin hoặc thư mục có thể truy cập bởi bên ngoài);CWE (Common Weakness Enumeration) 552 có tên chính thức là gì?
+13;Forced Browsing - Direct Request (Duyệt ép buộc - Truy cập trực tiếp tài nguyên);CWE (Common Weakness Enumeration) 425 có tên chính thức là gì?
+14;Improper Access Control (Kiểm soát truy cập không đúng cách);CWE (Common Weakness Enumeration) 284 có tên chính thức là gì?
+15;Improper Authorization (Ủy quyền không đúng cách);CWE (Common Weakness Enumeration) 285 có tên chính thức là gì?
+16;Improper Control of Dynamically-Managed Code Resources (Kiểm soát không đúng tài nguyên mã được quản lý động);CWE (Common Weakness Enumeration) 913 có tên chính thức là gì?
+17;Inclusion of Sensitive Information in Source Code (Chèn thông tin nhạy cảm vào trong mã nguồn);CWE (Common Weakness Enumeration) 540 tên chính thức là gì?
+18;Incorrect Authorization (Ủy quyền sai);CWE (Common Weakness Enumeration) 863 có tên chính thức là gì?
+19;Incorrect Default Permissions (Phân quyền mặc định sai);CWE (Common Weakness Enumeration) 276 có tên chính thức là gì?
+20;Insecure Storage of Sensitive Information (Lưu trữ không an toàn thông tin nhạy cảm);CWE (Common Weakness Enumeration) 922 có tên chính thức là gì?
+21;Insecure Temporary File (Tập tin tạm thời không  an toàn);CWE (Common Weakness Enumeration) 377 có tên chính thức là gì?
+22;Insertion of Sensitive Information into Externally-Accessible File or Directory (Chèn thông tin nhạy cảm vào tập tin/thư mục có thể truy cập từ bên ngoài);CWE (Common Weakness Enumeration) 538 tên chính thức là gì?
+23;Link Following - Improper Link Resolution Before File Access (Theo liên kết - Xử lý liên kết sai trước khi truy cập tập tin);CWE (Common Weakness Enumeration) 59 có tên chính thức là gì?
+24;Missing Authorization (Thiếu cơ chế ủy quyền);CWE (Common Weakness Enumeration) 862 có tên chính thức là gì?
+25;Open Redirect - URL Redirection to Untrusted Site (Chuyển hướng mở – chuyển hướng URL đến trang web không tin cậy);CWE (Common Weakness Enumeration) 601 có tên chính thức là gì?
+26;Path Traversal (Improper Limitation of a Pathname to a Restricted Directory - Giới hạn đường dẫn không đúng cách tới thư mục bị ràng buộc);CWE (Common Weakness Enumeration) 22 có tên chính thức là gì?
+27;Path Traversal: '.../...//' (Traversal đặc biệt bằng ký tự ../);CWE (Common Weakness Enumeration) 35 có tên chính thức là gì?
+28;Permission Issues (Vấn đề về phân quyền);CWE (Common Weakness Enumeration) 275 có tên chính thức là gì?
+29;Permissions, Privileges, and Access Controls (should no longer be used) - Quyền hạn, đặc quyền và kiểm soát truy cập" (đã ngừng sử dụng);CWE (Common Weakness Enumeration) 264 có tên chính thức là gì?
+30;Relative Path Traversal (Path Traversal tương đối);CWE (Common Weakness Enumeration) 23 có tên chính thức là gì?
+31;Resource Leak - Transmission of Private Resources into a New Sphere (Rò rỉ tài nguyên – Truyền tài nguyên riêng tư sang một phạm vi mới);CWE (Common Weakness Enumeration) 402 có tên chính thức là gì?
+32;Sensitive Cookie with Improper SameSite Attribute (Cookie nhạy cảm với thuộc tính SameSite cấu hình không đúng);CWE (Common Weakness Enumeration) 1275 có tên chính thức là gì?
+33;Storage of File with Sensitive Data Under Web Root (Lưu tập tin chứa dữ liệu nhạy cảm dưới thư mục gốc web - Web Root);CWE (Common Weakness Enumeration) 219 có tên chính thức là gì?
+34;Use of Incorrectly-Resolved Name or Reference (Sử dụng tên hoặc tham chiếu được phân giải sai);CWE (Common Weakness Enumeration) 706 có tên chính thức là gì?
