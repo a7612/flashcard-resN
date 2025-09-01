@@ -44,17 +44,28 @@ class QuizGame:
         return os.path.join(self.qdir, files[int(idx) - 1]) if idx.isdigit() and 1 <= int(idx) <= len(files) else None
 
     def _load(self, path):
-        """Đọc dữ liệu từ file: mỗi dòng dạng 'ID;Đáp án;Câu hỏi'."""
+        """Đọc dữ liệu từ file: mỗi dòng dạng 'ID;Đáp án;Câu hỏi;Mô tả'."""
+        """Đọc dữ liệu từ file: mỗi dòng dạng 'ID;Đáp án;Câu hỏi;Mô tả'."""
         if not os.path.exists(path):
             return []
+        data = []
         with open(path, encoding="utf-8") as f:
-            return [line.strip().split(";", 2) for line in f if ";" in line]
+            for line in f:
+                parts = line.strip().split(";", 3)
+                if len(parts) == 3:  # file cũ không có desc
+                    parts.append("")  # thêm desc rỗng
+                data.append(parts)
+        return data
+        # if not os.path.exists(path):
+        #     return []
+        # with open(path, encoding="utf-8") as f:
+        #     return [line.strip().split(";", 3) for line in f if ";" in line]
 
     def _save(self, path, data):
         """Ghi lại dữ liệu vào file, sắp xếp theo đáp án + câu hỏi."""
         with open(path, "w", encoding="utf-8") as f:
-            for i, (_, a, q) in enumerate(sorted(data, key=lambda x: (x[1].lower(), x[2].lower())), 1):
-                f.write(f"{i};{a};{q}\n")
+            for i, (_, a, q, d) in enumerate(sorted(data, key=lambda x: (x[1].lower(), x[2].lower())), 1):
+                f.write(f"{i};{a};{q};{d}\n")
 
     def _show(self, path):
         """Hiển thị danh sách câu hỏi trong file."""
@@ -63,8 +74,11 @@ class QuizGame:
             print("❌ File trống.")
             return []
         print("\n📋 Câu hỏi:")
-        for i, (qid, a, q) in enumerate(data, 1):
-            print(f"{BRIGHT_CYAN} {i}) {q}   {GREEN}[Đáp án: {a}]{RESET}")
+        for i, (qid, a, q, d) in enumerate(data, 1):
+            print(f"{BRIGHT_CYAN} {i}) {q}{RESET}")
+            print(f"   {GREEN}[Đáp án: {a}]{RESET}")
+            if d:
+                print(f"   {YELLOW}💡 Mô tả: {d}{RESET}")
         return data
 
     # ========== QUESTION CRUD ==========
@@ -81,8 +95,9 @@ class QuizGame:
                 if q.lower() == "exit()":
                     break
                 a = input("✅ Nhập đáp án: ").strip()
+                d = input("💡 Nhập mô tả (có thể bỏ trống): ").strip()
                 if q and a:
-                    data.append((str(len(data) + 1), a, q))
+                    data.append((str(len(data) + 1), a, q, d))
                     self._save(path, data)
                     clearsrc()
                     print("➕ Đã thêm câu hỏi mới.")
@@ -94,7 +109,7 @@ class QuizGame:
                 if idx.lower() == "exit()":
                     break
                 if idx.isdigit() and 1 <= int(idx) <= len(data):
-                    qid, ans, ques = data[int(idx) - 1]
+                    qid, ans, ques, desc = data[int(idx) - 1]
                     confirm = input(f"❓ Xác nhận xoá \"{ques}\" (y/n): ").strip().lower()
                     if confirm == "y":
                         data.pop(int(idx) - 1)
@@ -111,13 +126,74 @@ class QuizGame:
                 if idx.isdigit() and 1 <= int(idx) <= len(data):
                     new_q = input("❓ Nhập câu hỏi mới: ").strip()
                     new_a = input("✅ Nhập đáp án mới: ").strip()
+                    new_d = input("💡 Nhập mô tả mới (có thể bỏ trống): ").strip()
                     if new_q and new_a:
-                        data[int(idx) - 1] = (str(idx), new_a, new_q)
+                        data[int(idx) - 1] = (str(idx), new_a, new_q, new_d)
                         self._save(path, data)
                         clearsrc()
                         print("✏️ Đã cập nhật câu hỏi.")
                         self._show(path)
 
+    # ========== QUIZ ==========
+    def _options(self, correct, pool, n):
+        """Sinh ra các lựa chọn trắc nghiệm, tránh lặp lại đáp án đúng."""
+        pool = list(set(pool) - {correct, "Đúng", "Sai"})
+        return random.sample(pool, min(n - 1, len(pool))) + [correct]
+
+    def play_all(self):
+        """Chơi quiz với tất cả các file trong thư mục, random lẫn lộn."""
+        files = self._files()
+        data = [q for f in files for q in self._load(os.path.join(self.qdir, f))]
+        random.shuffle(data)
+        self._quiz(data, n_opts=MAX_GENERATE_ALL_ANSWERS, max_qs=MAX_GENERATE_ALL_QUESTIONS)
+
+    def _quiz(self, data, n_opts=None, max_qs=None):
+        """Chạy quiz với danh sách câu hỏi cho trước."""
+        if not data:
+            return print("❌ Không có câu hỏi.")
+
+        pool = data if max_qs is None else (data * ((max_qs // len(data)) + 1))[:max_qs]
+        all_ans = [a for _, a, _, _ in data]
+        score, wrong = 0, 0
+
+        for i, (_, a, q, d) in enumerate(pool, 1):
+            print("\n" + "="*40)
+            print(f"{i}. ❓ {q}")
+            if d:
+                print(f"   {YELLOW}💡 Gợi ý/Mô tả: {d}{RESET}")
+
+            opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a, all_ans, n_opts)
+            random.shuffle(opts)
+            letters = string.ascii_lowercase[:len(opts)]
+            mapping = dict(zip(letters, opts))
+
+            for k, v in mapping.items():
+                print(f"  {k}) {v}")
+
+            pick = input("👉 Nhập đáp án: ").lower()
+            if mapping.get(pick, "").lower() == a.lower():
+                score += 1
+                print(f"{GREEN}✅ Chính xác!{RESET}")
+            else:
+                wrong += 1
+                print(f"{RED}❌ Sai!{RESET} Đáp án đúng: {a}")
+
+        print("\n" + "="*50)
+        print("🎯 Hoàn thành Quiz!")
+        print(f"{GREEN}✅ Đúng: {score}{RESET}")
+        print(f"{RED}❌ Sai: {wrong}{RESET}")
+        print(f"{BG_RED}📊 Kết quả: {score}/{len(pool)} đúng{RESET}")
+        print(f"{BG_RED}🔥 Tỉ lệ chính xác: {score/len(pool)*100:.1f}%{RESET}")
+
+    def play_file(self):
+        """Chơi quiz từ một file cụ thể."""
+        path = self._choose_file("chơi")
+        if path:
+            self._quiz(self._load(path),
+                    n_opts=MAX_GENERATE_NORMAL_ANSWERS,
+                    max_qs=MAX_GENERATE_NORMAL_QUESTIONS)
+
+    # ========== MENU ==========
     def manage_questions(self):
         """Menu quản lý câu hỏi (CRUD)."""
         while True:
@@ -136,7 +212,6 @@ class QuizGame:
             else:
                 print("⚠️ Lựa chọn không hợp lệ, thử lại.")
 
-    # ========== FILE CRUD ==========
     def manage_files(self):
         """Menu quản lý tệp tin: tạo, xoá, đổi tên file."""
         while True:
@@ -178,63 +253,6 @@ class QuizGame:
             else:
                 print("⚠️ Lựa chọn không hợp lệ.")
 
-    # ========== QUIZ ==========
-    def _options(self, correct, pool, n):
-        """Sinh ra các lựa chọn trắc nghiệm, tránh lặp lại đáp án đúng."""
-        pool = list(set(pool) - {correct, "Đúng", "Sai"})
-        return random.sample(pool, min(n - 1, len(pool))) + [correct]
-
-    def play_all(self):
-        """Chơi quiz với tất cả các file trong thư mục, random lẫn lộn."""
-        files = self._files()
-        data = [q for f in files for q in self._load(os.path.join(self.qdir, f))]
-        random.shuffle(data)  # 👉 xáo trộn toàn bộ câu hỏi từ nhiều file
-        self._quiz(data, n_opts=MAX_GENERATE_ALL_ANSWERS, max_qs=MAX_GENERATE_ALL_QUESTIONS)
-
-    def _quiz(self, data, n_opts=None, max_qs=None):
-        """Chạy quiz với danh sách câu hỏi cho trước."""
-        if not data:
-            return print("❌ Không có câu hỏi.")
-
-        pool = data if max_qs is None else (data * ((max_qs // len(data)) + 1))[:max_qs]
-        all_ans = [a for _, a, _ in data]
-        score, wrong = 0, 0
-
-        for i, (_, a, q) in enumerate(pool, 1):
-            print("\n" + "="*40)
-            print(f"{i}. ❓ {q}")
-            opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a, all_ans, n_opts)
-            random.shuffle(opts)
-            letters = string.ascii_lowercase[:len(opts)]
-            mapping = dict(zip(letters, opts))
-
-            for k, v in mapping.items():
-                print(f"  {k}) {v}")
-
-            pick = input("👉 Nhập đáp án: ").lower()
-            if mapping.get(pick, "").lower() == a.lower():
-                score += 1
-                print(f"{GREEN}✅ Chính xác!{RESET}")
-            else:
-                wrong += 1
-                print(f"{RED}❌ Sai!{RESET} Đáp án đúng: {a}")
-
-        print("\n" + "="*50)
-        print("🎯 Hoàn thành Quiz!")
-        print(f"{GREEN}✅ Đúng: {score}{RESET}")
-        print(f"{RED}❌ Sai: {wrong}{RESET}")
-        print(f"{BG_RED}📊 Kết quả: {score}/{len(pool)} đúng{RESET}")
-        print(f"{BG_RED}🔥 Tỉ lệ chính xác: {score/len(pool)*100:.1f}%{RESET}")
-
-    def play_file(self):
-        """Chơi quiz từ một file cụ thể."""
-        path = self._choose_file("chơi")
-        if path:
-            self._quiz(self._load(path),
-                    n_opts=MAX_GENERATE_NORMAL_ANSWERS,
-                    max_qs=MAX_GENERATE_NORMAL_QUESTIONS)
-
-    # ========== MENU ==========
     def menu(self):
         """Menu chính của chương trình."""
         actions = {
