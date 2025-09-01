@@ -1,6 +1,6 @@
 QUESTIONS_DIR = "questions"
 MAX_GENERATE_NORMAL_QUESTIONS = 20   # số câu hỏi khi chơi 1 file
-MAX_GENERATE_ALL_QUESTIONS = 50      # số câu hỏi khi chơi tất cả
+MAX_GENERATE_ALL_QUESTIONS = 10      # số câu hỏi khi chơi tất cả
 
 MAX_GENERATE_NORMAL_ANSWERS = 4   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
