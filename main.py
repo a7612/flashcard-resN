@@ -45,7 +45,6 @@ class QuizGame:
 
     def _load(self, path):
         """Đọc dữ liệu từ file: mỗi dòng dạng 'ID;Đáp án;Câu hỏi;Mô tả'."""
-        """Đọc dữ liệu từ file: mỗi dòng dạng 'ID;Đáp án;Câu hỏi;Mô tả'."""
         if not os.path.exists(path):
             return []
         data = []
@@ -56,10 +55,6 @@ class QuizGame:
                     parts.append("")  # thêm desc rỗng
                 data.append(parts)
         return data
-        # if not os.path.exists(path):
-        #     return []
-        # with open(path, encoding="utf-8") as f:
-        #     return [line.strip().split(";", 3) for line in f if ";" in line]
 
     def _save(self, path, data):
         """Ghi lại dữ liệu vào file, sắp xếp theo đáp án + câu hỏi."""
@@ -159,9 +154,7 @@ class QuizGame:
         for i, (_, a, q, d) in enumerate(pool, 1):
             print("\n" + "="*40)
             print(f"{i}. ❓ {q}")
-            if d:
-                print(f"   {YELLOW}💡 Gợi ý/Mô tả: {d}{RESET}")
-
+            
             opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a, all_ans, n_opts)
             random.shuffle(opts)
             letters = string.ascii_lowercase[:len(opts)]
@@ -174,9 +167,13 @@ class QuizGame:
             if mapping.get(pick, "").lower() == a.lower():
                 score += 1
                 print(f"{GREEN}✅ Chính xác!{RESET}")
+                if d:
+                    print(f"   {YELLOW}💡 Mô tả: {d}{RESET}")
             else:
                 wrong += 1
                 print(f"{RED}❌ Sai!{RESET} Đáp án đúng: {a}")
+                if d:
+                    print(f"   {YELLOW}💡 Mô tả: {d}{RESET}")
 
         print("\n" + "="*50)
         print("🎯 Hoàn thành Quiz!")
