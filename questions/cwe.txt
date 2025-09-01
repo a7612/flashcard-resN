@@ -1,0 +1,1 @@
+1;Path Traversal - Improper Limitation of a Pathname to a Restricted Directory;Lỗi CWE-22 có tên chính là gì?;Khi dữ liệu bên ngoài được dùng để tạo đường dẫn file/thư mục nhưng không xử lý các ký tự đặc biệt (như ../), cho phép kẻ tấn công thoát khỏi thư mục hạn chế.
