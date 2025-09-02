@@ -161,23 +161,26 @@ class QuizGame:
                         self._show(path)
 
         elif mode.startswith("sửa"):
-            field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3}
-            if mode == "sửa":
-                idx = input("\n✏️ Nhập ID cần sửa toàn bộ (exit() để thoát): ").strip()
-                if idx.isdigit() and 1 <= int(idx) <= len(data):
-                    old = data[int(idx) - 1]
-                    new_q = input("❓ Câu hỏi mới: ").strip()
-                    new_a = input("✅ Đáp án mới: ").strip()
-                    new_d = input("💡 Mô tả mới: ").strip()
-                    if new_q and new_a:
-                        data[int(idx) - 1] = (str(idx), new_a, new_q, new_d)
-                        self._save(path, data)
-                        log_action("EDIT_Q_FULL", f"{os.path.basename(path)} | ID:{idx} | OLD:{old} | NEW:{data[int(idx)-1]}")
-                        self.clearsrc()
-                        print("✏️ Đã cập nhật câu hỏi.")
-                        self._show(path)
-            else:
-                self._edit_field(data, path, field_map[mode])
+            while True:
+                field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3}
+                if mode == "sửa":
+                    idx = input("\n✏️ Nhập ID cần sửa toàn bộ (exit() để thoát): ").strip()
+                    if idx.lower() == "exit()":
+                        break
+                    if idx.isdigit() and 1 <= int(idx) <= len(data):
+                        old = data[int(idx) - 1]
+                        new_q = input("❓ Câu hỏi mới: ").strip()
+                        new_a = input("✅ Đáp án mới: ").strip()
+                        new_d = input("💡 Mô tả mới: ").strip()
+                        if new_q and new_a:
+                            data[int(idx) - 1] = (str(idx), new_a, new_q, new_d)
+                            self._save(path, data)
+                            log_action("EDIT_Q_FULL", f"{os.path.basename(path)} | ID:{idx} | OLD:{old} | NEW:{data[int(idx)-1]}")
+                            self.clearsrc()
+                            print("✏️ Đã cập nhật câu hỏi.")
+                            self._show(path)
+                else:
+                    self._edit_field(data, path, field_map[mode])
 
     def _edit_field(self, data, path, field_idx):
         """Sửa một trường (question/answer/desc) và log hành động."""
