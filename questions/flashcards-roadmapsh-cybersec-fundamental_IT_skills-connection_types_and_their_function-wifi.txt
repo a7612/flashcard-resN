@@ -1,0 +1,23 @@
+1;2.4 GHz and 5 GHz.;What frequency bands does Wi-Fi typically use? (Wi-Fi thường hoạt động trên dải tần nào?);
+2;A penetration testing tool for Wi-Fi spoofing and MITM attacks.;What is Wi-Fi Pineapple used for? (Wi-Fi Pineapple dùng để làm gì?);Thiết bị pentest Wi-Fi chuyên giả mạo và tấn công Man-in-the-Middle. → Pentester hay dùng để kiểm thử an ninh mạng không dây.
+3;An exploit of WPA2’s 4-way handshake to decrypt Wi-Fi traffic.;What is the KRACK attack? (KRACK attack là gì?);Khai thác lỗ hổng trong 4-way handshake của WPA2 để giải mã traffic Wi-Fi. → Khi công bố năm 2017, hầu hết thiết bị Wi-Fi toàn cầu đều bị ảnh hưởng.
+4;Attackers exploit weak admin passwords or unchanged SSIDs.;What is the risk of default router settings? (Rủi ro của cấu hình router mặc định là gì?);Hacker khai thác mật khẩu admin yếu hoặc SSID mặc định. → Rất phổ biến ở quán net, quán café.
+5;Because attackers can spoof MAC addresses.;Why is MAC address filtering not fully secure? (Tại sao lọc MAC không hoàn toàn an toàn?);Vì hacker có thể giả mạo địa chỉ MAC.
+6;By compromising one device and moving laterally.;How can attackers use Wi-Fi to pivot inside a network? (Hacker dùng Wi-Fi để xoay trục trong mạng thế nào?);Xâm nhập 1 thiết bị rồi di chuyển ngang qua các thiết bị khác.
+7;By creating fake hotspots (Evil Twin attacks).;How do attackers exploit public Wi-Fi? (Hacker khai thác Wi-Fi công cộng thế nào?);Tạo điểm phát Wi-Fi giả mạo (Evil Twin). → Người dùng kết nối nhầm sẽ bị sniff traffic.
+8;By enabling many mobile and smart devices to connect easily.;How does Wi-Fi support IoT? (Wi-Fi hỗ trợ IoT thế nào?);Cho phép nhiều thiết bị di động và thông minh kết nối dễ dàng.
+9;By infecting insecure IoT devices connected via Wi-Fi.;How did the Mirai botnet use Wi-Fi devices? (Mirai botnet lợi dụng thiết bị Wi-Fi thế nào?);Lây nhiễm vào thiết bị IoT yếu bảo mật trên Wi-Fi. → Tạo ra một trong những botnet DDoS lớn nhất lịch sử (2016).
+10;By wireless routers or access points.;How are Wi-Fi networks created? (Mạng Wi-Fi được tạo ra như thế nào?);Bởi router hoặc access point không dây.
+11;Capturing data packets over Wi-Fi to steal information.;What is Wi-Fi sniffing? (Wi-Fi sniffing là gì?);Thu thập gói dữ liệu qua Wi-Fi để đánh cắp thông tin.
+12;Driving around to detect and map Wi-Fi networks.;What is wardriving? (Wardriving là gì?);Lái xe dò tìm và lập bản đồ các mạng Wi-Fi. → Thường bị hacker lợi dụng để tìm mạng yếu bảo mật.
+13;Employees may connect and leak sensitive data.;Why is public Wi-Fi risky for enterprises? (Tại sao Wi-Fi công cộng nguy hiểm với doanh nghiệp?);Nhân viên có thể kết nối và vô tình rò rỉ dữ liệu nhạy cảm. → Đây là lý do nhiều công ty bắt buộc dùng VPN.
+14;Forcing devices to disconnect from a Wi-Fi network.;What is Wi-Fi deauthentication attack? (Tấn công deauth Wi-Fi là gì?);Ép thiết bị ngắt kết nối Wi-Fi. → Hacker dùng chiêu này để buộc user reconnect qua Evil Twin.
+15;IEEE 802.11 standards.;What standards does Wi-Fi follow? (Wi-Fi tuân theo chuẩn nào?);Chuẩn IEEE 802.11.
+16;If insecure, they can be hijacked into botnets.;How can IoT devices on Wi-Fi be exploited? (Thiết bị IoT trên Wi-Fi có thể bị khai thác thế nào?);Nếu không an toàn, chúng có thể bị chiếm quyền và đưa vào botnet (ví dụ Mirai).
+17;In homes, offices, public spaces, and many locations.;Where can Wi-Fi be found? (Có thể tìm thấy Wi-Fi ở đâu?);Trong nhà, văn phòng, không gian công cộng và nhiều nơi khác.
+18;It supports WPA3 encryption.;Why is Wi-Fi 6 more secure? (Wi-Fi 6 an toàn hơn vì sao?);Vì hỗ trợ mã hóa WPA3 → khó brute-force hơn WPA2.
+19;It uses radio waves.;What does Wi-Fi use to transmit data? (Wi-Fi dùng gì để truyền dữ liệu?);Wi-Fi dùng sóng radio để truyền dữ liệu.
+20;It’s a newer version offering higher speed, better performance in crowded areas, and improved energy efficiency.;What is Wi-Fi 6 (802.11ax)? (Wi-Fi 6 là gì?);Phiên bản mới hơn với tốc độ cao hơn, hiệu suất tốt hơn ở nơi đông đúc và tiết kiệm năng lượng.
+21;Signals extend outside intended areas, allowing war driving.;How can Wi-Fi signal leakage be dangerous? (Rò rỉ sóng Wi-Fi nguy hiểm thế nào?);Sóng Wi-Fi tràn ra ngoài, tạo cơ hội cho war driving. → Hacker lái xe quanh khu vực để dò Wi-Fi.
+22;Weak passwords or outdated encryption (like WEP).;What is a common security weakness of Wi-Fi? (Điểm yếu bảo mật phổ biến của Wi-Fi là gì?);Mật khẩu yếu hoặc mã hóa lỗi thời (như WEP). → Dễ bị crack bằng dictionary attack.
+23;Wi-Fi is a wireless networking technology that allows devices to connect without cables.;What is Wi-Fi? (Wi-Fi là gì?);Wi-Fi là công nghệ mạng không dây cho phép thiết bị kết nối mà không cần dây cáp.

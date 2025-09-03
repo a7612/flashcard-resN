@@ -1,0 +1,10 @@
+1;13.56 MHz.;At what frequency does NFC operate? (NFC hoạt động ở tần số nào?);
+2;Attackers place malicious NFC tags in public places.;How can NFC be used in social engineering? (NFC có thể bị lợi dụng trong social engineering thế nào?);Kẻ tấn công đặt thẻ NFC độc hại ở nơi công cộng → dụ người dùng quét và bị dẫn đến website độc.
+3;Because it enables quick and secure interactions with minimal setup.;Why is NFC convenient? (Tại sao NFC tiện lợi?);Because it enables quick and secure interactions with minimal setup.
+4;Because of its very short range.;Why is NFC considered relatively safe compared to Wi-Fi/Bluetooth? (NFC an toàn hơn Wi-Fi/Bluetooth vì sao?);Vì phạm vi cực ngắn. → Nhưng nếu attacker ở gần thì vẫn có nguy cơ bị skim dữ liệu.
+5;Contactless payments, electronic ticketing, and data transfer.;What are common uses of NFC? (Ứng dụng phổ biến của NFC là gì?);Thanh toán không chạm, vé điện tử, và truyền dữ liệu.
+6;Disable NFC when not in use.;What should users do to protect against NFC attacks? (Người dùng nên làm gì để phòng chống tấn công NFC?);Tắt NFC khi không dùng. → Đây là cách giảm nguy cơ bị khai thác qua NFC lạ.
+7;Mobile payments, access control, and sharing information.;What are examples of NFC in daily life? (Ví dụ NFC trong đời sống hàng ngày?);Thanh toán qua điện thoại, kiểm soát ra vào, chia sẻ dữ liệu.
+8;NFC is a short-range wireless technology that works up to 4 inches (10 cm).;What is NFC and what is its range? (NFC là gì và phạm vi hoạt động thế nào?);NFC là công nghệ không dây tầm ngắn, hoạt động trong phạm vi 10 cm. → Dùng để trao đổi dữ liệu nhanh chóng, tiện lợi.
+9;Peer-to-peer, card emulation, and reader/writer.;What modes does NFC support? (NFC hỗ trợ những chế độ nào?);Giao tiếp ngang hàng, mô phỏng thẻ, và đọc/ghi.
+10;Relay attacks where attackers extend the range of NFC.;What is a security risk of NFC payments? (Rủi ro bảo mật của thanh toán NFC là gì?);Tấn công relay, hacker “kéo dài” phạm vi NFC để đánh cắp giao dịch.

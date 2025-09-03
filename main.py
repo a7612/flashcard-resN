@@ -160,10 +160,10 @@ class QuizGame:
                         print(f"🗑️ Đã xoá: \"{ques}\" [Đáp án: {ans}]")
                         self._show(path)
 
-        elif mode.startswith("sửa"):
-            while True:
-                field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3}
-                if mode == "sửa":
+        elif mode.startswith("sửa"):            
+            field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3, }
+            if mode == "sửa":
+                while True:
                     idx = input("\n✏️ Nhập ID cần sửa toàn bộ (exit() để thoát): ").strip()
                     if idx.lower() == "exit()":
                         break
@@ -179,24 +179,31 @@ class QuizGame:
                             self.clearsrc()
                             print("✏️ Đã cập nhật câu hỏi.")
                             self._show(path)
-                else:
-                    self._edit_field(data, path, field_map[mode])
+            else:
+                self._edit_field(data, path, field_map[mode])                 
 
     def _edit_field(self, data, path, field_idx):
         """Sửa một trường (question/answer/desc) và log hành động."""
-        idx = input("🔢 Nhập ID cần sửa: ").strip()
-        if idx.isdigit() and 1 <= int(idx) <= len(data):
-            entry = list(data[int(idx) - 1])
-            old_val = entry[field_idx]
-            new_val = input(f"✏️ Nhập giá trị mới (cũ: {old_val}) (enter = giữ nguyên): ").strip()
-            if new_val == "":
-                print("⚠️ Không có thay đổi.")
-                return
-            entry[field_idx] = new_val
-            data[int(idx) - 1] = tuple(entry)
-            self._save(path, data)
-            log_action("EDIT_FIELD", f"{os.path.basename(path)} | ID:{idx} | field_idx:{field_idx} | OLD:{old_val} | NEW:{new_val}")
-            print("✅ Đã sửa thành công.")
+        while True:
+            idx = input("🔢 Nhập ID cần sửa (exit() để thoát): ").strip()
+            if idx.lower() == "exit()":
+                break
+            if idx.isdigit() and 1 <= int(idx) <= len(data):
+                entry = list(data[int(idx) - 1])
+                old_val = entry[field_idx]
+                new_val = input(f"✏️ Nhập giá trị mới (cũ: {old_val}) (enter = giữ nguyên): ").strip()
+                if new_val == "":
+                    print("⚠️ Không có thay đổi.")
+                    return
+                entry[field_idx] = new_val
+                data[int(idx) - 1] = tuple(entry)
+                self._save(path, data)
+                log_action("EDIT_FIELD", f"{os.path.basename(path)} | ID:{idx} | field_idx:{field_idx} | OLD:{old_val} | NEW:{new_val}")
+                print("✅ Đã sửa thành công.")
+                break   # sửa xong thì thoát, hoặc bạn muốn cho sửa tiếp thì bỏ break
+            else:
+                print("❌ ID không hợp lệ. Thử lại hoặc gõ exit().")
+
 
     # ====== QUIZ & EXPORT ======
     def _options(self, correct, pool, n):
@@ -263,8 +270,10 @@ class QuizGame:
 
             # Phản hồi ngắn cho từng câu
             if ok:
+                self.clearsrc()
                 print(f"{GREEN}✅ Chính xác!{RESET}")
             else:
+                self.clearsrc()
                 print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {a}")
             if d:
                 print(f"   {YELLOW}💡 Mô tả: {d}{RESET}")
