@@ -250,7 +250,7 @@ class QuizGame:
 
             # In lựa chọn
             for k, v in mapping.items():
-                print(f"  {k}) {v}")
+                print(f"\n  {k}) {v}\n")
 
             pick = input("👉 Nhập đáp án: ").lower().strip()
             chosen = mapping.get(pick, "") if pick in mapping else ""
