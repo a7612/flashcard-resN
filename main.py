@@ -118,6 +118,8 @@ class QuizGame:
 
         if mode == "thêm":
             while True:
+                self.clearsrc()
+                self._show(path)
                 q = input("\n❓ Nhập câu hỏi (exit() để thoát): ").strip()
                 if q.lower() == "exit()":
                     break
@@ -188,7 +190,14 @@ class QuizGame:
 
         for i, (_, a, q, d, r) in enumerate(pool, 1):
             print("\n" + "-" * 60)
-            print(f"{i}. ❓ {q}")
+
+            # 🔥 Xử lý chuỗi chứa \n
+            q_disp = q.replace("\\n", "\n")
+            a_disp = a.replace("\\n", "\n")
+            d_disp = d.replace("\\n", "\n") if d else d
+            r_disp = r.replace("\\n", "\n") if r else r
+
+            print(f"{i}. ❓ {q_disp}")
 
             opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a, all_ans, n_opts)
             random.shuffle(opts)
@@ -200,16 +209,32 @@ class QuizGame:
 
             pick = input("👉 Nhập đáp án: ").lower().strip()
             chosen = mapping.get(pick, "(không hợp lệ)")
-            ok = chosen.lower() == a.lower()
+            ok = chosen.lower() == a_disp.lower()
             if ok:
                 score += 1
 
-            results.append({"index": i, "question": q, "correct": a, "chosen": chosen, "desc": d, "ref": r, "ok": ok})
+            results.append({
+                "index": i,
+                "question": q_disp,
+                "correct": a_disp,
+                "chosen": chosen,
+                "desc": d_disp,
+                "ref": r_disp,
+                "ok": ok
+            })
 
             if ok:
                 print(f"{GREEN}✅ Chính xác!{RESET}")
+                if d_disp:
+                    print(d_disp)
+                if r_disp:
+                    print(r_disp)
             else:
-                print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {a}")
+                print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {a_disp}")
+                if d_disp:
+                    print(d_disp)
+                if r_disp:
+                    print(r_disp)
 
         total = len(results)
         wrong = total - score
@@ -241,8 +266,12 @@ class QuizGame:
             writer.writerow([])
             writer.writerow(["idx", "question", "chosen", "correct", "ok", "desc", "reference"])
             for r in results:
-                writer.writerow([r["index"], r["question"], r["chosen"], r["correct"], r["ok"], r["desc"], r.get("ref", "")])
+                writer.writerow([
+                    r["index"], r["question"], r["chosen"], r["correct"],
+                    r["ok"], r["desc"], r.get("ref", "")
+                ])
         print(f"{BRIGHT_GREEN}✅ Đã export kết quả: {csv_path}{RESET}")
+
 
     def play_file(self):
         path = self._choose_file("chơi")
