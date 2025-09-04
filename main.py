@@ -4,24 +4,24 @@ import string
 import csv
 import datetime
 import getpass
+import uuid
 from config import *
 
 LOG_DIR = "logs"
 EXPORT_DIR = "exports"
+CLEAR_SCREEN = True  # Cho phép tắt/mở clearsrc
 
-# Tạo thư mục logs/ và exports/ nếu chưa tồn tại
+# Tạo thư mục cần thiết
 os.makedirs(LOG_DIR, exist_ok=True)
 os.makedirs(EXPORT_DIR, exist_ok=True)
 os.makedirs(QUESTIONS_DIR, exist_ok=True)
 
 
 def timestamp_now():
-    """Chuỗi timestamp để đặt tên file/log."""
     return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
 def current_user():
-    """Ai đang chạy chương trình (dùng để log)."""
     try:
         return getpass.getuser()
     except Exception:
@@ -29,7 +29,6 @@ def current_user():
 
 
 def log_action(action: str, detail: str = ""):
-    """Ghi log đơn giản: timestamp | user | action | detail."""
     fn = os.path.join(LOG_DIR, "actions.log")
     ts = datetime.datetime.now().isoformat(sep=" ", timespec="seconds")
     user = current_user()
@@ -39,24 +38,19 @@ def log_action(action: str, detail: str = ""):
 
 
 class QuizGame:
-    """Class quản lý toàn bộ game + CRUD + logging + export."""
-
     def __init__(self, qdir=QUESTIONS_DIR):
         self.qdir = qdir
         os.makedirs(self.qdir, exist_ok=True)
 
-    # ====== UTILS ======
     @staticmethod
     def clearsrc():
-        """Xoá màn hình console (tương thích Windows/Linux)."""
-        os.system("cls" if os.name == "nt" else "clear")
+        if CLEAR_SCREEN:
+            os.system("cls" if os.name == "nt" else "clear")
 
     def _files(self):
-        """Trả về danh sách file .txt trong thư mục câu hỏi."""
-        return [f for f in os.listdir(self.qdir) if f.endswith(".txt")]
+        return [f for f in os.listdir(self.qdir) if f.endswith(".csv")]
 
     def _list_files(self, show=True):
-        """Liệt kê file + số lượng câu hỏi trong mỗi file."""
         files = self._files()
         if not files:
             print("⚠️ Không có file câu hỏi.")
@@ -66,14 +60,14 @@ class QuizGame:
             for i, f in enumerate(files, 1):
                 path = os.path.join(self.qdir, f)
                 try:
-                    count = sum(1 for _ in open(path, encoding="utf-8"))
+                    with open(path, encoding="utf-8-sig") as csvfile:
+                        count = sum(1 for _ in csv.reader(csvfile)) - 1
                 except Exception:
                     count = 0
                 print(f" {i:>2}) {f:<25} | {count} câu hỏi")
         return files
 
     def _choose_file(self, action="chọn"):
-        """Cho người dùng chọn file dựa trên danh sách hiện có."""
         files = self._list_files()
         if not files:
             return None
@@ -84,47 +78,39 @@ class QuizGame:
         return None
 
     def _load(self, path):
-        """Đọc file -> list các tuple (id, answer, question, desc)."""
         if not os.path.exists(path):
             return []
         data = []
-        with open(path, encoding="utf-8") as f:
-            for line in f:
-                parts = line.strip().split(";", 3)
-                if len(parts) == 3:
-                    parts.append("")  # rỗng desc nếu file cũ
-                data.append(parts)
+        with open(path, encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                data.append((row["id"], row["answer"], row["question"], row["desc"], row["ref"]))
         return data
 
     def _save(self, path, data):
-        """
-        Lưu data vào file với format: id;answer;question;desc
-        Sắp xếp theo đáp án + câu hỏi để ổn định.
-        """
-        with open(path, "w", encoding="utf-8") as f:
-            for i, (_, a, q, d) in enumerate(sorted(data, key=lambda x: (x[1].lower(), x[2].lower())), 1):
-                f.write(f"{i};{a};{q};{d}\n")
+        with open(path, "w", encoding="utf-8-sig", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["id", "answer", "question", "desc", "ref"])
+            for row in data:
+                writer.writerow(row)
 
     def _show(self, path):
-        """Hiển thị danh sách câu hỏi trong file, trả về data list."""
         data = self._load(path)
         if not data:
             print("❌ File trống.")
             return []
         print("\n📋 DANH SÁCH CÂU HỎI:")
-        for i, (qid, a, q, d) in enumerate(data, 1):
+        for i, (qid, a, q, d, r) in enumerate(data, 1):
             print(f"{BRIGHT_CYAN}{i:>2}) {q}{RESET}")
             print(f"   {GREEN}➤ Đáp án: {a}{RESET}")
             if d:
                 print(f"   {YELLOW}💡 Mô tả: {d}{RESET}")
+            if r:
+                print(f"   {CYAN}🔗 Reference: {r}{RESET}")
         return data
 
-    # ====== CRUD ======
+    # CRUD
     def _crud(self, mode):
-        """
-        Thêm / Xoá / Sửa  ... Ghi log những hành động này vào logs/actions.log
-        mode: "thêm", "xoá", "sửa", "sửaQ", "sửaA", "sửaD"
-        """
         path = self._choose_file(mode)
         if not path:
             return
@@ -136,215 +122,142 @@ class QuizGame:
                 if q.lower() == "exit()":
                     break
                 a = input("✅ Đáp án: ").strip()
+                if not q or not a:
+                    print("⚠️ Câu hỏi và đáp án không được để trống.")
+                    continue
                 d = input("💡 Mô tả (có thể bỏ trống): ").strip()
-                if q and a:
-                    data.append((str(len(data) + 1), a, q, d))
-                    self._save(path, data)
-                    log_action("ADD_Q", f"{os.path.basename(path)} | Q: {q} | A: {a}")
-                    self.clearsrc()
-                    print("➕ Đã thêm câu hỏi mới.")
-                    self._show(path)
+                r = input("🔗 Reference (có thể bỏ trống): ").strip()
+                data.append((str(uuid.uuid4()), a, q, d, r))
+                self._save(path, data)
+                log_action("ADD_Q", f"{os.path.basename(path)} | Q: {q}")
+                print("➕ Đã thêm câu hỏi mới.")
 
         elif mode == "xoá":
             while True:
-                idx = input("\n🗑️ Nhập ID cần xoá (exit() để thoát): ").strip()
+                idx = input("\n🗑️ Nhập số thứ tự cần xoá (exit() để thoát): ").strip()
                 if idx.lower() == "exit()":
                     break
                 if idx.isdigit() and 1 <= int(idx) <= len(data):
-                    qid, ans, ques, desc = data[int(idx) - 1]
-                    if input(f"❓ Xác nhận xoá \"{ques}\" (y/n): ").lower() == "y":
-                        removed = data.pop(int(idx) - 1)
-                        self._save(path, data)
-                        log_action("DEL_Q", f"{os.path.basename(path)} | Q: {removed[2]} | A: {removed[1]}")
-                        self.clearsrc()
-                        print(f"🗑️ Đã xoá: \"{ques}\" [Đáp án: {ans}]")
-                        self._show(path)
+                    removed = data.pop(int(idx) - 1)
+                    self._save(path, data)
+                    log_action("DEL_Q", f"{os.path.basename(path)} | Q: {removed[2]}")
+                    print(f"🗑️ Đã xoá: {removed[2]}")
+                else:
+                    print("❌ ID không hợp lệ.")
 
-        elif mode.startswith("sửa"):            
-            field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3, }
-            if mode == "sửa":
-                while True:
-                    idx = input("\n✏️ Nhập ID cần sửa toàn bộ (exit() để thoát): ").strip()
-                    if idx.lower() == "exit()":
-                        break
-                    if idx.isdigit() and 1 <= int(idx) <= len(data):
-                        old = data[int(idx) - 1]
-                        new_q = input("❓ Câu hỏi mới: ").strip()
-                        new_a = input("✅ Đáp án mới: ").strip()
-                        new_d = input("💡 Mô tả mới: ").strip()
-                        if new_q and new_a:
-                            data[int(idx) - 1] = (str(idx), new_a, new_q, new_d)
-                            self._save(path, data)
-                            log_action("EDIT_Q_FULL", f"{os.path.basename(path)} | ID:{idx} | OLD:{old} | NEW:{data[int(idx)-1]}")
-                            self.clearsrc()
-                            print("✏️ Đã cập nhật câu hỏi.")
-                            self._show(path)
-            else:
-                self._edit_field(data, path, field_map[mode])                 
-
-    def _edit_field(self, data, path, field_idx):
-        """Sửa một trường (question/answer/desc) và log hành động."""
-        while True:
-            idx = input("🔢 Nhập ID cần sửa (exit() để thoát): ").strip()
-            if idx.lower() == "exit()":
-                break
+        elif mode.startswith("sửa"):
+            field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3, "sửaR": 4}
+            idx = input("🔢 Nhập số thứ tự cần sửa: ").strip()
             if idx.isdigit() and 1 <= int(idx) <= len(data):
                 entry = list(data[int(idx) - 1])
-                old_val = entry[field_idx]
-                new_val = input(f"✏️ Nhập giá trị mới (cũ: {old_val}) (enter = giữ nguyên): ").strip()
-                if new_val == "":
-                    print("⚠️ Không có thay đổi.")
-                    return
-                entry[field_idx] = new_val
+                if mode == "sửa":
+                    entry[2] = input("❓ Câu hỏi mới: ").strip() or entry[2]
+                    entry[1] = input("✅ Đáp án mới: ").strip() or entry[1]
+                    entry[3] = input("💡 Mô tả mới: ").strip() or entry[3]
+                    entry[4] = input("🔗 Reference mới: ").strip() or entry[4]
+                else:
+                    field_idx = field_map[mode]
+                    new_val = input(f"✏️ Nhập giá trị mới (cũ: {entry[field_idx]}): ").strip()
+                    if new_val:
+                        entry[field_idx] = new_val
                 data[int(idx) - 1] = tuple(entry)
                 self._save(path, data)
-                log_action("EDIT_FIELD", f"{os.path.basename(path)} | ID:{idx} | field_idx:{field_idx} | OLD:{old_val} | NEW:{new_val}")
+                log_action("EDIT_Q", f"{os.path.basename(path)} | {entry}")
                 print("✅ Đã sửa thành công.")
-                break   # sửa xong thì thoát, hoặc bạn muốn cho sửa tiếp thì bỏ break
-            else:
-                print("❌ ID không hợp lệ. Thử lại hoặc gõ exit().")
 
-
-    # ====== QUIZ & EXPORT ======
+    # Quiz
     def _options(self, correct, pool, n):
-        """Sinh lựa chọn (loại trừ đáp án đúng + 'Đúng'/'Sai')."""
         pool = list(set(pool) - {correct, "Đúng", "Sai"})
         return random.sample(pool, min(n - 1, len(pool))) + [correct]
 
     @staticmethod
     def _progress_bar(percent, width=30):
-        """Trả về string progress bar (ASCII)."""
         filled = int(width * percent // 100)
         bar = "[" + "=" * filled + " " * (width - filled) + "]"
         return f"{bar} {percent:.1f}%"
 
     def _quiz(self, data, n_opts=None, max_qs=None):
-        """
-        Chạy quiz:
-        - Ghi lại từng câu hỏi + đáp án chọn vào results (dùng để in bảng điểm và export)
-        - Sau quiz: in bảng điểm có highlight màu và progress bar, export CSV, log hành động.
-        """
         if not data:
             print("❌ Không có câu hỏi.")
             return
 
         pool = data if max_qs is None else (data * ((max_qs // len(data)) + 1))[:max_qs]
-        all_ans = [a for _, a, _, _ in data]
+        all_ans = [a for _, a, _, _, _ in data]
 
-        results = []  # list of dict: {idx, q, correct, chosen, desc, ok}
-        score = 0
+        results, score = [], 0
 
-        for i, (_, a, q, d) in enumerate(pool, 1):
+        for i, (_, a, q, d, r) in enumerate(pool, 1):
             print("\n" + "-" * 60)
             print(f"{i}. ❓ {q}")
 
-            # Sinh lựa chọn
-            if "nhận định đúng sai" in q.lower():
-                opts = ["Đúng", "Sai"]
-            else:
-                opts = self._options(a, all_ans, n_opts)
+            opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a, all_ans, n_opts)
             random.shuffle(opts)
-
             letters = string.ascii_lowercase[:len(opts)]
             mapping = dict(zip(letters, opts))
 
-            # In lựa chọn
             for k, v in mapping.items():
-                print(f"\n  {k}) {v}\n")
+                print(f"  {k}) {v}")
 
             pick = input("👉 Nhập đáp án: ").lower().strip()
-            chosen = mapping.get(pick, "") if pick in mapping else ""
+            chosen = mapping.get(pick, "(không hợp lệ)")
             ok = chosen.lower() == a.lower()
             if ok:
                 score += 1
 
-            # Lưu kết quả cho bảng điểm + export
-            results.append({
-                "index": i,
-                "question": q,
-                "correct": a,
-                "chosen": chosen or "(không hợp lệ)",
-                "desc": d,
-                "ok": ok
-            })
+            results.append({"index": i, "question": q, "correct": a, "chosen": chosen, "desc": d, "ref": r, "ok": ok})
 
-            # Phản hồi ngắn cho từng câu
             if ok:
-                self.clearsrc()
                 print(f"{GREEN}✅ Chính xác!{RESET}")
             else:
-                self.clearsrc()
                 print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {a}")
-            if d:
-                print(f"   {YELLOW}💡 Mô tả: {d}{RESET}")
 
         total = len(results)
         wrong = total - score
         percent = (score / total * 100) if total else 0.0
 
-        # In BẢNG ĐIỂM (tóm tắt)
         print("\n" + "=" * 60)
         print(f"{BLUE}🎯 BẢNG ĐIỂM CHI TIẾT{RESET}")
         header = f"{'#':>3}  {'RESULT':^8}  {'CHOSEN':^20}  {'CORRECT':^20}"
         print(header)
         print("-" * 60)
         for r in results:
-            idx = r["index"]
             res_sym = f"{GREEN}✅{RESET}" if r["ok"] else f"{RED}❌{RESET}"
-            chosen = (r["chosen"][:18] + "...") if len(r["chosen"]) > 18 else r["chosen"]
-            correct = (r["correct"][:18] + "...") if len(r["correct"]) > 18 else r["correct"]
-            # Highlight dòng đúng/sai màu sắc
-            print(f"{idx:>3})  {res_sym:^8}  {chosen:<20}  {correct:<20}")
+            print(f"{r['index']:>3})  {res_sym:^8}  {r['chosen']:<20}  {r['correct']:<20}")
 
         print("-" * 60)
         print(f"{GREEN}✅ Đúng : {score}{RESET}    {RED}❌ Sai : {wrong}{RESET}    {CYAN}📊 Tỉ lệ: {percent:.1f}%{RESET}")
-        # Progress bar
         print(self._progress_bar(percent))
 
-        # Export CSV
         csv_name = f"quiz_results_{timestamp_now()}.csv"
         csv_path = os.path.join(EXPORT_DIR, csv_name)
-        try:
-            with open(csv_path, "w", encoding="utf-8-sig", newline="") as csvfile:
-                writer = csv.writer(csvfile)
-                # Header meta
-                writer.writerow(["timestamp", datetime.datetime.now().isoformat()])
-                writer.writerow(["user", current_user()])
-                writer.writerow(["total_questions", total])
-                writer.writerow(["score", score])
-                writer.writerow(["wrong", wrong])
-                writer.writerow(["percent", f"{percent:.1f}"])
-                writer.writerow([])  # blank
-                # detail header
-                writer.writerow(["idx", "question", "chosen", "correct", "ok", "desc"])
-                for r in results:
-                    writer.writerow([r["index"], r["question"], r["chosen"], r["correct"], r["ok"], r["desc"]])
-            print(f"{BRIGHT_GREEN}✅ Đã export kết quả: {csv_path}{RESET}")
-            log_action("EXPORT_CSV", f"{csv_path} | score={score}/{total} ({percent:.1f}%)")
-        except Exception as e:
-            print(f"{RED}⚠️ Lỗi khi export CSV: {e}{RESET}")
-            log_action("EXPORT_ERROR", str(e))
+        with open(csv_path, "w", encoding="utf-8-sig", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["timestamp", datetime.datetime.now().isoformat()])
+            writer.writerow(["user", current_user()])
+            writer.writerow(["total_questions", total])
+            writer.writerow(["score", score])
+            writer.writerow(["wrong", wrong])
+            writer.writerow(["percent", f"{percent:.1f}"])
+            writer.writerow([])
+            writer.writerow(["idx", "question", "chosen", "correct", "ok", "desc", "reference"])
+            for r in results:
+                writer.writerow([r["index"], r["question"], r["chosen"], r["correct"], r["ok"], r["desc"], r.get("ref", "")])
+        print(f"{BRIGHT_GREEN}✅ Đã export kết quả: {csv_path}{RESET}")
 
     def play_file(self):
-        """Chơi quiz theo 1 file cụ thể."""
         path = self._choose_file("chơi")
         if path:
-            self._quiz(self._load(path),
-                       n_opts=MAX_GENERATE_NORMAL_ANSWERS,
-                       max_qs=MAX_GENERATE_NORMAL_QUESTIONS)
+            self._quiz(self._load(path), n_opts=MAX_GENERATE_NORMAL_ANSWERS, max_qs=MAX_GENERATE_NORMAL_QUESTIONS)
 
     def play_all(self):
-        """Chơi quiz với tất cả file trong thư mục."""
         files = self._files()
-        data = []
         for f in files:
-            data.extend(self._load(os.path.join(self.qdir, f)))
-        random.shuffle(data)
-        self._quiz(data, n_opts=MAX_GENERATE_ALL_ANSWERS, max_qs=MAX_GENERATE_ALL_QUESTIONS)
+            path = os.path.join(self.qdir, f)
+            for chunk in self._load(path):
+                self._quiz([chunk], n_opts=MAX_GENERATE_ALL_ANSWERS, max_qs=MAX_GENERATE_ALL_QUESTIONS)
 
-    # ====== MENU ======
+    # Menu
     def manage_questions(self):
-        """Menu CRUD nội dung."""
         actions = {
             "1": ("thêm", f"{BRIGHT_GREEN}➕ Thêm nội dung{RESET}"),
             "2": ("xoá", f"{BRIGHT_RED}🗑️ Xoá nội dung{RESET}"),
@@ -352,6 +265,7 @@ class QuizGame:
             "4": ("sửaQ", f"{BRIGHT_YELLOW}✏️ Sửa câu hỏi{RESET}"),
             "5": ("sửaA", f"{BRIGHT_YELLOW}✏️ Sửa đáp án{RESET}"),
             "6": ("sửaD", f"{BRIGHT_YELLOW}✏️ Sửa mô tả{RESET}"),
+            "7": ("sửaR", f"{BRIGHT_YELLOW}✏️ Sửa tham khảo{RESET}"),
         }
         while True:
             self.clearsrc()
@@ -368,7 +282,6 @@ class QuizGame:
                 print("⚠️ Lựa chọn không hợp lệ.")
 
     def manage_files(self):
-        """Menu quản lý tệp tin (tạo/xoá/đổi tên)."""
         while True:
             self.clearsrc()
             self._list_files()
@@ -376,15 +289,17 @@ class QuizGame:
             print(" 1) ➕ Tạo file\n 2) 🗑️ Xoá file\n 3) ✏️ Đổi tên file\n exit() 🔙 quay lại")
             ch = input("\n👉 Nhập lựa chọn: ").strip()
             if ch == "1":
-                name = input("📄 Nhập tên file mới (không cần .txt): ").strip()
+                name = input("📄 Nhập tên file mới (không cần .csv): ").strip()
                 if name:
-                    path = os.path.join(self.qdir, f"{name}.txt")
+                    path = os.path.join(self.qdir, f"{name}.csv")
                     if os.path.exists(path):
                         print("⚠️ File đã tồn tại.")
                     else:
-                        open(path, "w", encoding="utf-8").close()
+                        with open(path, "w", encoding="utf-8-sig", newline="") as f:
+                            writer = csv.writer(f)
+                            writer.writerow(["id", "answer", "question", "desc", "ref"])
                         log_action("CREATE_FILE", path)
-                        print(f"✅ Đã tạo {name}.txt")
+                        print(f"✅ Đã tạo {name}.csv")
             elif ch == "2":
                 path = self._choose_file("xoá")
                 if path and input(f"❓ Xoá {os.path.basename(path)} (y/n): ").lower() == "y":
@@ -394,9 +309,9 @@ class QuizGame:
             elif ch == "3":
                 path = self._choose_file("đổi tên")
                 if path:
-                    new = input("✏️ Nhập tên mới (không cần .txt): ").strip()
+                    new = input("✏️ Nhập tên mới (không cần .csv): ").strip()
                     if new:
-                        newpath = os.path.join(self.qdir, f"{new}.txt")
+                        newpath = os.path.join(self.qdir, f"{new}.csv")
                         os.rename(path, newpath)
                         log_action("RENAME_FILE", f"{path} -> {newpath}")
                         print("✅ Đã đổi tên file.")
