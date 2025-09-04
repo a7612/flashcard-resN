@@ -183,15 +183,19 @@ class QuizGame:
             print("❌ Không có câu hỏi.")
             return
 
+        # 🔀 Random nếu cần
         pool = data if max_qs is None else (data * ((max_qs // len(data)) + 1))[:max_qs]
-        all_ans = [a for _, a, _, _, _ in data]
+        if max_qs is not None:
+            random.shuffle(pool)
+            pool = pool[:max_qs]
 
+        all_ans = [a for _, a, _, _, _ in data]
         results, score = [], 0
 
         for i, (_, a, q, d, r) in enumerate(pool, 1):
             print("\n" + "-" * 60)
 
-            # 🔥 Xử lý chuỗi chứa \n
+            # 🔥 Chuẩn hóa xuống dòng
             q_disp = q.replace("\\n", "\n")
             a_disp = a.replace("\\n", "\n")
             d_disp = d.replace("\\n", "\n") if d else d
@@ -199,7 +203,7 @@ class QuizGame:
 
             print(f"{i}. ❓ {q_disp}")
 
-            opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a, all_ans, n_opts)
+            opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a_disp, all_ans, n_opts)
             random.shuffle(opts)
             letters = string.ascii_lowercase[:len(opts)]
             mapping = dict(zip(letters, opts))
@@ -208,8 +212,17 @@ class QuizGame:
                 print(f"  {k}) {v}")
 
             pick = input("👉 Nhập đáp án: ").lower().strip()
-            chosen = mapping.get(pick, "(không hợp lệ)")
-            ok = chosen.lower() == a_disp.lower()
+            ok = pick.lower() == a_disp.lower()
+            
+            # 🚫 Không cho Enter trống skip
+            # while True:
+            #     pick = input("👉 Nhập đáp án: ").lower().strip()
+            #     if pick in mapping:
+            #         chosen = mapping[pick]
+            #         break
+            #     print("⚠️ Lựa chọn không hợp lệ, nhập lại đi!")
+
+            # ok = chosen.lower() == a_disp.lower()
             if ok:
                 score += 1
 
@@ -217,7 +230,7 @@ class QuizGame:
                 "index": i,
                 "question": q_disp,
                 "correct": a_disp,
-                "chosen": chosen,
+                # "chosen": chosen,
                 "desc": d_disp,
                 "ref": r_disp,
                 "ok": ok
@@ -226,16 +239,17 @@ class QuizGame:
             if ok:
                 print(f"{GREEN}✅ Chính xác!{RESET}")
                 if d_disp:
-                    print(d_disp)
+                    print(f"Mô tả: {d_disp}")
                 if r_disp:
-                    print(r_disp)
+                    print(f"Tham chiếu:\n{r_disp}")
             else:
                 print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {a_disp}")
                 if d_disp:
-                    print(d_disp)
+                    print(f"{BRIGHT_YELLOW}Mô tả: {d_disp}{RESET}")
                 if r_disp:
-                    print(r_disp)
+                    print(f"{BRIGHT_CYAN}Tham chiếu:\n{r_disp}{RESET}")
 
+        # 📊 Thống kê
         total = len(results)
         wrong = total - score
         percent = (score / total * 100) if total else 0.0
@@ -247,12 +261,14 @@ class QuizGame:
         print("-" * 60)
         for r in results:
             res_sym = f"{GREEN}✅{RESET}" if r["ok"] else f"{RED}❌{RESET}"
-            print(f"{r['index']:>3})  {res_sym:^8}  {r['chosen']:<20}  {r['correct']:<20}")
+            print(f"{r['index']:>3})  {res_sym:^8}   {r['correct']:<20}")
+            # print(f"{r['index']:>3})  {res_sym:^8}  {r['chosen']:<20}  {r['correct']:<20}")
 
         print("-" * 60)
         print(f"{GREEN}✅ Đúng : {score}{RESET}    {RED}❌ Sai : {wrong}{RESET}    {CYAN}📊 Tỉ lệ: {percent:.1f}%{RESET}")
         print(self._progress_bar(percent))
 
+        # 💾 Export CSV
         csv_name = f"quiz_results_{timestamp_now()}.csv"
         csv_path = os.path.join(EXPORT_DIR, csv_name)
         with open(csv_path, "w", encoding="utf-8-sig", newline="") as csvfile:
@@ -264,10 +280,12 @@ class QuizGame:
             writer.writerow(["wrong", wrong])
             writer.writerow(["percent", f"{percent:.1f}"])
             writer.writerow([])
-            writer.writerow(["idx", "question", "chosen", "correct", "ok", "desc", "reference"])
+            writer.writerow(["idx", "question", "correct", "ok", "desc", "reference"])
+            # writer.writerow(["idx", "question", "chosen", "correct", "ok", "desc", "reference"])
             for r in results:
                 writer.writerow([
-                    r["index"], r["question"], r["chosen"], r["correct"],
+                    r["index"], r["question"], r["correct"],
+                    # r["index"], r["question"], r["chosen"], r["correct"],
                     r["ok"], r["desc"], r.get("ref", "")
                 ])
         print(f"{BRIGHT_GREEN}✅ Đã export kết quả: {csv_path}{RESET}")
@@ -276,14 +294,26 @@ class QuizGame:
     def play_file(self):
         path = self._choose_file("chơi")
         if path:
-            self._quiz(self._load(path), n_opts=MAX_GENERATE_NORMAL_ANSWERS, max_qs=MAX_GENERATE_NORMAL_QUESTIONS)
+            self._quiz(
+                self._load(path),
+                n_opts=MAX_GENERATE_NORMAL_ANSWERS,
+                max_qs=MAX_GENERATE_NORMAL_QUESTIONS
+            )
 
     def play_all(self):
         files = self._files()
+        data = []
         for f in files:
             path = os.path.join(self.qdir, f)
-            for chunk in self._load(path):
-                self._quiz([chunk], n_opts=MAX_GENERATE_ALL_ANSWERS, max_qs=MAX_GENERATE_ALL_QUESTIONS)
+            data.extend(self._load(path))
+
+        # 🔥 Chơi tất cả câu hỏi một lần, không reset từng câu
+        self._quiz(
+            data,
+            n_opts=MAX_GENERATE_ALL_ANSWERS,
+            max_qs=MAX_GENERATE_ALL_QUESTIONS
+        )
+
 
     # Menu
     def manage_questions(self):
