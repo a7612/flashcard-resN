@@ -29,8 +29,8 @@ def current_user():
 
 
 def log_action(action: str, detail: str = ""):
-    fn = os.path.join(LOG_DIR, "actions.log")
     ts = datetime.datetime.now().isoformat(sep=" ", timespec="seconds")
+    fn = os.path.join(LOG_DIR, f"{datetime.datetime.now().strftime("%Y%m%d")}.log")    
     user = current_user()
     line = f"{ts} | {user} | {action} | {detail}\n"
     with open(fn, "a", encoding="utf-8") as f:
@@ -88,10 +88,14 @@ class QuizGame:
         return data
 
     def _save(self, path, data):
+        # Sort theo cột id (cột 0)
+        # data_sorted = sorted(data, key=lambda x: uuid.UUID(x[0]))
+        data_sorted = sorted(data, key=lambda x: x[1].lower()) 
+
         with open(path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["id", "answer", "question", "desc", "ref"])
-            for row in data:
+            for row in data_sorted:
                 writer.writerow(row)
 
     def _show(self, path):
@@ -196,11 +200,10 @@ class QuizGame:
             print("\n" + "-" * 60)
 
             # 🔥 Chuẩn hóa xuống dòng
-            q_disp = q.replace("\\n", "\n")
-            a_disp = a.replace("\\n", "\n")
-            d_disp = d.replace("\\n", "\n") if d else d
-            r_disp = r.replace("\\n", "\n") if r else r
-
+            q_disp = q.replace("\\n", "\n").replace("\\t", "\t")
+            a_disp = a.replace("\\n", "\n").replace("\\t", "\t")
+            d_disp = d.replace("\\n", "\n").replace("\\t", "\t") if d else d
+            r_disp = r.replace("\\n", "\n").replace("\\t", "\t") if r else r
             print(f"{i}. ❓ {q_disp}")
 
             opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a_disp, all_ans, n_opts)
@@ -211,8 +214,18 @@ class QuizGame:
             for k, v in mapping.items():
                 print(f"  {k}) {v}")
 
-            pick = input("👉 Nhập đáp án: ").lower().strip()
-            ok = pick.lower() == a_disp.lower()
+            while True:
+                pick = input("👉 Nhập đáp án: ").lower().strip()
+                if pick in mapping:
+                    chosen = mapping[pick]
+                    break
+                print("⚠️ Lựa chọn không hợp lệ, nhập lại đi!")
+                log_action("CHOSEN", f"Nhập thất bại")
+
+            ok = chosen.lower() == a_disp.lower()
+            
+            # pick = input("👉 Nhập đáp án: ").lower().strip()
+            # ok = pick.lower() == a_disp.lower()
             
             # 🚫 Không cho Enter trống skip
             # while True:
@@ -238,12 +251,14 @@ class QuizGame:
 
             if ok:
                 print(f"{GREEN}✅ Chính xác!{RESET}")
+                log_action(f"CHOSEN:{_}", f"{chosen} - {q} Đúng + 1 điểm")
                 if d_disp:
                     print(f"Mô tả: {d_disp}")
                 if r_disp:
                     print(f"Tham chiếu:\n{r_disp}")
             else:
                 print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {a_disp}")
+                log_action(f"CHOSEN:{_}", f"{chosen} - {q} Sai")
                 if d_disp:
                     print(f"{BRIGHT_YELLOW}Mô tả: {d_disp}{RESET}")
                 if r_disp:
@@ -391,9 +406,11 @@ class QuizGame:
         while True:
             print(f"{BLUE}\n===== 📚 FLASHCARD QUIZ GAME ====={RESET}")
             for k, (_, label) in actions.items():
-                print(f" {k}) {label}")
+                t = (f" {k}) {label}")
+                print(t)
             ch = input("\n👉 Nhập lựa chọn: ").strip()
             if ch in actions:
+                log_action(f"START: ", f"{ch}:{t}")
                 if ch == "0":
                     return
                 actions[ch][0]()
