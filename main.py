@@ -16,17 +16,14 @@ os.makedirs(LOG_DIR, exist_ok=True)
 os.makedirs(EXPORT_DIR, exist_ok=True)
 os.makedirs(QUESTIONS_DIR, exist_ok=True)
 
-
 def timestamp_now():
     return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
 
 def current_user():
     try:
         return getpass.getuser()
     except Exception:
         return "unknown_user"
-
 
 def log_action(action: str, detail: str = ""):
     ts = datetime.datetime.now().isoformat(sep=" ", timespec="seconds")
@@ -35,7 +32,6 @@ def log_action(action: str, detail: str = ""):
     line = f"{ts} | {user} | {action} | {detail}\n"
     with open(fn, "a", encoding="utf-8") as f:
         f.write(line)
-
 
 class QuizGame:
     def __init__(self, qdir=QUESTIONS_DIR):
@@ -182,6 +178,9 @@ class QuizGame:
         bar = "[" + "=" * filled + " " * (width - filled) + "]"
         return f"{bar} {percent:.1f}%"
 
+    def _normalize(self, text):
+        return text.replace("\\n", "\n").replace("\\t", "\t") if text else text
+
     def _quiz(self, data, n_opts=None, max_qs=None):
         if not data:
             print("❌ Không có câu hỏi.")
@@ -200,13 +199,28 @@ class QuizGame:
             print("\n" + "-" * 60)
 
             # 🔥 Chuẩn hóa xuống dòng
-            q_disp = q.replace("\\n", "\n").replace("\\t", "\t")
-            a_disp = a.replace("\\n", "\n").replace("\\t", "\t")
-            d_disp = d.replace("\\n", "\n").replace("\\t", "\t") if d else d
-            r_disp = r.replace("\\n", "\n").replace("\\t", "\t") if r else r
+            q_disp, a_disp, d_disp, r_disp = (self._normalize(x) for x in (q, a, d, r))
+            
+            # q_disp = q.replace("\\n", "\n").replace("\\t", "\t") 
+            # a_disp = a.replace("\\n", "\n").replace("\\t", "\t") 
+            # d_disp = d.replace("\\n", "\n").replace("\\t", "\t") if d else d 
+            # r_disp = r.replace("\\n", "\n").replace("\\t", "\t") if r else r
+            
             print(f"{i}. ❓ {q_disp}")
 
-            opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a_disp, all_ans, n_opts)
+            if None:
+                pass
+            elif "nhận định đúng sai" in q.lower():
+                opts = ["Đúng", "Sai"]
+            elif "dịch" in q.lower():
+                opts = self._options(a_disp, list({a_disp, *[ans for _, ans, ques, _, _ in data if "dịch" in ques.lower()]}), n_opts)
+            elif "tên đầy đủ" in q.lower():
+                opts = self._options(a_disp, list({a_disp, *[ans for _, ans, ques, _, _ in data if "tên đầy đủ" in ques.lower()]}), n_opts)                                           
+            else:
+                opts = self._options(a_disp, all_ans, n_opts) 
+                        
+            # opts = ["Đúng", "Sai"] if "nhận định đúng sai" in q.lower() else self._options(a_disp, all_ans, n_opts)
+            
             random.shuffle(opts)
             letters = string.ascii_lowercase[:len(opts)]
             mapping = dict(zip(letters, opts))
@@ -222,7 +236,11 @@ class QuizGame:
                 print("⚠️ Lựa chọn không hợp lệ, nhập lại đi!")
                 log_action("CHOSEN", f"Nhập thất bại")
 
-            ok = chosen.lower() == a_disp.lower()
+            # Lấy tất cả đáp án đúng cho câu hỏi hiện tại
+            correct_answers = [ans for _, ans, ques, _, _ in data if ques.strip().lower() == q.strip().lower()]
+            ok = chosen.lower() in (ca.lower() for ca in correct_answers)
+            
+            # ok = chosen.lower() == a_disp.lower()
             
             # pick = input("👉 Nhập đáp án: ").lower().strip()
             # ok = pick.lower() == a_disp.lower()
