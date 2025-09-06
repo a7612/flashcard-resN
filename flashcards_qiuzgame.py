@@ -37,6 +37,7 @@ class QuizGame:
     def __init__(self, qdir=QUESTIONS_DIR):
         self.qdir = qdir
         os.makedirs(self.qdir, exist_ok=True)
+        self._categories = self._load_categories()
 
     # ----------------- File handling -----------------
     @staticmethod
@@ -187,6 +188,41 @@ class QuizGame:
     def _normalize(self, text):
         """Chuẩn hóa \n, \t"""
         return text.replace("\\n", "\n").replace("\\t", "\t") if text else text
+    
+    # def _load_categories(self, path="categories.csv"):
+    #     """Load phân loại câu hỏi từ file CSV"""
+    #     cats = []
+    #     if os.path.exists(path):
+    #         with open(path, encoding="utf-8-sig") as f:
+    #             reader = csv.DictReader(f)
+    #             for row in reader:
+    #                 cats.append({
+    #                     "id": row.get("id", "").strip(),
+    #                     "type": row.get("type", "").strip(),
+    #                     "keyword": row.get("keyword", "").strip().lower()
+    #                 })
+    #     return cats
+
+
+    # def _get_options(self, q, a, data, all_ans, n_opts):
+    #     ql = q.lower()
+
+    #     for cat in self._categories:
+    #         if cat["keyword"] in ql:
+    #             if cat["type"] == "bool":
+    #                 return ["Đúng", "Sai"]
+
+    #             elif cat["type"] == "group":
+    #                 # chỉ gom đáp án thuộc cùng category
+    #                 same_group = [
+    #                     ans for _, ans, ques, *_ in data
+    #                     if cat["keyword"] in ques.lower()
+    #                 ]
+    #                 pool = set(same_group) | {a}
+    #                 return self._options(a, pool, n_opts)
+
+    #     # fallback: gom tất cả
+    #     return self._options(a, all_ans, n_opts)
 
     def _get_options(self, q, a, data, all_ans, n_opts):
         """Sinh danh sách lựa chọn dựa theo loại câu hỏi"""
