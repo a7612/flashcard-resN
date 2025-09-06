@@ -37,7 +37,7 @@ class QuizGame:
     def __init__(self, qdir=QUESTIONS_DIR):
         self.qdir = qdir
         os.makedirs(self.qdir, exist_ok=True)
-        self._categories = self._load_categories()
+        # self._categories = self._load_categories()
 
     # ----------------- File handling -----------------
     @staticmethod
@@ -75,7 +75,7 @@ class QuizGame:
         if not files:
             return
         try:
-            i = input(f"\n👉 Nhập số file để {action}: ")
+            i = input(f"\n👉 Nhập ID để {action}: ")
             return os.path.join(self.qdir, files[int(i) - 1]) if i.isdigit() and 0 < int(i) <= len(files) else None
         except:
             print("⚠️ Chọn không hợp lệ.")
@@ -128,6 +128,8 @@ class QuizGame:
 
         if mode == "thêm":
             while True:
+                self.clearsrc()
+                self._show(path)
                 q = input("\n❓ Nhập câu hỏi (hoặc nhập exit() để thoát): ").strip()
                 if q.lower() == "exit()": break
                 a = input("✅ Đáp án: ").strip()
@@ -373,7 +375,9 @@ class QuizGame:
             [print(f"{BRIGHT_GREEN} {k}) {label}{RESET}") for k, (_, label) in actions.items()]
             print(f"\n{BRIGHT_GREEN}Hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} 🔙 quay lại{RESET}")
             ch = input(f"\n{BRIGHT_GREEN}👉 Nhập lựa chọn: {RESET}").strip().lower()
-            if ch == "exit()": return
+            if ch == "exit()": 
+                self.clearsrc()
+                break
             if ch in actions: self._crud(actions[ch][0])
             else: print("⚠️ Lựa chọn không hợp lệ.")
 
@@ -391,7 +395,9 @@ class QuizGame:
             [print(f"{BRIGHT_CYAN} {k}) {label}{RESET}") for k, (_, label, _) in actions.items()]
             print(f"\n{BRIGHT_CYAN}Hoặc nhập {BRIGHT_RED}exit(){BRIGHT_CYAN} 🔙 quay lại{RESET}")
             ch = input(f"\n{BRIGHT_CYAN}👉 Nhập lựa chọn: {RESET}").strip().lower()
-            if ch == "exit()": return
+            if ch == "exit()": 
+                self.clearsrc()
+                break
             if ch in actions:
                 act, _, func = actions[ch]; func(act)
             else: print("⚠️ Lựa chọn không hợp lệ.")
