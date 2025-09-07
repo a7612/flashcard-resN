@@ -104,11 +104,12 @@ class QuizGame:
 
         print("\n📋 DANH SÁCH CÂU HỎI:")
         for i, (_, a, q, d, r) in enumerate(data, 1):
-            print(f"{BRIGHT_CYAN}{i:>2}) {q}{RESET}")
-            print(f"   {GREEN}➤ Đáp án: {a}{RESET}")
+            q_disp, a_disp, d_disp, r_disp = (self._normalize(x) for x in (q, a, d, r))
+            print(f"{BRIGHT_CYAN}{i:>2}) {q_disp}{RESET}")
+            print(f"   {GREEN}➤ Đáp án: {a_disp}{RESET}")
             for label, val, color in [
-                (f"{YELLOW}💡 Mô tả:", d, YELLOW),
-                (f"{CYAN}🔗 Reference:", r, CYAN),
+                (f"{YELLOW}💡 Mô tả:\n", d_disp, YELLOW),
+                (f"{CYAN}🔗 Reference:\n", r_disp, CYAN),
             ]:
                 if val:
                     print(f"   {color}{label} {val}{RESET}")

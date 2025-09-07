@@ -1,0 +1,2 @@
+﻿id,answer,question,desc,ref
+26a7ce7d-1624-47bc-a468-2ac0d24cc348,Test whether all array elements along a given axis evaluate to True.,Hàm all() của thư viện Numpy trong ngôn ngữ lập trình Python có tác dụng gì?,,
