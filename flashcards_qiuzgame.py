@@ -38,6 +38,7 @@ class QuizGame:
         self.qdir = qdir
         os.makedirs(self.qdir, exist_ok=True)
         # self._categories = self._load_categories()
+        self.color_map = self._build_color_map()
 
     # ----------------- File handling -----------------
     @staticmethod
@@ -105,14 +106,14 @@ class QuizGame:
         print("\n📋 DANH SÁCH CÂU HỎI:")
         for i, (_, a, q, d, r) in enumerate(data, 1):
             q_disp, a_disp, d_disp, r_disp = (self._normalize(x) for x in (q, a, d, r))
-            print(f"{BRIGHT_CYAN}{i:>2}) {q_disp}{RESET}")
-            print(f"   {GREEN}➤ Đáp án: {a_disp}{RESET}")
+            print(f"{BRIGHT_CYAN}{i:>2})==========\n❓\tCâu hỏi: {RESET}{q_disp}")
+            print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
             for label, val, color in [
-                (f"{YELLOW}💡 Mô tả:\n", d_disp, YELLOW),
-                (f"{CYAN}🔗 Reference:\n", r_disp, CYAN),
+                (f"{YELLOW}💡\tMô tả: {RESET}", d_disp, YELLOW),
+                (f"{CYAN}🔗\tReference: {RESET}", r_disp, CYAN),
             ]:
                 if val:
-                    print(f"   {color}{label} {val}{RESET}")
+                    print(f"{color}{label} {val}{RESET}")
         return data
 
     # ----------------- CRUD câu hỏi -----------------
@@ -131,11 +132,11 @@ class QuizGame:
             while True:
                 self.clearsrc()
                 self._show(path)
-                q = input("\n❓ Nhập câu hỏi (hoặc nhập exit() để thoát): ").strip()
+                q = input(f"\n❓ Nhập câu hỏi (hoặc nhập exit() để thoát):{RESET} ").strip()
                 if q.lower() == "exit()": break
-                a = input("✅ Đáp án: ").strip()
+                a = input(f"✅ Nhập đáp án (hoặc nhập exit() để thoát):{RESET}: ").strip()
+                if a.lower() == "exit()": break
                 if not q or not a:
-                    print("⚠️ Câu hỏi và đáp án không được để trống.")
                     continue
                 d = input("💡 Mô tả (có thể bỏ trống): ").strip()
                 r = input("🔗 Reference (có thể bỏ trống): ").strip()
@@ -145,7 +146,9 @@ class QuizGame:
 
         elif mode == "xoá":
             while True:
-                idx = input(f"🗑️ {BRIGHT_GREEN}Nhập ID (hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} để thoát): ").strip()
+                self.clearsrc()
+                self._show(path)
+                idx = input(f"\n🗑️ {BRIGHT_GREEN}Nhập ID (hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} để thoát):{RESET}s ").strip()
                 if idx.lower() == "exit()": break
                 if idx.isdigit() and 1 <= int(idx) <= len(data):
                     removed = data.pop(int(idx) - 1)
@@ -157,7 +160,9 @@ class QuizGame:
         elif mode.startswith("sửa"):
             field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3, "sửaR": 4}
             while True:
-                idx = input(f"🔢 {BRIGHT_GREEN}Nhập ID (hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} để thoát): ").strip()
+                self.clearsrc()
+                self._show(path)
+                idx = input(f"\n🔢 {BRIGHT_GREEN}Nhập ID (hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} để thoát):{RESET}s ").strip()
                 if idx.lower() == "exit()": break
                 if idx.isdigit() and 1 <= int(idx) <= len(data):
                     entry = list(data[int(idx) - 1])
@@ -187,10 +192,29 @@ class QuizGame:
         """Hiển thị progress bar"""
         filled = int(width * percent // 100)
         return "[" + "=" * filled + " " * (width - filled) + f"] {percent:.1f}%"
-
-    def _normalize(self, text):
-        """Chuẩn hóa \n, \t"""
-        return text.replace("\\n", "\n").replace("\\t", "\t") if text else text
+    
+    @staticmethod
+    def _build_color_map():
+        """Tạo map {TOKEN} -> ANSI từ config"""
+        import config
+        return {
+            f"{{{k}}}": v
+            for k, v in vars(config).items()
+            if k.isupper() and isinstance(v, str) and v.startswith(f"\033")
+        }
+    
+    def _normalize_all(self, text, max_passes=20):
+        """Chuẩn hóa \n, \t và màu (lặp nhiều lần nếu cần)"""
+        if not text:
+            return text
+        for _ in range(max_passes):
+            # Thay cả literal và escape thật
+            text = (text
+                    .replace("\\n", "\n").replace("\\t", "\t")
+                    .replace("\n", "\n").replace("\t", "\t"))
+            for token, ansi in self.color_map.items():
+                text = text.replace(token, ansi)
+        return text
     
     # def _load_categories(self, path="categories.csv"):
     #     """Load phân loại câu hỏi từ file CSV"""
@@ -229,13 +253,13 @@ class QuizGame:
 
     def _get_options(self, q, a, data, all_ans, n_opts):
         """Sinh danh sách lựa chọn dựa theo loại câu hỏi"""
-        if "nhận định đúng sai" in q.lower():
-            return ["Đúng", "Sai"]
-        elif "dịch" in q.lower():
-            group = {a, *[ans for _, ans, ques, *_ in data if "dịch" in ques.lower()]}
+        if f"nhận định đúng sai" in q.lower():
+            return [f"Đúng", f"Sai"]
+        elif f"dịch" in q.lower():
+            group = {a, *[ans for _, ans, ques, *_ in data if f"dịch" in ques.lower()]}
             return self._options(a, group, n_opts)
-        elif "tên đầy đủ" in q.lower():
-            group = {a, *[ans for _, ans, ques, *_ in data if "tên đầy đủ" in ques.lower()]}
+        elif f"tên đầy đủ" in q.lower():
+            group = {a, *[ans for _, ans, ques, *_ in data if f"tên đầy đủ" in ques.lower()]}
             return self._options(a, group, n_opts)
         return self._options(a, all_ans, n_opts)
 
@@ -250,7 +274,7 @@ class QuizGame:
         if d:
             print(f"{YELLOW}💡 Mô tả: {d}{RESET}")
         if r:
-            print(f"{CYAN}🔗 Tham chiếu:\n{r}{RESET}")
+            print(f"{CYAN}🔗 Tham chiếu:{r}{RESET}")
 
     def _export_results(self, results, score, total):
         """Xuất kết quả quiz ra CSV"""
@@ -315,10 +339,14 @@ class QuizGame:
         results, score = [], 0
 
         for i, (qid, a, q, d, r) in enumerate(pool, 1):
-            print("\n" + "-" * 60)
+            print(f"\n" + "-" * 60)
 
             # Chuẩn hóa hiển thị
-            q_disp, a_disp, d_disp, r_disp = (self._normalize(x) for x in (q, a, d, r))
+
+            """Chuẩn hóa \n, \t và màu (lặp nhiều lần nếu cần)"""
+            # Chuẩn hóa \n, \t và màu (có thể lặp nhiều lần nếu cần)
+            q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
+          
             print(f"{i}. ❓ {q_disp}")
 
             # Tạo lựa chọn
