@@ -1,7 +1,5 @@
 ﻿id,answer,question,desc,ref
-22475bf4-1e4d-4379-a8ed-7ef1c23a3cea,gần,Dịch - near,,
-5e3246b8-2198-471c-b9d3-1a815e8a33f9,lịch sử,Dịch - history,,
-892b07af-3ce6-45a0-bc84-2247682515b2,muốn,want,,
-2d266657-d728-40d9-8691-c6b9b3e329fe,một,Dịch - a,,
-6ec9c65a-df81-4ed5-a4a4-fbf3cbbfccbb,từ điển,Dịch - dictionary,,
-f1dc9bb8-6814-45e3-9b19-e69597e610d1,xa,Dịch - far,,
+a0d13838-7f45-46fb-bd84-ff246251b0b0,Computer Security,Cụm từ {BRIGHT_RED}Bảo mật máy tính{RESET} dịch sang tiếng anh có nghĩa là gì?,,
+a4bf6fa8-01ae-406e-935b-9f9bf74aaa1d,Cybersecurity,Cụm từ {BRIGHT_RED}an ninh mạng{RESET} dịch sang tiếng anh có nghĩa là gì?,,
+f036a2e4-56ee-4c7d-84e3-8733a45f78cc,Digital Security,Cụm từ {BRIGHT_RED}an ninh kỹ thuật số{RESET} dịch sang tiếng anh có nghĩa là gì?,,
+306fdefa-36e6-4f22-8f69-af34a4865329,sub-discipline within the field of,Cụm từ {BRIGHT_RED}phân ngành trong lĩnh vực{RESET} dịch sang tiếng anh có nghĩa là gì?,,

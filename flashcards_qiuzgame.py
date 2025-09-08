@@ -105,7 +105,7 @@ class QuizGame:
 
         print("\n📋 DANH SÁCH CÂU HỎI:")
         for i, (_, a, q, d, r) in enumerate(data, 1):
-            q_disp, a_disp, d_disp, r_disp = (self._normalize(x) for x in (q, a, d, r))
+            q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
             print(f"{BRIGHT_CYAN}{i:>2})==========\n❓\tCâu hỏi: {RESET}{q_disp}")
             print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
             for label, val, color in [
@@ -203,65 +203,35 @@ class QuizGame:
             if k.isupper() and isinstance(v, str) and v.startswith(f"\033")
         }
     
-    def _normalize_all(self, text, max_passes=20):
-        """Chuẩn hóa \n, \t và màu (lặp nhiều lần nếu cần)"""
+    def _normalize_all(self, text, max_passes=1):
+        """Chuẩn hóa \n, \t và thay {COLOR} -> ANSI (lặp nhiều lần nếu cần)"""
         if not text:
             return text
-        for _ in range(max_passes):
-            # Thay cả literal và escape thật
-            text = (text
-                    .replace("\\n", "\n").replace("\\t", "\t")
-                    .replace("\n", "\n").replace("\t", "\t"))
+        last = None
+        passes = 0
+        while text != last and passes < max_passes:
+            last = text
+            # B1: chuẩn hóa ký tự đặc biệt
+            text = text.replace("\\n", "\n").replace("\\t", "\t").replace(".\n", "\n")
+            # B2: thay token màu
             for token, ansi in self.color_map.items():
                 text = text.replace(token, ansi)
+            passes += 1
         return text
     
-    # def _load_categories(self, path="categories.csv"):
-    #     """Load phân loại câu hỏi từ file CSV"""
-    #     cats = []
-    #     if os.path.exists(path):
-    #         with open(path, encoding="utf-8-sig") as f:
-    #             reader = csv.DictReader(f)
-    #             for row in reader:
-    #                 cats.append({
-    #                     "id": row.get("id", "").strip(),
-    #                     "type": row.get("type", "").strip(),
-    #                     "keyword": row.get("keyword", "").strip().lower()
-    #                 })
-    #     return cats
-
-
-    # def _get_options(self, q, a, data, all_ans, n_opts):
-    #     ql = q.lower()
-
-    #     for cat in self._categories:
-    #         if cat["keyword"] in ql:
-    #             if cat["type"] == "bool":
-    #                 return ["Đúng", "Sai"]
-
-    #             elif cat["type"] == "group":
-    #                 # chỉ gom đáp án thuộc cùng category
-    #                 same_group = [
-    #                     ans for _, ans, ques, *_ in data
-    #                     if cat["keyword"] in ques.lower()
-    #                 ]
-    #                 pool = set(same_group) | {a}
-    #                 return self._options(a, pool, n_opts)
-
-    #     # fallback: gom tất cả
-    #     return self._options(a, all_ans, n_opts)
-
     def _get_options(self, q, a, data, all_ans, n_opts):
-        """Sinh danh sách lựa chọn dựa theo loại câu hỏi"""
-        if f"nhận định đúng sai" in q.lower():
-            return [f"Đúng", f"Sai"]
-        elif f"dịch" in q.lower():
-            group = {a, *[ans for _, ans, ques, *_ in data if f"dịch" in ques.lower()]}
-            return self._options(a, group, n_opts)
-        elif f"tên đầy đủ" in q.lower():
-            group = {a, *[ans for _, ans, ques, *_ in data if f"tên đầy đủ" in ques.lower()]}
-            return self._options(a, group, n_opts)
-        return self._options(a, all_ans, n_opts)
+        ql = q.lower()
+
+        if "nhận định đúng sai" in ql:
+            return ["Đúng", "Sai"]
+
+        special_map = KEYWORD
+        for kw in special_map:
+            if kw in ql:
+                group = {a, *[ans for _, ans, ques, *_ in data if kw in ques.lower()]}
+                return [self._normalize_all(opt) for opt in self._options(a, group, n_opts)]
+        
+        return [self._normalize_all(opt) for opt in self._options(a, all_ans, n_opts)]
 
     def _feedback(self, ok, chosen, q, a, d, r, qid):
         """Hiển thị phản hồi sau khi trả lời"""
@@ -316,13 +286,10 @@ class QuizGame:
             print("⚠️ Lựa chọn không hợp lệ, nhập lại đi!")
             log_action("CHOSEN", "Nhập thất bại")
 
-    def _check_answer(self, chosen, q, a_disp, data):
-        """Kiểm tra đáp án người chơi chọn có đúng không"""
-        correct_answers = [
-            ans for _, ans, ques, *_ in data 
-            if ques.strip().lower() == q.strip().lower()
-        ]
-        return chosen.lower() in (ca.lower() for ca in correct_answers)
+    def _check_answer(self, chosen, q, a, data):
+        """Kiểm tra đáp án người chơi chọn có đúng không""" 
+        correct_answers = [ ans for _, ans, ques, *_ in data if ques.strip().lower() == q.strip().lower() ] 
+        return chosen.lower() in (self._normalize_all(ca).lower() for ca in correct_answers)
 
     def _quiz(self, data, n_opts=None, max_qs=None):
         """Chạy quiz trên dataset"""
@@ -345,8 +312,8 @@ class QuizGame:
 
             """Chuẩn hóa \n, \t và màu (lặp nhiều lần nếu cần)"""
             # Chuẩn hóa \n, \t và màu (có thể lặp nhiều lần nếu cần)
+            # q_disp, a_disp, d_disp, r_disp, data_disp, all_ans_disp = (self._normalize_all(x, 40) for x in (q, a, d, r, data, all_ans))
             q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
-          
             print(f"{i}. ❓ {q_disp}")
 
             # Tạo lựa chọn
@@ -456,6 +423,7 @@ class QuizGame:
         while True:
             if path := self._choose_file("đổi tên"):
                 new = input("✏️ Nhập tên mới (hoặc nhập exit() để thoát)\n> ").strip()
+                log_action(f"CHANGE_Name")
                 if new.lower() == "exit()": break
                 if new:
                     newpath = os.path.join(self.qdir, f"{new}.csv")
