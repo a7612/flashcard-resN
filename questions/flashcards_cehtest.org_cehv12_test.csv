@@ -1,3 +1,0 @@
-﻿id,answer,question,desc,ref
-9cd6a0bf-de59-464c-a903-454e28dd26da,Cross-site-scripting attack,"This is an attack that takes advantage of a web site vulnerability in which the site displays content that includes un-sanitized user-provided data. What is this attack?\n <aherf=""http://foobar.com/index.html?id=%3Cscript%20src=%22http://baddomain.com/badscript.js%22%3C/script%3E"">See foobar</a>",,https://owasp.org/www-community/attacks/xss/\nhttps://portswigger.net/web-security/cross-site-scripting
-420f10a4-c0f6-44f0-9a26-75d966e15a2a,Cloud based,What kind of detection techniques is being used in antivirus software that identifies malware by collecting data from multiple protected systems and instead of analyzing files locally it’s made on the provider’s environment?,,

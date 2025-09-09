@@ -229,9 +229,13 @@ class QuizGame:
         for kw in special_map:
             if kw in ql:
                 group = {a, *[ans for _, ans, ques, *_ in data if kw in ques.lower()]}
-                return [self._normalize_all(opt) for opt in self._options(a, group, n_opts)]
+                opts = self._options(a, group, n_opts)
+                return list(dict.fromkeys(self._normalize_all(opt) for opt in opts))
+            
+        opts = self._options(a, all_ans, n_opts)
+        return list(dict.fromkeys(self._normalize_all(opt) for opt in opts))
         
-        return [self._normalize_all(opt) for opt in self._options(a, all_ans, n_opts)]
+        # return [self._normalize_all(opt) for opt in self._options(a, all_ans, n_opts)]
 
     def _feedback(self, ok, chosen, q, a, d, r, qid):
         """Hiển thị phản hồi sau khi trả lời"""
@@ -314,14 +318,14 @@ class QuizGame:
             # Chuẩn hóa \n, \t và màu (có thể lặp nhiều lần nếu cần)
             # q_disp, a_disp, d_disp, r_disp, data_disp, all_ans_disp = (self._normalize_all(x, 40) for x in (q, a, d, r, data, all_ans))
             q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
-            print(f"{i}. ❓ {q_disp}")
+            print(f"{i}. ❓ {q_disp}\n")
 
             # Tạo lựa chọn
             opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
             random.shuffle(opts)
             mapping = dict(zip(string.ascii_lowercase, opts))
             for k, v in list(mapping.items())[:len(opts)]:
-                print(f"  {k}) {v}")
+                print(f"{BRIGHT_GREEN}\t{k}){RESET} {v}\n")
 
             # Người chơi chọn
             chosen = self._ask_choice(mapping)
@@ -366,6 +370,7 @@ class QuizGame:
             "7": ("sửaR",   f"{BRIGHT_YELLOW}✏️ Sửa tham khảo cụ thẻ{RESET}"),
         }
         while True:
+            self.clearsrc()
             print(f"\n{BRIGHT_CYAN}====={BRIGHT_GREEN} 📋 QUẢN LÝ NỘI DUNG  {RESET}{BRIGHT_CYAN}====={RESET}")
             print(f"\n{BRIGHT_GREEN}===\nCác chức năng hiện tại:\n{RESET}")
             [print(f"{BRIGHT_GREEN} {k}) {label}{RESET}") for k, (_, label) in actions.items()]
@@ -385,18 +390,22 @@ class QuizGame:
             "3": ("RENAME_FILE", f"✏️ {BRIGHT_YELLOW}Đổi tên file{RESET}", self._rename_file),
         }
         while True:
-            print(f"\n{BRIGHT_CYAN}====={BRIGHT_GREEN} 📂 QUẢN LÝ FILE  {RESET}{BRIGHT_CYAN}====={RESET}")
-            self._list_files()
-            print(f"\n{BRIGHT_CYAN}===\nCác chức năng hiện tại:\n{RESET}")
-            [print(f"{BRIGHT_CYAN} {k}) {label}{RESET}") for k, (_, label, _) in actions.items()]
-            print(f"\n{BRIGHT_CYAN}Hoặc nhập {BRIGHT_RED}exit(){BRIGHT_CYAN} 🔙 quay lại{RESET}")
-            ch = input(f"\n{BRIGHT_CYAN}👉 Nhập lựa chọn: {RESET}").strip().lower()
-            if ch == "exit()": 
+            try:
                 self.clearsrc()
+                print(f"\n{BRIGHT_CYAN}====={BRIGHT_GREEN} 📂 QUẢN LÝ FILE  {RESET}{BRIGHT_CYAN}====={RESET}")
+                self._list_files()
+                print(f"\n{BRIGHT_CYAN}===\nCác chức năng hiện tại:\n{RESET}")
+                [print(f"{BRIGHT_CYAN} {k}) {label}{RESET}") for k, (_, label, _) in actions.items()]
+                print(f"\n{BRIGHT_CYAN}Hoặc nhập {BRIGHT_RED}exit(){BRIGHT_CYAN} 🔙 quay lại{RESET}")
+                ch = input(f"\n{BRIGHT_CYAN}👉 Nhập lựa chọn: {RESET}").strip().lower()
+                if ch == "exit()": 
+                    self.clearsrc()
+                    break
+                if ch in actions:
+                    act, _, func = actions[ch]; func(act)
+                else: print("⚠️ Lựa chọn không hợp lệ.")
+            except FileNotFoundError:
                 break
-            if ch in actions:
-                act, _, func = actions[ch]; func(act)
-            else: print("⚠️ Lựa chọn không hợp lệ.")
 
     # ----------------- Xử lý file -----------------
     def _create_file(self, act):
