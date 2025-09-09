@@ -325,7 +325,7 @@ class QuizGame:
             random.shuffle(opts)
             mapping = dict(zip(string.ascii_lowercase, opts))
             for k, v in list(mapping.items())[:len(opts)]:
-                print(f"{BRIGHT_GREEN}\t{k}){RESET} {v}\n")
+                print(f"{BRIGHT_GREEN}\t{k}){RESET} {v}{RESET}\n")
 
             # Người chơi chọn
             chosen = self._ask_choice(mapping)
