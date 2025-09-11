@@ -1,4 +1,3 @@
-__pycache__/
-exports/
-logs/
-dont-generate/
+exports
+logs
+__pycache__
