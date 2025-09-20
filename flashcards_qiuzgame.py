@@ -123,6 +123,7 @@ class QuizGame:
         if not path:
             return
         data = self._show(path)
+        self.clearsrc()
 
         def save_and_log(action, msg):
             self._save(path, data)
@@ -130,7 +131,6 @@ class QuizGame:
 
         if mode == "thêm":
             while True:
-                self.clearsrc()
                 self._show(path)
                 q = input(f"\n❓ Nhập câu hỏi (hoặc nhập exit() để thoát):{RESET} ").strip()
                 if q.lower() == "exit()": break
@@ -138,29 +138,45 @@ class QuizGame:
                 if a.lower() == "exit()": break
                 if not q or not a:
                     continue
+
+                # 🔎 Check trùng lặp
+                is_dup = any(
+                    q.lower().strip() == old_q.lower().strip()
+                    and a.lower().strip() == old_a.lower().strip()
+                    for _, old_a, old_q, _, _ in data
+                )
+                if is_dup:
+                    self.clearsrc()
+                    print(f"{RED}⚠️ Câu hỏi đã tồn tại, bỏ qua!{RESET}")
+                    continue
+
                 d = input("💡 Mô tả (có thể bỏ trống): ").strip()
                 r = input("🔗 Reference (có thể bỏ trống): ").strip()
                 data.append((str(uuid.uuid4()), a, q, d, r))
                 save_and_log("ADD_Q", f"Q: {q}")
-                print("➕ Đã thêm câu hỏi mới.")
+
+                self.clearsrc()
+                self._show(path)   # ✅ Hiển thị lại list sau khi thêm
+                print(f"{GREEN}➕ Đã thêm câu hỏi mới.{RESET}")
+
 
         elif mode == "xoá":
             while True:
-                self.clearsrc()
                 self._show(path)
                 idx = input(f"\n🗑️ {BRIGHT_GREEN}Nhập ID (hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} để thoát):{RESET} ").strip()
                 if idx.lower() == "exit()": break
                 if idx.isdigit() and 1 <= int(idx) <= len(data):
                     removed = data.pop(int(idx) - 1)
                     save_and_log("DEL_Q", f"Q: {removed[2]}")
+                    self.clearsrc()
                     print(f"🗑️ Đã xoá: {removed[2]}")
                 else:
+                    self.clearsrc()
                     print("❌ ID không hợp lệ.")
 
         elif mode.startswith("sửa"):
             field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3, "sửaR": 4}
             while True:
-                self.clearsrc()
                 self._show(path)
                 idx = input(f"\n🔢 {BRIGHT_GREEN}Nhập ID (hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} để thoát):{RESET} ").strip()
                 if idx.lower() == "exit()": break
@@ -178,6 +194,7 @@ class QuizGame:
                             entry[field_idx] = new_val
                     data[int(idx) - 1] = tuple(entry)
                     save_and_log("EDIT_Q", f"{entry}")
+                    self.clearsrc()
                     print("✅ Đã sửa thành công.")
 
     # ----------------- Game logic -----------------
