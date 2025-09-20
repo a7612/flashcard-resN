@@ -96,25 +96,26 @@ class QuizGame:
             writer.writerow(["id", "answer", "question", "desc", "ref"])
             writer.writerows(data_sorted)
 
-    def _show(self, path):
+    def _show(self, path, show = True):
         """In danh sách câu hỏi trong file"""
         data = self._load(path)
         if not data:
             print("❌ File trống.")
             return []
 
-        print("\n📋 DANH SÁCH CÂU HỎI:")
-        for i, (_, a, q, d, r) in enumerate(data, 1):
-            q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
-            print(f"{BRIGHT_CYAN}{i:>2})==========\n❓\tCâu hỏi: {RESET}{q_disp}")
-            print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
-            for label, val, color in [
-                (f"{YELLOW}💡\tMô tả: {RESET}", d_disp, YELLOW),
-                (f"{CYAN}🔗\tReference: {RESET}", r_disp, CYAN),
-            ]:
-                if val:
-                    print(f"{color}{label} {val}{RESET}")
-        return data
+        if show:
+            print("\n📋 DANH SÁCH CÂU HỎI:")
+            for i, (_, a, q, d, r) in enumerate(data, 1):
+                q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
+                print(f"{BRIGHT_CYAN}{i:>2})==========\n❓\tCâu hỏi: {RESET}{q_disp}")
+                print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
+                for label, val, color in [
+                    (f"{YELLOW}💡\tMô tả: {RESET}", d_disp, YELLOW),
+                    (f"{CYAN}🔗\tReference: {RESET}", r_disp, CYAN),
+                ]:
+                    if val:
+                        print(f"{color}{label} {val}{RESET}")
+            return data
 
     # ----------------- CRUD câu hỏi -----------------
     def _crud(self, mode):
@@ -122,7 +123,7 @@ class QuizGame:
         path = self._choose_file(mode)
         if not path:
             return
-        data = self._show(path)
+        data = self._show(path, show=False)
         self.clearsrc()
 
         def save_and_log(action, msg):
