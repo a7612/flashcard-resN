@@ -97,7 +97,8 @@ class QuizGame:
 
     def _save(self, path, data):
         """Ghi dữ liệu vào file CSV (sort theo đáp án)"""
-        data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
+        data_sorted = sorted(data, key=lambda x: x[0])  # cột 0 là uuid
+        # data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
         with open(path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["id", "answer", "question", "desc", "ref"])
