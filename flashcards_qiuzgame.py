@@ -74,10 +74,17 @@ class QuizGame:
         """Chọn file từ danh sách"""
         files = self._list_files()
         if not files:
-            return
+            return None
         try:
-            i = input(f"\n👉 Nhập ID để {action}: ")
-            return os.path.join(self.qdir, files[int(i) - 1]) if i.isdigit() and 0 < int(i) <= len(files) else None
+            i = input(f"\n👉 Nhập ID để {action} (hoặc gõ exit() để thoát): ").strip().lower()
+            if i == "exit()":
+                return None  # ✅ Thoát ngay tại đây
+            if i.isdigit() and 0 < int(i) <= len(files):
+                return os.path.join(self.qdir, files[int(i) - 1])
+            print("⚠️ Chọn không hợp lệ.")
+            return None
+        except KeyboardInterrupt:
+            return None
         except:
             print("⚠️ Chọn không hợp lệ.")
 
@@ -90,7 +97,7 @@ class QuizGame:
 
     def _save(self, path, data):
         """Ghi dữ liệu vào file CSV (sort theo đáp án)"""
-        data_sorted = sorted(data, key=lambda x: x[1].lower())
+        data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
         with open(path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["id", "answer", "question", "desc", "ref"])
@@ -103,7 +110,7 @@ class QuizGame:
             print("❌ File trống.")
             return []
 
-        if show:
+        if show is True:
             print("\n📋 DANH SÁCH CÂU HỎI:")
             for i, (_, a, q, d, r) in enumerate(data, 1):
                 q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
@@ -115,16 +122,34 @@ class QuizGame:
                 ]:
                     if val:
                         print(f"{color}{label} {val}{RESET}")
-            return data
-
+        return data
+    
     # ----------------- CRUD câu hỏi -----------------
+    
+    def _ask_index(self, data, action="chọn"):
+        """
+        Hỏi người dùng nhập ID của câu hỏi.
+        - data: list câu hỏi [(id, answer, question, desc, ref), ...]
+        - action: để in gợi ý ("xoá", "sửa", ...)
+        Trả về index (int, base 0) hoặc None nếu thoát/nhập sai.
+        """
+        while True:
+            idx = input(f"\n🔢 Nhập ID để {action} (hoặc nhập exit() để thoát): ").strip()
+            if idx.lower() == "exit()":
+                return None
+            if idx.isdigit() and 1 <= int(idx) <= len(data):
+                return int(idx) - 1
+            else:
+                self.clearsrc()
+                print("⚠️ ID không hợp lệ, nhập lại đi!")
+    
     def _crud(self, mode):
         """Thao tác CRUD trên câu hỏi"""
         path = self._choose_file(mode)
         if not path:
             return
         data = self._show(path, show=False)
-        self.clearsrc()
+        self.clearsrc()      
 
         def save_and_log(action, msg):
             self._save(path, data)
@@ -132,7 +157,7 @@ class QuizGame:
 
         if mode == "thêm":
             while True:
-                self._show(path)
+                self._show(path, show=True)
                 q = input(f"\n❓ Nhập câu hỏi (hoặc nhập exit() để thoát):{RESET} ").strip()
                 if q.lower() == "exit()": break
                 a = input(f"✅ Nhập đáp án (hoặc nhập exit() để thoát):{RESET}: ").strip()
@@ -157,29 +182,25 @@ class QuizGame:
                 save_and_log("ADD_Q", f"Q: {q}")
 
                 self.clearsrc()
-                self._show(path)   # ✅ Hiển thị lại list sau khi thêm
                 print(f"{GREEN}➕ Đã thêm câu hỏi mới.{RESET}")
-
 
         elif mode == "xoá":
             while True:
                 self._show(path)
-                idx = input(f"\n🗑️ {BRIGHT_GREEN}Nhập ID (hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} để thoát):{RESET} ").strip()
-                if idx.lower() == "exit()": break
-                if idx.isdigit() and 1 <= int(idx) <= len(data):
-                    removed = data.pop(int(idx) - 1)
-                    save_and_log("DEL_Q", f"Q: {removed[2]}")
-                    self.clearsrc()
-                    print(f"🗑️ Đã xoá: {removed[2]}")
-                else:
-                    self.clearsrc()
-                    print("❌ ID không hợp lệ.")
+                idx = self._ask_index(data, "xoá")
+                if idx is None: break
+                removed = data.pop(idx)
+                save_and_log("DEL_Q", f"Q: {removed[2]}")
+                self.clearsrc()
+                print(f"🗑️ Đã xoá: {removed[2]}")
 
         elif mode.startswith("sửa"):
             field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3, "sửaR": 4}
             while True:
                 self._show(path)
-                idx = input(f"\n🔢 {BRIGHT_GREEN}Nhập ID (hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} để thoát):{RESET} ").strip()
+                idx = self._ask_index(data, "sửa")
+                if idx is None: break
+                entry = list(data[idx])
                 if idx.lower() == "exit()": break
                 if idx.isdigit() and 1 <= int(idx) <= len(data):
                     entry = list(data[int(idx) - 1])
@@ -347,6 +368,7 @@ class QuizGame:
 
             # Người chơi chọn
             chosen = self._ask_choice(mapping)
+            self.clearsrc()
 
             # ✅ Kiểm tra đúng/sai
             ok = self._check_answer(chosen, q, a_disp, data)
@@ -409,7 +431,6 @@ class QuizGame:
         }
         while True:
             try:
-                self.clearsrc()
                 print(f"\n{BRIGHT_CYAN}====={BRIGHT_GREEN} 📂 QUẢN LÝ FILE  {RESET}{BRIGHT_CYAN}====={RESET}")
                 self._list_files()
                 print(f"\n{BRIGHT_CYAN}===\nCác chức năng hiện tại:\n{RESET}")
@@ -437,26 +458,27 @@ class QuizGame:
             with open(path, "w", encoding="utf-8-sig", newline="") as f:
                 csv.writer(f).writerow(["id", "answer", "question", "desc", "ref"])
             log_action(act, path)
+            self.clearsrc()
             print(f"✅ Đã tạo {name}.csv")
 
     def _delete_file(self, act):
         """🗑️ Xoá file CSV đã chọn"""
         if (path := self._choose_file("xoá")) and input(f"❓ Xoá {os.path.basename(path)} (y/n)\n> ").lower() == "y":
             os.remove(path); log_action(act, path)
-            print("🗑️ Đã xoá file.")
+            self.clearsrc()
+            print(f"🗑️ Đã xoá file. {path}")
 
     def _rename_file(self, act):
         """✏️ Đổi tên file CSV"""
-        while True:
-            if path := self._choose_file("đổi tên"):
-                new = input("✏️ Nhập tên mới (hoặc nhập exit() để thoát)\n> ").strip()
-                log_action(f"CHANGE_Name")
-                if new.lower() == "exit()": break
-                if new:
-                    newpath = os.path.join(self.qdir, f"{new}.csv")
-                    os.rename(path, newpath)
-                    log_action(act, f"{path} -> {newpath}")
-                    print("✅ Đã đổi tên file.")
+        if path := self._choose_file("đổi tên"):
+            new = input("✏️ Nhập tên mới\n> ").strip()
+            log_action(f"CHANGE_Name")
+            if new:
+                newpath = os.path.join(self.qdir, f"{new}.csv")
+                os.rename(path, newpath)
+                log_action(act, f"{path} -> {newpath}")
+                self.clearsrc()
+                print(f"✅ Đã đổi tên file. {path}")
 
     def menu(self):
         """Menu chính chương trình"""
