@@ -1,0 +1,12 @@
+﻿id,answer,question,desc,ref
+ebdbf29c-27dd-4f67-ad31-d1fc18416d45,Choose random targets {BRIGHT_CYAN}(Chọn mục tiêu ngẫu nhiên),Cái nào là mô tả {BRIGHT_GREEN}-iR {BRIGHT_CYAN}<num hosts>{RESET} trong Network Mapped (Nmap)?,,
+9e2178dd-5c99-4abd-82f0-954537f9699c,Exclude hosts/networks {BRIGHT_CYAN}(Loại trừ hosts/mạng),"Cái nào là mô tả {BRIGHT_GREEN}--exclude {BRIGHT_CYAN}<host1[,host2][,host3],...>{RESET} trong Network Mapped (Nmap)?",,
+e5b30701-ee60-4fb9-94f3-3ab55d48fe4a,Exclude list from file {BRIGHT_CYAN}(Danh sách loại trừ từ file),Cái nào là mô tả {BRIGHT_GREEN}--excludefile {BRIGHT_CYAN}<exclude_file>{RESET} trong Network Mapped (Nmap)?,,
+3d4fdb80-317b-49d7-b23b-462286b41823,Input from list of hosts/networks {BRIGHT_CYAN}(Nhập từ danh sách hosts/mạng),Cái nào là mô tả {BRIGHT_GREEN}-iL {BRIGHT_CYAN}<inputfilename>{RESET} trong Network Mapped (Nmap)?,,
+d6dc6340-4e78-4f02-9a20-56ce7e1c9bf4,List Scan - simply list targets to scan {BRIGHT_CYAN}(Liệt kê mục tiêu — chỉ liệt kê các mục tiêu để quét),Cái nào là mô tả {BRIGHT_GREEN}-sL{RESET} trong Network Mapped (Nmap)?,,
+b366c1f1-035e-41ec-a3b4-bfbc4de5aa42,Ping Scan - disable port scan {BRIGHT_CYAN}(Ping Scan — tắt quét cổng (không quét cổng)),Cái nào là mô tả {BRIGHT_GREEN}-sn{RESET} trong Network Mapped (Nmap)?,,
+2a588870-69ae-4ad8-b403-1f0d3dd26e8d,SCTP discovery to given port {BRIGHT_CYAN}(Xác định SCTP tới các cổng được chỉ định),Cái nào là mô tả {BRIGHT_GREEN}-PY {BRIGHT_CYAN}[portlist]{RESET} trong Network Mapped (Nmap)?,,
+3c8d3aa6-70e5-4d23-8a1a-ad9e7ac5a697,TCP ACK discovery to given port {BRIGHT_CYAN}(Xác định TCP ACK tới các cổng được chỉ định),Cái nào là mô tả {BRIGHT_GREEN}-PA {BRIGHT_CYAN}[portlist]{RESET} trong Network Mapped (Nmap)?,,
+6c8b2e71-91f0-4c99-b393-da58027a697a,TCP SYN discovery to given port {BRIGHT_CYAN}(Xác định TCP SYN tới các cổng được chỉ định),Cái nào là mô tả {BRIGHT_GREEN}-PS {BRIGHT_CYAN}[portlist]{RESET} trong Network Mapped (Nmap)?,,
+ad6e9267-53aa-4222-9f5a-e67481428b7d,Treat all hosts as online -- skip host discovery {BRIGHT_CYAN}(Xử lý mọi host như đang online — bỏ qua phát hiện host),Cái nào là mô tả {BRIGHT_GREEN}-Pn{RESET} trong Network Mapped (Nmap)?,,
+0e825dae-9bf4-4b31-9914-bae75375ab3a,UDP discovery to given port {BRIGHT_CYAN}(Xác định UDP tới các cổng được chỉ định),Cái nào là mô tả {BRIGHT_GREEN}-PU {BRIGHT_CYAN}[portlist]{RESET} trong Network Mapped (Nmap)?,,

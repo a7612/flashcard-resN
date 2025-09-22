@@ -97,8 +97,8 @@ class QuizGame:
 
     def _save(self, path, data):
         """Ghi dữ liệu vào file CSV (sort theo đáp án)"""
-        data_sorted = sorted(data, key=lambda x: x[0])  # cột 0 là uuid
-        # data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
+        # data_sorted = sorted(data, key=lambda x: x[0])  # cột 0 là uuid
+        data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
         with open(path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["id", "answer", "question", "desc", "ref"])
@@ -161,7 +161,7 @@ class QuizGame:
                 self._show(path, show=True)
                 q = input(f"\n❓ Nhập câu hỏi (hoặc nhập exit() để thoát):{RESET} ").strip()
                 if q.lower() == "exit()": break
-                a = input(f"✅ Nhập đáp án (hoặc nhập exit() để thoát):{RESET}: ").strip()
+                a = input(f"✅ Nhập đáp án (hoặc nhập exit() để thoát):{RESET} ").strip()
                 if a.lower() == "exit()": break
                 if not q or not a:
                     continue
@@ -262,7 +262,7 @@ class QuizGame:
     def _get_options(self, q, a, data, all_ans, n_opts):
         ql = q.lower()
 
-        if "nhận định đúng sai" in ql:
+        if any(kw in ql for kw in KEYWORD_BOOL):
             return ["Đúng", "Sai"]
 
         special_map = KEYWORD
@@ -342,9 +342,10 @@ class QuizGame:
             return
 
         # 🔀 Lấy pool câu hỏi (random + giới hạn nếu cần)
-        pool = (data * ((max_qs // len(data)) + 1))[:max_qs] if max_qs else data
         if max_qs:
-            random.shuffle(pool)
+            pool = random.sample(data, min(max_qs, len(data)))
+        else:
+            pool = data[:]
 
         all_ans = [a for _, a, _, _, _ in data]
         results, score = [], 0
@@ -369,7 +370,7 @@ class QuizGame:
 
             # Người chơi chọn
             chosen = self._ask_choice(mapping)
-            self.clearsrc()
+            # self.clearsrc()
 
             # ✅ Kiểm tra đúng/sai
             ok = self._check_answer(chosen, q, a_disp, data)
