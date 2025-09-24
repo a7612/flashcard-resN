@@ -367,6 +367,7 @@ class QuizGame:
             # Chuẩn hóa \n, \t và màu (có thể lặp nhiều lần nếu cần)
             # q_disp, a_disp, d_disp, r_disp, data_disp, all_ans_disp = (self._normalize_all(x, 40) for x in (q, a, d, r, data, all_ans))
             q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
+            print(f"ID Câu hỏi: {qid}")
             print(f"{i}. ❓ {q_disp}\n")
 
             # Tạo lựa chọn
