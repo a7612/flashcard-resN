@@ -271,7 +271,7 @@ class QuizGame:
         ql = q.lower()
 
         if any(kw in ql for kw in KEYWORD_BOOL):
-            return ["Đúng", "Sai"]
+            return ["Đúng (True)", "Sai (False)"]
 
         special_map = KEYWORD
         for kw in special_map:
