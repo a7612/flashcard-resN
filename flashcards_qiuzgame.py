@@ -1,4 +1,5 @@
 import os
+import re
 import random
 import string
 import csv
@@ -251,9 +252,16 @@ class QuizGame:
         passes = 0
         while text != last and passes < max_passes:
             last = text
-            # B1: chuẩn hóa ký tự đặc biệt
-            text = text.replace("\\n", "\n").replace("\\t", "\t").replace(".\n", "\n")
-            # B2: thay token màu
+            # B1: escape literal thành ký tự
+            text = text.replace("\\n", "\n").replace("\\t", "\t")
+
+            # B2: chuẩn hóa dấu chấm xuống dòng
+            text = text.replace(".\n", "\n")
+
+            # B3: thay backslash còn sót lại
+            text = text.replace("{BACKSLASH}", "\\")
+
+            # B4: thay token màu
             for token, ansi in self.color_map.items():
                 text = text.replace(token, ansi)
             passes += 1
@@ -283,7 +291,7 @@ class QuizGame:
             print(f"{GREEN}✅ Chính xác!{RESET}")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
         else:
-            print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {a}")
+            print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {a}{RESET}")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Sai")
         if d:
             print(f"{YELLOW}💡 Mô tả: {d}{RESET}")
