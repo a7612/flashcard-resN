@@ -359,7 +359,7 @@ class QuizGame:
         results, score = [], 0
 
         for i, (qid, a, q, d, r) in enumerate(pool, 1):
-            print(f"\n" + "-" * 60)
+            print(f"\n" + "-" * 120)
 
             # Chuẩn hóa hiển thị
 
@@ -367,8 +367,8 @@ class QuizGame:
             # Chuẩn hóa \n, \t và màu (có thể lặp nhiều lần nếu cần)
             # q_disp, a_disp, d_disp, r_disp, data_disp, all_ans_disp = (self._normalize_all(x, 40) for x in (q, a, d, r, data, all_ans))
             q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
-            print(f"ID Câu hỏi: {qid}")
             print(f"{i}. ❓ {q_disp}\n")
+            print(f"ID Câu hỏi: {BRIGHT_YELLOW}{qid}{RESET}\n")
 
             # Tạo lựa chọn
             opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
