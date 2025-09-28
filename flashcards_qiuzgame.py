@@ -34,7 +34,7 @@ def log_action(action: str, detail: str = ""):
         f.write(line)
 
 # ================== Core Game ==================
-class QuizGame:
+class FlashCard:
     def __init__(self, qdir=QUESTIONS_DIR):
         self.qdir = qdir
         os.makedirs(self.qdir, exist_ok=True)
@@ -516,4 +516,4 @@ class QuizGame:
 
 # Entry point
 if __name__ == "__main__":
-    QuizGame().menu()
+    FlashCard().menu()
