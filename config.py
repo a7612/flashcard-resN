@@ -8,7 +8,7 @@ MAX_GENERATE_ALL_QUESTIONS = 30      # số câu hỏi khi chơi tất cả
 MAX_GENERATE_NORMAL_ANSWERS = 4   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 6     # số đáp án khi chơi all
 
-KEYWORD = ["dịch sang tiếng anh có nghĩa là gì", "tên đầy đủ"]
+KEYWORD = ["what is", "what does", "là gì", "có chức năng gì"]
 KEYWORD_BOOL = ["nhận định đúng sai"]
 
 # ====== ANSI COLORS ======
