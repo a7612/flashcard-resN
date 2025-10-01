@@ -120,10 +120,10 @@ class FlashCard:
                 print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
                 for label, val, color in [
                     (f"{YELLOW}💡\tMô tả: {RESET}", d_disp, YELLOW),
-                    (f"{CYAN}🔗\tReference: {RESET}", r_disp, CYAN),
+                    (f"{CYAN}🔗\tReference: {RESET}\n", r_disp, CYAN),
                 ]:
                     if val:
-                        print(f"{color}{label} {val}{RESET}")
+                        print(f"{color}{label}{val}{RESET}")
         return data
     
     # ----------------- CRUD câu hỏi -----------------
@@ -288,7 +288,7 @@ class FlashCard:
     def _feedback(self, ok, chosen, q, a, d, r, qid):
         """Hiển thị phản hồi sau khi trả lời"""
         if ok:
-            print(f"{GREEN}✅ Chính xác!{RESET}")
+            print(f"{GREEN}✅ Chính xác! {RESET}{a}\n")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
         else:
             print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {RESET}{a}")
@@ -296,7 +296,7 @@ class FlashCard:
         if d:
             print(f"{YELLOW}💡 Mô tả: {RESET}{d}")
         if r:
-            print(f"{CYAN}🔗 Tham chiếu:{RESET}{r}")
+            print(f"{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
 
     def _export_results(self, results, score, total):
         """Xuất kết quả quiz ra CSV"""
