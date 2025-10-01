@@ -291,12 +291,12 @@ class FlashCard:
             print(f"{GREEN}✅ Chính xác!{RESET}")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
         else:
-            print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {a}{RESET}")
+            print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {RESET}{a}")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Sai")
         if d:
-            print(f"{YELLOW}💡 Mô tả: {d}{RESET}")
+            print(f"{YELLOW}💡 Mô tả: {RESET}{d}")
         if r:
-            print(f"{CYAN}🔗 Tham chiếu:{r}{RESET}")
+            print(f"{CYAN}🔗 Tham chiếu:{RESET}{r}")
 
     def _export_results(self, results, score, total):
         """Xuất kết quả quiz ra CSV"""
