@@ -116,11 +116,11 @@ class FlashCard:
             print("\n📋 DANH SÁCH CÂU HỎI:")
             for i, (_, a, q, d, r) in enumerate(data, 1):
                 q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
-                print(f"{BRIGHT_CYAN}{i:>2})==========\n❓\tCâu hỏi: {RESET}{q_disp}")
+                print(f"\n{BRIGHT_CYAN}{i:>2}){"-"*60}\n\n❓\tCâu hỏi: {RESET}{q_disp}")
                 print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
                 for label, val, color in [
-                    (f"{YELLOW}💡\tMô tả: {RESET}", d_disp, YELLOW),
-                    (f"{CYAN}🔗\tReference: {RESET}\n", r_disp, CYAN),
+                    (f"{YELLOW}💡\tMô tả: {RESET}\n\n", d_disp, YELLOW),
+                    (f"{CYAN}🔗\tReference: {RESET}\n\n", r_disp, CYAN),
                 ]:
                     if val:
                         print(f"{color}{label}{val}{RESET}")
@@ -294,9 +294,9 @@ class FlashCard:
             print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {RESET}{a}")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Sai")
         if d:
-            print(f"{YELLOW}💡 Mô tả: {RESET}{d}")
+            print(f"{YELLOW}💡 Mô tả: {RESET}\n\n{d}")
         if r:
-            print(f"{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
+            print(f"{CYAN}🔗 Tham chiếu:{RESET}\n\n{r}")
 
     def _export_results(self, results, score, total):
         """Xuất kết quả quiz ra CSV"""
@@ -308,7 +308,7 @@ class FlashCard:
         print("-" * 60)
         for r in results:
             res_sym = f"{GREEN}✅{RESET}" if r["ok"] else f"{RED}❌{RESET}"
-            print(f"{r['index']:>3})  {res_sym:^8}   {r['correct']:<20}")
+            print(f"{RESET}{r['index']:>3})  {res_sym:^8}   {r['correct']:<20}{RESET}")
         print("-" * 60)
         print(f"{GREEN}✅ Đúng : {score}{RESET}    {RED}❌ Sai : {wrong}{RESET}    {CYAN}📊 Tỉ lệ: {percent:.1f}%{RESET}")
         print(self._progress_bar(percent))
@@ -367,15 +367,15 @@ class FlashCard:
             # Chuẩn hóa \n, \t và màu (có thể lặp nhiều lần nếu cần)
             # q_disp, a_disp, d_disp, r_disp, data_disp, all_ans_disp = (self._normalize_all(x, 40) for x in (q, a, d, r, data, all_ans))
             q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
-            print(f"{i}. ❓ {q_disp}\n")
-            print(f"ID Câu hỏi: {BRIGHT_YELLOW}{qid}{RESET}\n")
+            print(f"{RESET}{i}. ❓ {q_disp}\n")
+            print(f"{RESET}ID Câu hỏi: {BRIGHT_YELLOW}{qid}\n")
 
             # Tạo lựa chọn
             opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
             random.shuffle(opts)
             mapping = dict(zip(string.ascii_lowercase, opts))
             for k, v in list(mapping.items())[:len(opts)]:
-                print(f"{BRIGHT_GREEN}\t{k}){RESET} {v}{RESET}\n")
+                print(f"{RESET}{BRIGHT_GREEN}\t{k}){RESET} {v}{RESET}\n")
 
             # Người chơi chọn
             chosen = self._ask_choice(mapping)
@@ -412,13 +412,13 @@ class FlashCard:
     def manage_questions(self):
         """Menu quản lý câu hỏi"""
         actions = {
-            "1": ("thêm",   f"{BRIGHT_GREEN}➕ Thêm nội dung{RESET}"),
-            "2": ("xoá",    f"{BRIGHT_RED}🗑️ Xoá nội dung{RESET}"),
-            "3": ("sửa",    f"{BRIGHT_YELLOW}✏️ Sửa toàn bộ nội dung{RESET}"),
-            "4": ("sửaQ",   f"{BRIGHT_YELLOW}✏️ Sửa câu hỏi cụ thể{RESET}"),
-            "5": ("sửaA",   f"{BRIGHT_YELLOW}✏️ Sửa đáp án cụ thể{RESET}"),
-            "6": ("sửaD",   f"{BRIGHT_YELLOW}✏️ Sửa mô tả cụ thể{RESET}"),
-            "7": ("sửaR",   f"{BRIGHT_YELLOW}✏️ Sửa tham khảo cụ thẻ{RESET}"),
+            "1": ("thêm",   f"{RESET}{BRIGHT_GREEN}➕ Thêm nội dung"),
+            "2": ("xoá",    f"{RESET}{BRIGHT_RED}🗑️ Xoá nội dung"),
+            "3": ("sửa",    f"{RESET}{BRIGHT_YELLOW}✏️ Sửa toàn bộ nội dung"),
+            "4": ("sửaQ",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa câu hỏi cụ thể"),
+            "5": ("sửaA",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa đáp án cụ thể"),
+            "6": ("sửaD",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa mô tả cụ thểS"),
+            "7": ("sửaR",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa tham khảo cụ thẻS"),
         }
         while True:
             self.clearsrc()
