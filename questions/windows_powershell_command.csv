@@ -1,0 +1,9 @@
+﻿id,answer,question,desc,ref
+9e61da58-c5cf-4390-8ab6-243c36052978,{BRIGHT_GREEN}ConvertFrom-SecureString,Powershell: Chuyển đổi một chuỗi an toàn thành một chuỗi chuẩn được mã hóa.,,
+c585271a-0592-4b9f-8184-bdf86a283cd4,{BRIGHT_GREEN}Get-InitiatorPort,Powershell: Nhận một hoặc nhiều cổng khởi tạo bộ điều hợp bus máy chủ (HBA).,,
+bf5466d2-d3bd-442f-8013-23e72966da21,{BRIGHT_GREEN}Get-PhysicalDisk,Powershell: Nhận danh sách tất cả các đối tượng ổ đĩa vật lý có thể nhìn thấy trên bất kỳ nhà cung cấp quản lý lưu trữ nào hoặc tùy chọn là danh sách đã lọc.,,
+286d6ed2-03d7-4f72-9dbb-3f8f4f56e6d3,{BRIGHT_GREEN}Get-Unique{RESET} (gu),Powershell: Trả về các giá trị duy nhất (unique items) từ một danh sách đã được sắp xếp,,
+67d49894-5a19-4590-ba92-e429b86b00da,{BRIGHT_GREEN}Invoke-CimMethod,Powershell: Gọi phương thức của lớp CIM.,,
+97ad9f2e-c3fb-4c71-b277-6e054ff5a27d,{BRIGHT_GREEN}Remove-ItemProperty{RESET} (rp),Powershell: Xóa thuộc tính và giá trị của nó khỏi một mục.,,
+b2c819f4-506d-49cf-b503-be7dd73a5410,{BRIGHT_GREEN}Select-Xml,Powershell: Tìm văn bản trong chuỗi hoặc tài liệu XML.,,
+1e4a5c09-a93e-4636-a214-a84e2cb56829,{BRIGHT_GREEN}Set-WinUserLanguageList,Powershell: Đặt danh sách ngôn ngữ và các thuộc tính liên quan cho tài khoản người dùng hiện tại.,,

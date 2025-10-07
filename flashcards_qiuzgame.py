@@ -359,16 +359,11 @@ class FlashCard:
         results, score = [], 0
 
         for i, (qid, a, q, d, r) in enumerate(pool, 1):
-            print(f"\n" + "-" * 120)
+            print(f"\n{BRIGHT_RED}{"="*60}")
 
             # Chuẩn hóa hiển thị
-
-            """Chuẩn hóa \n, \t và màu (lặp nhiều lần nếu cần)"""
-            # Chuẩn hóa \n, \t và màu (có thể lặp nhiều lần nếu cần)
-            # q_disp, a_disp, d_disp, r_disp, data_disp, all_ans_disp = (self._normalize_all(x, 40) for x in (q, a, d, r, data, all_ans))
             q_disp, a_disp, d_disp, r_disp = (self._normalize_all(x) for x in (q, a, d, r))
-            print(f"{RESET}{i}. ❓ {q_disp}\n")
-            print(f"{RESET}ID Câu hỏi: {BRIGHT_YELLOW}{qid}\n")
+            print(f"{RESET}{i}❓ {q_disp}\n")            
 
             # Tạo lựa chọn
             opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
@@ -376,12 +371,16 @@ class FlashCard:
             mapping = dict(zip(string.ascii_lowercase, opts))
             for k, v in list(mapping.items())[:len(opts)]:
                 print(f"{RESET}{BRIGHT_GREEN}\t{k}){RESET} {v}{RESET}\n")
-
-            # Người chơi chọn
+                
+            print(f"{BRIGHT_RED}{"="*60}")
+            print(f"{RESET}ID Câu hỏi: {BRIGHT_YELLOW}{qid}\n{RESET}")
+            
+            # Input đáp án, clearsrc
             chosen = self._ask_choice(mapping)
-            # self.clearsrc()
+            self.clearsrc()
 
-            # ✅ Kiểm tra đúng/sai
+            # Hiển thị câu hỏi, Kiểm tra đáp ấn
+            print(f"{RESET}{i}. ❓ {q_disp}\n")
             ok = self._check_answer(chosen, q, a_disp, data)
             if ok:
                 score += 1
