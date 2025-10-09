@@ -201,25 +201,27 @@ class FlashCard:
             while True:
                 self._show(path)
                 idx = self._ask_index(data, "sửa")
-                if idx is None: break
+                if idx is None:
+                    break
+
                 entry = list(data[idx])
-                if idx.lower() == "exit()": break
-                if idx.isdigit() and 1 <= int(idx) <= len(data):
-                    entry = list(data[int(idx) - 1])
-                    if mode == "sửa":
-                        entry[2] = input("❓ Câu hỏi mới: ").strip() or entry[2]
-                        entry[1] = input("✅ Đáp án mới: ").strip() or entry[1]
-                        entry[3] = input("💡 Mô tả mới: ").strip() or entry[3]
-                        entry[4] = input("🔗 Reference mới: ").strip() or entry[4]
-                    else:
-                        field_idx = field_map[mode]
-                        new_val = input(f"✏️ Nhập giá trị mới (cũ: {entry[field_idx]}): ").strip()
-                        if new_val:
-                            entry[field_idx] = new_val
-                    data[int(idx) - 1] = tuple(entry)
-                    save_and_log("EDIT_Q", f"{entry}")
-                    self.clearsrc()
-                    print("✅ Đã sửa thành công.")
+
+                if mode == "sửa":
+                    entry[2] = input(f"❓ Câu hỏi mới (cũ: {entry[2]}): ").strip() or entry[2]
+                    entry[1] = input(f"✅ Đáp án mới (cũ: {entry[1]}): ").strip() or entry[1]
+                    entry[3] = input(f"💡 Mô tả mới (cũ: {entry[3]}): ").strip() or entry[3]
+                    entry[4] = input(f"🔗 Reference mới (cũ: {entry[4]}): ").strip() or entry[4]
+                else:
+                    field_idx = field_map[mode]
+                    new_val = input(f"✏️ Nhập giá trị mới (cũ: {entry[field_idx]}): ").strip()
+                    if new_val:
+                        entry[field_idx] = new_val
+
+                data[idx] = tuple(entry)
+                save_and_log("EDIT_Q", f"Q: {entry[2]}")
+                self.clearsrc()
+                print("✅ Đã sửa thành công.")
+
 
     # ----------------- Game logic -----------------
         # ----------------- Game logic -----------------
