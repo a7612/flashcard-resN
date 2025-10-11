@@ -1,0 +1,10 @@
+﻿id,answer,question,desc,ref
+7b30e67a-76bd-4519-b887-9343298f1a57,Computer Network (Mạng máy tính),"Cho phép trao đổi dữ liệu hiệu quả, hỗ trợ nhiều ứng dụng như email, chia sẻ tệp, và duyệt web.",,
+f90db89e-a89f-4cbc-a48e-e579b7435df9,Computer Network (Mạng máy tính),"Một nhóm các máy tính và thiết bị được kết nối, có thể giao tiếp và chia sẻ dữ liệu với nhau",,
+e1456ee3-f98c-4038-8176-6f0ccdefc2de,Computer Network (Mạng máy tính),"Tập hợp các thiết bị (máy tính, máy chủ, máy in hoặc các phần cứng liên quan khác) được kết nối với nhau để chia sẻ tài nguyên và thông tin",,
+59b44684-365b-457d-9aa9-9fcf82233a08,Link (Liên kết),"Phương tiện kết nối giữa các nút, có thể là cáp, dây dẫn, hoặc tín hiệu không dây.",,
+5c67f062-2bff-4000-b5a8-a281d859463b,Networking Devices (Thiết bị mạng),Các thiết bị quản lý và hỗ trợ chức năng mạng,"router, switch, hub, access point, ...",
+a02cff09-cb7d-463b-bc27-deaf9b44273a,Node (Nút),"Bất kỳ thiết bị nào có khả năng gửi, nhận hoặc chuyển tiếp dữ liệu trong mạng","Laptop, điện thoại, máy in, tai nghe không dây, máy chủ, ...",
+a9fd2746-7d33-47f5-9745-eadd492d68e2,Node (Nút),"Bất kỳ thiết bị nào trong mạng như modem, router hoặc máy tính có thể gửi hoặc nhận dữ liệu.",,
+57385777-01be-4d76-a625-c88f6fb52555,Service Provider Networks (Nhà cung cấp dịch vụ mạng),Các mạng được cung cấp bởi bên thứ ba cho phép người dùng hoặc tổ chức thuê quyền truy cập và năng lực mạng.,"Nhà cung cấp Internet, nhà mạng di động, ...",
+f9de99ad-8c72-47af-85db-8ba446d796ea,Transmission Media (Phương tiện truyền dẫn),Môi trường vật lý hoặc không dây cho phép dữ liệu di chuyển giữa các thiết bị.,"Có dây: Cáp Ethernet, cáp quang.\nKhông dây: Wi-Fi, Bluetooth, hồng ngoại.",
