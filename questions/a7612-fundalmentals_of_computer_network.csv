@@ -1,0 +1,7 @@
+﻿id,answer,question,desc,ref
+05787818-d763-48bf-aa64-1e30fd51056f,2,Có bao nhiêu loại kiến trúc mạng?,"\tClient-Server Architecture (Kiến trúc máy khách-máy chủ) là một loại kiến trúc mạng máy tính trong đó node có thể là server hoặc client. Tại đây, nút máy chủ có thể quản lý hành vi của nút máy khách.\n\tPeer-to-peer Architecture (Kiến trúc ngang hàng) là kiểu kiến trúc không có bất kỳ khái niệm nào về máy chủ trung tâm. Mỗi thiết bị đều có thể hoạt động miễn phí với tư cách là máy khách hoặc máy chủ.",
+ac37b9b2-f305-44c5-86e2-02575386929e,Network (Mạng),Một nhóm máy tính và thiết bị được kết nối có thể giao tiếp và chia sẻ dữ liệu với nhau được gọi là?,,
+12b8e208-34bc-4566-b3ad-04bfd384e7c3,Network (Mạng),Tập hợp các thiết bị được kết nối với nhau để chia sẻ tài nguyên và thông tin được gọi là?,,
+07c788de-14df-4fc7-9eaa-41787327fa2a,Networking Devices (Thiết bị mạng),Các thiết bị quản lý và hỗ trợ các chức năng mạng được gọi là?,"Bao gồm bộ định tuyến (router), bộ chuyển mạch (switch), bộ trung tâm (hub), điểm truy cập (access point), ...",
+3fbe5b0c-d1e0-4683-91db-52e01b3e8bea,Node (Nút mạng),"Bất kỳ thiết bị nào có thể gửi, nhận hoặc chuyển tiếp dữ liệu trong mạng được gọi là?","Bao gồm máy tính xách tay, điện thoại di động, máy in, tai nghe nhét tai, máy chủ, v.v.",
+e3ec383f-512d-418a-aa35-9580327d5be6,Transmission Media (Phương tiện truyền dẫn),Phương tiện có dây hoặc không dây chịu trách nhiệm truyền dữ liệu giữa các thiết bị được gọi là?,"\tCó dây: cáp LAN, cáp quang\n\tKhông dây: Wifi, Bluetooth",
