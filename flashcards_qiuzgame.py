@@ -225,11 +225,10 @@ class FlashCard:
                 return True, int(x)-1
             return False, None
         return self._safe_input(f"\n🔢 Nhập ID để {action} (hoặc nhập exit() để thoát): ", validator=validator)
-    
-    data = list(self._load(path))
+
     # CRUD split into smaller ops to avoid repeat-loading
     def _add_question(self, path):
-        
+        data = list(self._load(path))
         while True:
             self._show(path, show=True)
             q = self._safe_input(f"\n❓ Nhập câu hỏi (hoặc nhập exit() để thoát):{RESET} ")
