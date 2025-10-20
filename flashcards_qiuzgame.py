@@ -136,7 +136,21 @@ class FlashCard:
             return []
         with open(path, encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
-            return [(r.get("id", ""), r.get("answer", ""), r.get("question", ""), r.get("desc", ""), r.get("ref", "")) for r in reader]
+            src = os.path.basename(path)
+            data = []
+            for r in reader:
+                qid = r.get("id", "").strip()
+                if not qid:  # Nếu trống -> generate ID mới
+                    qid = str(uuid.uuid4())
+                data.append((
+                    qid,
+                    r.get("answer", "").strip(),
+                    r.get("question", "").strip(),
+                    r.get("desc", "").strip(),
+                    r.get("ref", "").strip(),
+                    src
+                ))
+            return data
 
     def _save(self, path, data):
         """Save sorted data and invalidate caches (LRU cache + counts)."""
@@ -144,7 +158,8 @@ class FlashCard:
         with open(path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["id", "answer", "question", "desc", "ref"])
-            writer.writerows(data_sorted)
+            for row in data_sorted:
+                writer.writerow(row[:5])
 
         # invalidate caches
         try:
@@ -204,7 +219,7 @@ class FlashCard:
             return []
         if show:
             print("\n📋 DANH SÁCH CÂU HỎI:")
-            for i, (_, a, q, d, r) in enumerate(data, 1):
+            for i, (_, a, q, d, r, source) in enumerate(data, 1):
                 q_disp = self._replace_colors(q)
                 a_disp = self._replace_colors(a)
                 d_disp = self._replace_colors(d)
@@ -215,6 +230,7 @@ class FlashCard:
                     print(f"{YELLOW}💡\tMô tả: {RESET}\n\n{d_disp}{RESET}")
                 if r_disp:
                     print(f"{CYAN}🔗\tReference: {RESET}\n\n{r_disp}{RESET}")
+                
         return data
 
     def _ask_index(self, data, action="chọn"):
@@ -398,15 +414,15 @@ class FlashCard:
         chosen_norm = chosen.strip().lower()
         return any(chosen_norm == self._replace_colors(ca).strip().lower() for ca in corrects)
 
-    def _quiz(self, data, n_opts=None, max_qs=None):
+    def _quiz(self, data, n_opts=None, max_qs=None, source = None):
         if not data:
             print("❌ Không có câu hỏi.")
             return
         pool = data[:] if not max_qs else random.sample(data, min(max_qs, len(data)))
-        all_ans = [a for _, a, _, _, _ in data]
+        all_ans = [a for _, a, _, _, _ , source in data]
         results = []
         score = 0
-        for i, (qid, a, q, d, r) in enumerate(pool, 1):
+        for i, (qid, a, q, d, r, source) in enumerate(pool, 1):
             print(f"\n{BRIGHT_RED}{'='*60}")
             q_disp = self._replace_colors(q)
             a_disp = self._replace_colors(a)
@@ -419,7 +435,10 @@ class FlashCard:
             for k, v in list(mapping.items())[:len(opts)]:
                 print(f"{RESET}{BRIGHT_GREEN}\t{k}){RESET} {v}{RESET}\n")
             print(f"{BRIGHT_RED}{'='*60}")
-            print(f"{RESET}ID Câu hỏi: {BRIGHT_YELLOW}{qid}\n{RESET}")
+            if _CONFIG.DEBUG:
+                if source:
+                    print(f"{RESET}File nguồn: {BRIGHT_YELLOW}{source}{RESET}")
+                print(f"{RESET}ID Câu hỏi: {BRIGHT_YELLOW}{qid}\n{RESET}")         
             chosen = self._ask_choice(mapping)
             # clearsrc
             self.clearsrc()
