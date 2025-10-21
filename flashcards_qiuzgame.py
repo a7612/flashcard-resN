@@ -362,10 +362,10 @@ class FlashCard:
 
     def _feedback(self, ok, chosen, q, a, d, r, qid):
         if ok:
-            print(f"{GREEN}✅ Chính xác! {RESET}{a}\n\n\t\t\t{BRIGHT_GREEN}HAY!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(f"{GREEN}✅ Chính xác! {RESET}{a}\n\n\t{BRIGHT_GREEN}HAY!!!!!!!!!!!!!!!!!!!!!!!!")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
         else:
-            print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {RESET}{a}\n\n\t\t\t{BRIGHT_RED}QUÁ GÀ !!!!!!!!!!!!!!!!!!!!!!!!")
+            print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {RESET}{a}\n\n\t{BRIGHT_RED}QUÁ GÀ !!!!!!!!!!!!!!!!!!!!!!!!")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Sai")
         if d:
             print(f"{YELLOW}💡 Mô tả: {RESET}\n\n{d}")
@@ -423,17 +423,17 @@ class FlashCard:
         results = []
         score = 0
         for i, (qid, a, q, d, r, source) in enumerate(pool, 1):
-            print(f"\n{'='*48}\n")
+            print(f"\n{'='*48}")
             q_disp = self._replace_colors(q)
             a_disp = self._replace_colors(a)
             d_disp = self._replace_colors(d)
             r_disp = self._replace_colors(r)
-            print(f"{RESET}{i}❓ {q_disp}\n\n")
+            print(f"{RESET}{i}❓ {q_disp}\n")
             opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
             random.shuffle(opts)
             mapping = dict(zip(string.ascii_lowercase, opts))
             for k, v in list(mapping.items())[:len(opts)]:
-                print(f"{RESET}{BRIGHT_GREEN}\t\t{k}){RESET} {v}{RESET}\n")
+                print(f"{RESET}{BRIGHT_GREEN}{k}){RESET} {v}{RESET}\n")
             print(f"{'='*48}")
             if _CONFIG.DEBUG:
                 if source:
@@ -442,7 +442,7 @@ class FlashCard:
             chosen = self._ask_choice(mapping)
             # clearsrc
             self.clearsrc()
-            print(f"\n{'='*48}\n")
+            print(f"{'='*48}")
             print(f"{RESET}{i}. ❓ {q_disp}")
             print(f"{YELLOW}Chọn:{RESET} {chosen}\n")
             ok = self._check_answer(chosen, q, a_disp, data)
