@@ -9,9 +9,9 @@ MAX_GENERATE_ALL_QUESTIONS = 30      # số câu hỏi khi chơi tất cả
 MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
-KEYWORD = ["là gì", "tại sao", "mục đích", "vai trò", "mô tả", "nhiệm vụ", "mục tiêu"]
-KEYWORD_DATE= ["thời điểm", "thời gian", "ngày", "tháng", "năm"]
-KEYWORD_BOOL = ["nhận định đúng sai"]
+KEYWORD = []
+KEYWORD_DATE= []
+KEYWORD_BOOL = []
 
 # ====== ANSI COLORS ======
 RESET   = "\033[0m"   # reset về mặc định
