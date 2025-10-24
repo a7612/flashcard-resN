@@ -2,7 +2,7 @@ QUESTIONS_DIR = "questions"
 LOG_DIR = "logs"
 EXPORT_DIR = "exports"
 CLEAR_SCREEN = True
-DEBUG = True
+DEBUG = False
 
 MAX_GENERATE_NORMAL_QUESTIONS = 20   # số câu hỏi khi chơi 1 file
 MAX_GENERATE_ALL_QUESTIONS = 30      # số câu hỏi khi chơi tất cả

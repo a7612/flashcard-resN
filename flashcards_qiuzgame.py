@@ -18,6 +18,7 @@ import datetime
 import getpass
 import re
 import logging
+import time
 from logging.handlers import TimedRotatingFileHandler
 from functools import lru_cache
 from types import SimpleNamespace
@@ -362,15 +363,15 @@ class FlashCard:
 
     def _feedback(self, ok, chosen, q, a, d, r, qid):
         if ok:
-            print(f"{GREEN}✅ Chính xác! {RESET}{a}\n\n\t{BRIGHT_GREEN}HAY!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(f"{GREEN}✅ Chính xác! {RESET}{a}\n\n{BRIGHT_GREEN}{'O'*48}\n\tHAY!!!!!!!!!!!!!!!!!!!!!!!!\n{'O'*48}\n")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
         else:
-            print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {RESET}{a}\n\n\t{BRIGHT_RED}QUÁ GÀ !!!!!!!!!!!!!!!!!!!!!!!!")
+            print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {RESET}{a}\n\n{BRIGHT_RED}{'X'*48}\n\tQUÁ GÀ !!!!!!!!!!!!!!!!!!!!!!!!\n{'X'*48}\n")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Sai")
         if d:
-            print(f"{YELLOW}💡 Mô tả: {RESET}\n\n{d}")
+            print(f"{YELLOW}💡 Mô tả: {RESET}\n{d}\n")
         if r:
-            print(f"{CYAN}🔗 Tham chiếu:{RESET}\n\n{r}")
+            print(f"{CYAN}🔗 Tham chiếu:{RESET}\n{r}\n")
 
     def _export_results(self, results, score, total):
         wrong = total - score
@@ -423,12 +424,23 @@ class FlashCard:
         results = []
         score = 0
         for i, (qid, a, q, d, r, source) in enumerate(pool, 1):
-            print(f"\n{'='*48}")
+            print(f"{RESET}{'='*48}")
+            check_continue = input(f'\nNhập {BRIGHT_GREEN}bất kỳ để tiếp tục{RESET} hoặc {BRIGHT_RED}"exit()" để tổng kết ngay{RESET}: ').strip().lower()
+            if check_continue in ["exit()", "quit()"]:
+                print(f"\n🔚 Tổng kết sau {i-1} câu...\n")
+                break
             q_disp = self._replace_colors(q)
             a_disp = self._replace_colors(a)
             d_disp = self._replace_colors(d)
             r_disp = self._replace_colors(r)
-            print(f"{RESET}{i}❓ {q_disp}\n")
+            print(f"\nĐang chuẩn bị câu hỏi tiếp theo")
+            time.sleep(0.3)
+            print(f"{random.randint(0,25)}% - random dataset: {source}\n{random.randint(26,50)}% - Đang load id: {qid}")
+            time.sleep(0.3)
+            print(f"{random.randint(50,75)}% - Đang load data\n{random.randint(76,99)}% - Đồng bộ LRU")
+            time.sleep(0.3)
+            print(f"100% - Thành công")
+            print(f"\n{RESET}{i}❓ {q_disp}\n")
             opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
             random.shuffle(opts)
             mapping = dict(zip(string.ascii_lowercase, opts))
@@ -444,7 +456,7 @@ class FlashCard:
             self.clearsrc()
             print(f"{'='*48}")
             print(f"{RESET}{i}. ❓ {q_disp}")
-            print(f"{YELLOW}Chọn:{RESET} {chosen}\n")
+            print(f"{YELLOW}Chọn:{RESET} {chosen}")
             ok = self._check_answer(chosen, q, a_disp, data)
             if ok:
                 score += 1
@@ -453,6 +465,8 @@ class FlashCard:
                 "desc": d_disp, "ref": r_disp, "ok": ok
             })
             self._feedback(ok, chosen, q_disp, a_disp, d_disp, r_disp, qid)
+            print(f"{BRIGHT_GREEN}Số câu đúng hiện tại: {score}")
+                
         self._export_results(results, score, len(results))
 
     def play_file(self):
