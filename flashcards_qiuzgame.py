@@ -347,7 +347,7 @@ class FlashCard:
     def _get_options(self, q, a, data, all_ans, n_opts):
         ql = q.lower()
         if any(kw in ql for kw in _CONFIG.KEYWORD_BOOL):
-            return ["Đúng (True)", "Sai (False)"]
+            return ["Đúng", "Sai"]
         # check special keywords map
         for kw in _CONFIG.KEYWORD:
             if kw in ql:
