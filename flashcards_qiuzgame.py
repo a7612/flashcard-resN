@@ -142,6 +142,7 @@ class FlashCard:
             for r in reader:
                 qid = r.get("id", "").strip()
                 if not qid:  # Nếu trống -> generate ID mới
+                    print("Có dữ liệu thiếu ID. Đang bổ sung... ")
                     qid = str(uuid.uuid4())
                 data.append((
                     qid,
@@ -470,16 +471,42 @@ class FlashCard:
         self._export_results(results, score, len(results))
 
     def play_file(self):
+        print(f"{'='*16} Chơi theo file {'='*16}\n")
         path = self._choose_file("chơi")
-        if path:
-            self._quiz(self._load(path), n_opts=_CONFIG.MAX_GENERATE_NORMAL_ANSWERS, max_qs=_CONFIG.MAX_GENERATE_NORMAL_QUESTIONS)
+        difficult_choice = input(f"0 - Mặc định: {_CONFIG.MAX_GENERATE_NORMAL_QUESTIONS} flashcard, {_CONFIG.MAX_GENERATE_NORMAL_ANSWERS} options\n1 - Dễ (10 flashcard, 1 options, thích hợp cho việc học)\n2 - Trung bình (20 flashcard, 4 options / TF, khuyến nghị)\n3 - Khó (50 flashcard, 6 options / TF)\n4 - Hardcore (100 flashcard, 8 ~ 24 options)\n\nVui lòng chọn độ khó hoặc nhập exit() để thoát:")
+        if difficult_choice == str(0):
+            if path:
+                self._quiz(self._load(path), n_opts=_CONFIG.MAX_GENERATE_NORMAL_ANSWERS, max_qs=_CONFIG.MAX_GENERATE_NORMAL_QUESTIONS)
+        if difficult_choice == str(1):            
+            if path:
+                self._quiz(self._load(path), n_opts=1, max_qs=10)
+        if difficult_choice == str(2):
+            if path:
+                self._quiz(self._load(path), n_opts=4, max_qs=20)
+        if difficult_choice == str(3):
+            if path:
+                self._quiz(self._load(path), n_opts=6, max_qs=50)
+        if difficult_choice == str(4):
+            if path:
+                self._quiz(self._load(path), n_opts=random.randint(8, 24), max_qs=100)
 
     def play_all(self):
+        print(f"{'='*16} Chơi ngẫu nhiên {'='*16}\n")
         data = []
         for f in self._files():
             data.extend(self._load(os.path.join(self.qdir, f)))
-        self._quiz(data, n_opts=_CONFIG.MAX_GENERATE_ALL_ANSWERS, max_qs=_CONFIG.MAX_GENERATE_ALL_QUESTIONS)
-
+        difficult_choice = input(f"0 - Mặc định: {_CONFIG.MAX_GENERATE_ALL_QUESTIONS} flashcard, {_CONFIG.MAX_GENERATE_ALL_ANSWERS} options\n1 - Dễ (10 flashcard, 1 options, thích hợp cho việc học)\n2 - Trung bình (20 flashcard, 4 options / TF, khuyến nghị)\n3 - Khó (50 flashcard, 6 options / TF)\n4 - Hardcore (100 flashcard, 8 ~ 24 options)\n\nVui lòng chọn độ khó hoặc nhập exit() để thoát:")
+        if difficult_choice == str(0):
+            self._quiz(data, n_opts=_CONFIG.MAX_GENERATE_ALL_ANSWERS, max_qs=_CONFIG.MAX_GENERATE_ALL_QUESTIONS)
+        if difficult_choice == str(1):            
+            self._quiz(data, n_opts=1, max_qs=10)
+        if difficult_choice == str(2):
+            self._quiz(data, n_opts=4, max_qs=20)
+        if difficult_choice == str(3):
+            self._quiz(data, n_opts=6, max_qs=50)
+        if difficult_choice == str(4):
+            self._quiz(data, n_opts=random.randint(8, 24), max_qs=100)
+            
     # ----------------- File management -----------------
     def _create_file(self, act):
         name = self._safe_input("📄 Nhập tên file mới (không cần .csv): ")

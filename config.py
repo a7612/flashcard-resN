@@ -5,7 +5,7 @@ CLEAR_SCREEN = True
 DEBUG = False
 
 MAX_GENERATE_NORMAL_QUESTIONS = 20   # số câu hỏi khi chơi 1 file
-MAX_GENERATE_ALL_QUESTIONS = 30      # số câu hỏi khi chơi tất cả
+MAX_GENERATE_ALL_QUESTIONS = 15      # số câu hỏi khi chơi tất cả
 MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
