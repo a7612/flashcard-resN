@@ -94,6 +94,7 @@ class FlashCard:
         # replace ".\n" -> "\n" (as original)
         text = text.replace(".\n", "\n")
         # swap tokens
+        
         return self._color_token_re.sub(lambda m: self.color_map.get(m.group(0), m.group(0)), text)
 
     # ----------------- File listing -----------------
@@ -222,10 +223,14 @@ class FlashCard:
         if show:
             print("\n📋 DANH SÁCH CÂU HỎI:")
             for i, (_, a, q, d, r, source) in enumerate(data, 1):
-                q_disp = self._replace_colors(q)
-                a_disp = self._replace_colors(a)
-                d_disp = self._replace_colors(d)
-                r_disp = self._replace_colors(r)
+                q_disp = q
+                a_disp = a
+                d_disp = d
+                r_disp = r
+                # q_disp = self._replace_colors(q, check_color=False)
+                # a_disp = self._replace_colors(a, check_color=False)
+                # d_disp = self._replace_colors(d, check_color=False)
+                # r_disp = self._replace_colors(r, check_color=False)
                 print(f"\n{BRIGHT_CYAN}{i:>2}){'-'*60}\n\n❓\tCâu hỏi: {RESET}{q_disp}")
                 print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
                 if d_disp:
