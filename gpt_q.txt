@@ -4,7 +4,7 @@
 + TH2: nếu chỉ có mỗi từ tiếng anh thì làm theo form sau: Tiếng Anh (Tiếng Việt). vd: Router (Bộ định tuyến), Switch (Bộ chuyển mạch), ... 
 
 - Định nghĩa: _(1) là gì? 
-- _(1) trong _(2) là gì? 
+- Định nghĩa: _(1) trong _(2) là gì? 
 - _(1) làm gì trong _(2)? 
 - Chức năng chính của _(1) trong _(2) là gì? 
 - Chức năng chính được sử dụng trong thực tế của _(1) trong _(2) là gì?
