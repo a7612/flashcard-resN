@@ -7,7 +7,7 @@
 - _(1) trong _(2) là gì?
 - _(1) làm gì trong _(2)?
 - Chức năng chính của _(1) trong _(2) là gì?
-- Chức năng chính được áp dụng trong thực tế của _(1) trong _(2)  là gì?
+- Chức năng chính được áp dụng trong thực tế của _(1) trong _(2) là gì?
 - Vai trò của _(1) trong _(2) là gì?
 - Tại sao vai trò của _(1) quan trọng trong _(2)?
 - Tại sao vai trò được áp dụng trong thực tế của _(1) quan trọng trong _(2)?
