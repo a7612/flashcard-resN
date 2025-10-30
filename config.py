@@ -18,7 +18,7 @@ KEYWORD = [
     "được sử dụng trong thực tế", 
     "định nghĩa", "liệt kê",
 ]
-KEYWORD_BOOL = ["đúng hay sai"]
+KEYWORD_BOOL = ["đúng hay sai", "dung"]
 
 # ====== ANSI COLORS ======
 RESET   = "\033[0m"   # reset về mặc định
