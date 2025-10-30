@@ -157,7 +157,8 @@ class FlashCard:
 
     def _save(self, path, data):
         """Save sorted data and invalidate caches (LRU cache + counts)."""
-        data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
+        # data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
+        data_sorted = sorted(data, key=lambda x: (x[2].lower().strip(), x[1].lower().strip()))
         with open(path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["id", "answer", "question", "desc", "ref"])
@@ -223,14 +224,14 @@ class FlashCard:
         if show:
             print("\n📋 DANH SÁCH CÂU HỎI:")
             for i, (_, a, q, d, r, source) in enumerate(data, 1):
-                q_disp = q
-                a_disp = a
-                d_disp = d
-                r_disp = r
-                # q_disp = self._replace_colors(q, check_color=False)
-                # a_disp = self._replace_colors(a, check_color=False)
-                # d_disp = self._replace_colors(d, check_color=False)
-                # r_disp = self._replace_colors(r, check_color=False)
+                # q_disp = q
+                # a_disp = a
+                # d_disp = d
+                # r_disp = r
+                q_disp = self._replace_colors(q)
+                a_disp = self._replace_colors(a)
+                d_disp = self._replace_colors(d)
+                r_disp = self._replace_colors(r)
                 print(f"\n{BRIGHT_CYAN}{i:>2}){'-'*60}\n\n❓\tCâu hỏi: {RESET}{q_disp}")
                 print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
                 if d_disp:
