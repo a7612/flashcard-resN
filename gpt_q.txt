@@ -3,13 +3,17 @@
 + TH1: nếu có từ viết tắt thì làm theo form sau: Từ viết tắt (Tiếng Anh đủ nghĩa của từ - Tiếng Việt). Vd: AP (Access Point - Điểm truy cập), AES (Advanced Encryption Standard - Tiêu chuẩn mã hoá tiên tiến), ...
 + TH2: nếu chỉ có mỗi từ tiếng anh thì làm theo form sau: Tiếng Anh (Tiếng Việt). vd: Router (Bộ định tuyến), Switch (Bộ chuyển mạch), ...
 
-- Định nghĩa: _(1) là gì?
-- _(1) trong _(2)?
+- Định nghĩa: _(1)?
+- _(1) trong _(2) là gì?
 - _(1) làm gì trong _(2)?
-- Chức năng chính của _(1) trong _(2)?
-- Vai trò của _(1) trong _(2)?
+- Chức năng chính của _(1) trong _(2) là gì?
+- Chức năng chính của _(1) trong _(2) được sử dụng trong thực tế là gì?
+- Vai trò của _(1) trong _(2) là gì?
 - Tại sao vai trò của _(1) quan trọng trong _(2)?
+- Tại sao vai trò của _(1) quan trọng trong _(2) được sử dụng trong thực tế?
 - Tại sao _(1) lại lý tưởng cho _(2)?
-- Mục đích của _(1)?
-- Mục đích của _(1) trong _(2)?
+- Tại sao _(1) lại lý tưởng cho _(2) trong được sử dụng trong thực tế?
+- Mục đích của _(1) là gì?
+- Mục đích của _(1) trong _(2) là gì?
+- Mục đích chính của _(1) trong _(2) được sử dụng trong thực tế là gì?
 - Liệt kê các loại _(1) thường được sử dụng trong _(2)?
