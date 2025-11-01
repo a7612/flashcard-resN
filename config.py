@@ -9,15 +9,7 @@ MAX_GENERATE_ALL_QUESTIONS = 15      # số câu hỏi khi chơi tất cả
 MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
-KEYWORD = [
-    "làm gì", 
-    "chức năng chính của", "chức năng chính được áp dụng trong thực tế của"
-    "vai trò", "tại sao vai trò của", "tại sao vai trò được áp dụng trong thực tế của"
-    "lại lý tưởng", "lại lý tưởng cho việc áp dụng trong thực tế cho" 
-    "mục đích của", "mục đích chính được áp dụng trong thực tế của" 
-    "được sử dụng trong thực tế", 
-    "định nghĩa", "liệt kê",
-]
+KEYWORD = []
 KEYWORD_BOOL = ["đúng hay sai", "dung"]
 
 # ====== ANSI COLORS ======
