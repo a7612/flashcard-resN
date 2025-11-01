@@ -369,16 +369,16 @@ class FlashCard:
         return [self._replace_colors(opt) for opt in dict.fromkeys(opts)]
 
     def _feedback(self, ok, chosen, q, a, d, r, qid):
+        if d:
+            print(f"\n{YELLOW}💡 Mô tả: {RESET}\n{d}")
+        if r:
+            print(f"\n{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
         if ok:
-            print(f"{GREEN}✅ Chính xác! {RESET}{a}\n\n{BRIGHT_GREEN}{'O'*48}\n\tHAY!!!!!!!!!!!!!!!!!!!!!!!!\n{'O'*48}\n")
+            print(f"\n{BRIGHT_GREEN}{'O'*48}\nHAY! - {GREEN}Đáp án là: {RESET}{a}\n{GREEN}{'O'*48}\n")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
         else:
-            print(f"{RED}❌ Sai!{RESET} ➤ Đáp án đúng: {RESET}{a}\n\n{BRIGHT_RED}{'X'*48}\n\tQUÁ GÀ !!!!!!!!!!!!!!!!!!!!!!!!\n{'X'*48}\n")
+            print(f"\n{BRIGHT_RED}{'X'*48}\nGÀ! - {RED}Đáp án là: {RESET}{a}\n{RED}{'X'*48}\n")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Sai")
-        if d:
-            print(f"{YELLOW}💡 Mô tả: {RESET}\n{d}\n")
-        if r:
-            print(f"{CYAN}🔗 Tham chiếu:{RESET}\n{r}\n")
 
     def _export_results(self, results, score, total):
         wrong = total - score
@@ -431,8 +431,7 @@ class FlashCard:
         results = []
         score = 0
         for i, (qid, a, q, d, r, source) in enumerate(pool, 1):
-            print(f"{RESET}{'='*48}")
-            check_continue = input(f'\nNhập {BRIGHT_GREEN}bất kỳ để tiếp tục{RESET} hoặc {BRIGHT_RED}"exit()" để tổng kết ngay{RESET}: ').strip().lower()
+            check_continue = input(f'Nhập {BRIGHT_GREEN}bất kỳ để tiếp tục{RESET} hoặc {BRIGHT_RED}"exit()" để tổng kết ngay{RESET}: ').strip().lower()
             if check_continue in ["exit()", "quit()"]:
                 print(f"\n🔚 Tổng kết sau {i-1} câu...\n")
                 break
@@ -447,24 +446,23 @@ class FlashCard:
             print(f"{random.randint(50,75)}% - Đang chuẩn bị data: {BRIGHT_CYAN}{qid}{RESET}\n{random.randint(76,99)}% - Random Option: {BRIGHT_CYAN}{qid}{RESET}")
             time.sleep(0.03)
             print(f"100% - Thành công")
-            print(f"\n{'='*48}")
-            print(f"\n{RESET}{i}❓ {q_disp}\n")
+            print(f"{BRIGHT_BLUE}{'='*48}{RESET}")
+            print(f"{RESET}{i}. {q_disp}\n")
             opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
             random.shuffle(opts)
             mapping = dict(zip(string.ascii_lowercase, opts))
-            print(f"{'='*48}\n")
             for k, v in list(mapping.items())[:len(opts)]:
                 print(f"{RESET}{BRIGHT_GREEN}{k}){RESET} {v}{RESET}\n")
-            print(f"{'='*48}")
             if _CONFIG.DEBUG:
                 if source:
                     print(f"\n{RESET}File nguồn: {BRIGHT_YELLOW}{source}{RESET}")
-                print(f"{RESET}ID Câu hỏi: {BRIGHT_YELLOW}{qid}\n{RESET}")         
+                print(f"{RESET}ID Câu hỏi: {BRIGHT_YELLOW}{qid}\n{RESET}")
+            print(f"{BRIGHT_BLUE}{'='*48}{RESET}")    
             chosen = self._ask_choice(mapping)
             # clearsrc
             self.clearsrc()
             print(f"{'='*48}")
-            print(f"{RESET}{i}. ❓ {q_disp}")
+            print(f"{RESET}{i}. {q_disp}")
             print(f"{YELLOW}Chọn:{RESET} {chosen}")
             ok = self._check_answer(chosen, q, a_disp, data)
             if ok:
@@ -504,6 +502,7 @@ class FlashCard:
         for f in self._files():
             data.extend(self._load(os.path.join(self.qdir, f)))
         difficult_choice = input(f"0 - Mặc định: {_CONFIG.MAX_GENERATE_ALL_QUESTIONS} flashcard, {_CONFIG.MAX_GENERATE_ALL_ANSWERS} options\n1 - Dễ (10 flashcard, 1 options, thích hợp cho việc học)\n2 - Trung bình (20 flashcard, 4 options / TF, khuyến nghị)\n3 - Khó (50 flashcard, 6 options / TF)\n4 - Hardcore (100 flashcard, 8 ~ 24 options)\n\nVui lòng chọn độ khó hoặc nhập exit() để thoát:")
+        self.clearsrc()
         if difficult_choice == str(0):
             self._quiz(data, n_opts=_CONFIG.MAX_GENERATE_ALL_ANSWERS, max_qs=_CONFIG.MAX_GENERATE_ALL_QUESTIONS)
         if difficult_choice == str(1):            
@@ -514,6 +513,7 @@ class FlashCard:
             self._quiz(data, n_opts=6, max_qs=50)
         if difficult_choice == str(4):
             self._quiz(data, n_opts=random.randint(8, 24), max_qs=100)
+        
             
     # ----------------- File management -----------------
     def _create_file(self, act):
