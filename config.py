@@ -13,16 +13,18 @@ KEYWORD = [
     # N
     # "mô hình",
     # Q
+    "là gì"
     # = Đâu
     "ở đâu", "kết nối đến đâu",
     # = Nào
-    "loại nào", "tầng nào", "thiết bị nào", "cổng nào", "lớp nào", "mô hình mạng nào", "thành phần nào",
-    "ở điểm nào", "thông tin nào",  "hướng nào", "phạm vi nào",
+    "loại nào", "tầng nào", "thiết bị nào", "cổng nào", "lớp nào", "mô hình mạng nào", "thành phần nào", "cáp nào",
+    "ở điểm nào", "thông tin nào",  "hướng nào", "phạm vi nào", "yếu tố nào", 
     # = Gì
-    "bao gồm gì", "vai trò gì", "gọi là gì", "làm gì", "chức năng chính là gì", "chức năng gì", "có thể làm gì", "tác dụng gì", "ngăn gì", "điều gì", "trách nhiệm gì", "kết nối gì",
-    "giúp ích gì",
+    "bao gồm gì", "vai trò gì", "gọi là gì", "làm gì", "chức năng chính là gì", 
+    "chức năng gì", "tác dụng gì", "ngăn gì", "điều gì", "trách nhiệm gì", "kết nối gì",
+    "giúp ích gì", "nhiệm vụ gì",
     # = other
-    "điểm khác biệt", "lợi ích", "chia thành mấy", "tô-pô nào",
+    "điểm khác biệt", "lợi ích", "chia thành mấy", "tô-pô nào", "bao nhiêu",
 ]
 KEYWORD_BOOL = ["đúng hay sai", "dung"]
 
