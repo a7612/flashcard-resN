@@ -1,4 +1,9 @@
-id,type,keyword
-1,bool,nhận diện đúng sai
-2,group,tên đầy đủ
-3,group,dịch
+category,keyword,type
+bool,đúng,bool
+bool,sai,bool
+thiết bị, firewall, normal
+thiết bị, router, normal
+thiết bị, switch, normal
+thiết bị, hub, normal
+thiết bị, ap, normal
+

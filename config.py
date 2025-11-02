@@ -9,7 +9,21 @@ MAX_GENERATE_ALL_QUESTIONS = 15      # số câu hỏi khi chơi tất cả
 MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
-KEYWORD = []
+KEYWORD = [
+    # N
+    # "mô hình",
+    # Q
+    # = Đâu
+    "ở đâu", "kết nối đến đâu",
+    # = Nào
+    "loại nào", "tầng nào", "thiết bị nào", "cổng nào", "lớp nào", "mô hình mạng nào", "thành phần nào",
+    "ở điểm nào", "thông tin nào",  "hướng nào", "phạm vi nào",
+    # = Gì
+    "bao gồm gì", "vai trò gì", "gọi là gì", "làm gì", "chức năng chính là gì", "chức năng gì", "có thể làm gì", "tác dụng gì", "ngăn gì", "điều gì", "trách nhiệm gì", "kết nối gì",
+    "giúp ích gì",
+    # = other
+    "điểm khác biệt", "lợi ích", "chia thành mấy", "tô-pô nào",
+]
 KEYWORD_BOOL = ["đúng hay sai", "dung"]
 
 # ====== ANSI COLORS ======
