@@ -10,21 +10,14 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    # N
-    # "mô hình",
-    # Q
-    "là gì"
-    # = Đâu
-    "ở đâu", "kết nối đến đâu",
-    # = Nào
-    "loại nào", "tầng nào", "thiết bị nào", "cổng nào", "lớp nào", "mô hình mạng nào", "thành phần nào", "cáp nào",
-    "ở điểm nào", "thông tin nào",  "hướng nào", "phạm vi nào", "yếu tố nào", 
-    # = Gì
-    "bao gồm gì", "vai trò gì", "gọi là gì", "làm gì", "chức năng chính là gì", 
-    "chức năng gì", "tác dụng gì", "ngăn gì", "điều gì", "trách nhiệm gì", "kết nối gì",
-    "giúp ích gì", "nhiệm vụ gì",
-    # = other
-    "điểm khác biệt", "lợi ích", "chia thành mấy", "tô-pô nào", "bao nhiêu",
+    # đâu
+    "ở đâu", "đến đâu",
+    # gì
+    "bằng gì", "điều gì", "làm gì", "nhiệm vụ gì", "là gì", "tác dụng gì", "bao gồm gì", "trách nhiệm gì", "kết nối gì", "chức năng gì", "vai trò gì", "mục đích gì",
+    # nào
+    "nguyên nhân nào", "thiết bị nào", "tầng nào", "giao thức nào", "yếu tố nào", "cổng nào", "thiết bị nào", "thông tin nào", "như thế nào", "phạm vi nào", "bằng cách nào", "hướng nào", "lớp nào", "dấu hiệu nào", "công nghệ nền nào", "hiện tượng nào", "cáp nào", "điểm nào",
+    # other
+    "mặc định", "thiết bị", "tại sao", "mấy lớp", "mấy tầng", "bao nhiêu",
 ]
 KEYWORD_BOOL = ["đúng hay sai", "dung"]
 
