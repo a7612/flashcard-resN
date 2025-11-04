@@ -1,23 +1,6 @@
-(1) ; (2) 
-* Lưu ý: 
-+ TH1: nếu có từ viết tắt thì làm theo form sau: Từ viết tắt (Tiếng Anh đủ nghĩa của từ - Tiếng Việt). Vd: AP (Access Point - Điểm truy cập), AES (Advanced Encryption Standard - Tiêu chuẩn mã hoá tiên tiến), ... 
-+ TH2: nếu chỉ có mỗi từ tiếng anh thì làm theo form sau: Tiếng Anh (Tiếng Việt). vd: Router (Bộ định tuyến), Switch (Bộ chuyển mạch), ... 
+Anh cần em làm chuyên gia có tầm nhìn vô địch trong thực tế để cố vấn cho anh. Tạo ra 25 câu qiuz tiếng việt về chủ đề _ trong _ nha. 
 
-- Định nghĩa: _(1) là gì? 
-- Định nghĩa: _(1) trong _(2) là gì? 
-- _(1) làm gì trong _(2)? 
-- Chức năng chính của _(1) trong _(2) là gì? 
-- Chức năng chính được sử dụng trong thực tế của _(1) trong _(2) là gì?
-- Chức năng chính được áp dụng trong thực tế của _(1) trong _(2) là gì? 
-- Vai trò của _(1) trong _(2) là gì? 
-- Tại sao vai trò của _(1) quan trọng trong _(2)? 
-- Tại sao vai trò được sử dụng trong thực tế của _(1) quan trọng trong _(2)?
-- Tại sao vai trò được áp dụng trong thực tế của _(1) quan trọng trong _(2)? 
-- Tại sao _(1) lại lý tưởng cho _(2)? 
-- Tại sao _(1) lại lý tưởng cho việc sử dụng trong thực tế cho _(2)?
-- Tại sao _(1) lại lý tưởng cho việc áp dụng trong thực tế cho _(2)?
-- Mục đích của _(1) là gì? 
-- Mục đích của _(1) trong _(2) là gì? 
-- Mục đích chính được sử dụng trong thực tế của _(1) trong _(2) là gì?
-- Mục đích chính được áp dụng trong thực tế của _(1) trong _(2) là gì? 
-- Liệt kê tất cả các loại _(1) thường được sử dụng trong _(2)?
+* Lưu ý: 
+1) Có "cả câu hỏi song ngữ (vi - en), 4 options câu trả lời (3 sai, 1 đúng), có mô tả".
+2) Nếu có "từ viết tắt" thì luôn luôn làm theo form sau: Từ viết tắt (Tiếng Anh của từ - Tiếng Việt sát nghĩa của từ). Vd: AP (Access Point - Điểm truy cập), AES (Advanced Encryption Standard - Tiêu chuẩn mã hoá tiên tiến), ... Áp dụng cho tất cả câu hỏi, trả lời, mô tả. 
+3) Nếu có từ tiếng anh chỉ "keyword" thì luôn luôn làm theo form sau: Tiếng Anh (Tiếng Việt sát nghĩa của từ). vd: Router (Bộ định tuyến), Switch (Bộ chuyển mạch), ... Áp dụng cho tất cả câu hỏi, trả lời, mô tả.
