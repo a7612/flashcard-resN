@@ -369,14 +369,26 @@ class FlashCard:
         return [self._replace_colors(opt) for opt in dict.fromkeys(opts)]
 
     def _feedback(self, ok, chosen, q, a, d, r, qid):
-        if d:
-            print(f"\n{YELLOW}💡 Mô tả: {RESET}\n{d}")
-        if r:
-            print(f"\n{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
         if ok:
-            print(f"\n{BRIGHT_GREEN}{'O'*48}\nHAY! - {GREEN}Đáp án là: {RESET}{a}\n{GREEN}{'O'*48}\n")
-            log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
+            if chosen != a :
+                if d:
+                    print(f"\n{YELLOW}💡 Mô tả: {RESET}\n{d}")
+                if r:
+                    print(f"\n{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
+                print(f"\n{BRIGHT_GREEN}{'O'*48}\nHAY! - {GREEN}Đáp án là: {RESET}{chosen}\n{GREEN}{'O'*48}\n")
+                log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
+            else:
+                if d:
+                    print(f"\n{YELLOW}💡 Mô tả: {RESET}\n{d}")
+                if r:
+                    print(f"\n{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
+                print(f"\n{BRIGHT_GREEN}{'O'*48}\nHAY! - {GREEN}Đáp án là: {RESET}{a}\n{GREEN}{'O'*48}\n")
+                log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
         else:
+            if d:
+                print(f"\n{YELLOW}💡 Mô tả: {RESET}\n{d}")
+            if r:
+                print(f"\n{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
             print(f"\n{BRIGHT_RED}{'X'*48}\nGÀ! - {RED}Đáp án là: {RESET}{a}\n{RED}{'X'*48}\n")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Sai")
 

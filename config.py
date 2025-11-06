@@ -10,12 +10,16 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
+    # ai
+    "cho ai", "là ai", "ai là",
+    # chính
+    "mục tiêu chính",
     # đâu
     "ở đâu", "đến đâu",
     # gì
-    "bằng gì", "điều gì", "làm gì", "nhiệm vụ gì", "là gì", "tác dụng gì", "bao gồm gì", "trách nhiệm gì", "kết nối gì", "chức năng gì", "vai trò gì", "mục đích gì",
+    "bằng gì", "điều gì", "làm gì", "nhiệm vụ gì", "là gì", "tác dụng gì", "bao gồm gì", "trách nhiệm gì", "kết nối gì", "chức năng gì", "vai trò gì", "mục đích gì", "việc gì", "đặc điểm gì?", "gọi là gì",
     # nào
-    "nguyên nhân nào", "thiết bị nào", "tầng nào", "giao thức nào", "yếu tố nào", "cổng nào", "thiết bị nào", "thông tin nào", "như thế nào", "phạm vi nào", "bằng cách nào", "hướng nào", "lớp nào", "dấu hiệu nào", "công nghệ nền nào", "hiện tượng nào", "cáp nào", "điểm nào",
+    "nguyên nhân nào", "thiết bị nào", "tầng nào", "giao thức nào", "yếu tố nào", "cổng nào", "thiết bị nào", "thông tin nào", "như thế nào", "phạm vi nào", "bằng cách nào", "hướng nào", "lớp nào", "dấu hiệu nào", "công nghệ nền nào", "hiện tượng nào", "cáp nào", "điểm nào", "hoạt động nào", "tấn công nào", "giai đoạn nào", "công cụ nào", "kỹ thuật nào", "bảng nào", "vai trò nào", "thành phần nào", "quy tắc nào", "tư duy nào",
     # other
     "mặc định", "thiết bị", "tại sao", "mấy lớp", "mấy tầng", "bao nhiêu",
 ]
