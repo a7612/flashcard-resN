@@ -10,24 +10,9 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    # 
-    "là gì", "mục tiêu", "bao nhiêu",
-    
-    
-    # ai
-    "cho ai", "là ai", "ai là",
-    # chính
-    "mục tiêu chính",
-    # đâu
-    "ở đâu", "đến đâu",
-    # gì
-    "bằng gì", "điều gì", "làm gì", "nhiệm vụ gì", "là gì", "tác dụng gì", "bao gồm gì", "trách nhiệm gì", "kết nối gì", "chức năng gì", "vai trò gì", "mục đích gì", "việc gì", "đặc điểm gì?", "gọi là gì", "tội gì", "thông tin gì",
-    # nào
-    "nguyên nhân nào", "thiết bị nào", "tầng nào", "giao thức nào", "yếu tố nào", "cổng nào", "thiết bị nào", "thông tin nào", "như thế nào", "phạm vi nào", "bằng cách nào", "hướng nào", "lớp nào", "dấu hiệu nào", "công nghệ nền nào", "hiện tượng nào", "cáp nào", "điểm nào", "hoạt động nào", "tấn công nào", "giai đoạn nào", "công cụ nào", "kỹ thuật nào", "bảng nào", "vai trò nào", "thành phần nào", "quy tắc nào", "tư duy nào", "khi nào",
-    # other
-    "mặc định", "thiết bị", "tại sao", "mấy lớp", "mấy tầng", "bao nhiêu",
+    "toán tử tìm kiếm nâng cao nào", "giai đoạn nào", "tấn công nào", "công cụ nào", "kỹ thuật phòng thủ nào",
 ]
-KEYWORD_BOOL = ["đúng hay sai", "dung"]
+KEYWORD_BOOL = ["đúng hay sai"]
 
 # ====== ANSI COLORS ======
 RESET   = "\033[0m"   # reset về mặc định
