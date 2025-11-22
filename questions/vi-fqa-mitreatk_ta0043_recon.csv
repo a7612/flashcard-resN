@@ -1,7 +1,0 @@
-﻿id,answer,question,desc,ref
-803406f2-06fb-465e-9dd9-1d2cd7e54850,Reconnaissance (Trinh sát),"Trong Mitre Att&ck Enterprise, kỹ thuật Active Scanning (Quét chủ động) nào trong chiến thuật nào?",,
-a5b8c717-1210-4672-92e4-adde9ba37b09,T1595,"Trong Mitre Att&ck Enterprise, kỹ thuật Active Scanning (Quét chủ động) có ID là:",,
-e71474bd-409d-4b0a-b805-1994ba368679,T1595.001,"Trong Mitre Att&ck Enterprise, kỹ thuật phụ Scanning IP Block (Quét dãy khối IP) có ID là:",- Kỹ thuật phụ của Active Scanning,
-394b2974-079c-4cd7-901b-26ddbf3be654,T1595.002,"Trong Mitre Att&ck Enterprise, kỹ thuật phụ Vulnerability Scanning (Quét lỗ hỏng) có ID là:",- Kỹ thuật phụ của Active Scanning,
-2ae280c9-8269-4f11-9573-13925e5f6b8c,T1595.003,"Trong Mitre Att&ck Enterprise, kỹ thuật phụ Wordlist Scanning (Quét danh sách ký tự/từ) có ID là:",- Kỹ thuật phụ của Active Scanning,
-b2228d2e-927e-42d7-b1dc-ff7c18f79f1f,TA0043,"Trong Mitre Att&ck Enterprise, chiến thuật Reconnaissance (Trinh Sát) có ID là:",,
