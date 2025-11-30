@@ -10,7 +10,8 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    "là gì", "bao nhiêu", "liệt kê", "id là", "chiến thuật nào","như thế nào", "tại sao", "lỗ hỏng nào"
+    "là gì", "bao nhiêu", "liệt kê", "id là", "chiến thuật nào","như thế nào", "tại sao", "lỗ hổng nào", "giá trị nào",
+    "có phụ thuộc vào",
 ]
 KEYWORD_BOOL = ["đúng hay sai"]
 
