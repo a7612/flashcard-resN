@@ -108,10 +108,10 @@ class FlashCard:
                 print("⚠️ Không có file câu hỏi.")
             return []
         if show:
-            print(f"{BRIGHT_GREEN}\n📂 Danh sách file:{RESET}")
+            print(f"{BRIGHT_GREEN}\n📂 Danh sách file:{RESET}\n")
             for i, fname in enumerate(files, 1):
                 count = self._count_questions_cached(fname)
-                print(f" {i:>2}) {fname:<25} \t({BRIGHT_CYAN}{count} {BRIGHT_RED}câu hỏi{RESET})")
+                print(f"{i:>2}) {fname:<25} {BRIGHT_GREEN}---{RESET} ({BRIGHT_CYAN}{count} {BRIGHT_RED}câu hỏi{RESET})")
         return files
 
     def _count_questions_cached(self, fname):
