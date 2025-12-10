@@ -235,9 +235,9 @@ class FlashCard:
                 print(f"\n{BRIGHT_CYAN}{i:>2}){'-'*60}\n\n❓\tCâu hỏi: {RESET}{q_disp}")
                 print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
                 if d_disp:
-                    print(f"{YELLOW}💡\tMô tả: {RESET}\n\n{d_disp}{RESET}")
+                    print(f"{YELLOW}💡\tMô tả: {RESET}\n{d_disp}{RESET}")
                 if r_disp:
-                    print(f"{CYAN}🔗\tReference: {RESET}\n\n{r_disp}{RESET}")
+                    print(f"{CYAN}🔗\tReference: {RESET}\n{r_disp}{RESET}")
                 
         return data
 
