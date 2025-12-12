@@ -485,6 +485,7 @@ class FlashCard:
             })
             self._feedback(ok, chosen, q_disp, a_disp, d_disp, r_disp, qid)
             print(f"{BRIGHT_GREEN}Số câu đúng hiện tại: {score}")
+            print(f"{BRIGHT_RED}Số câu sai hiện tại: {max_qs - score}")
                 
         self._export_results(results, score, len(results))
 
