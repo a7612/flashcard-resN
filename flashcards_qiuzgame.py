@@ -356,6 +356,7 @@ class FlashCard:
         if any(kw in ql for kw in _CONFIG.KEYWORD_BOOL):
             return ["Đúng", "Sai"]
         # check special keywords map
+        
         for kw in _CONFIG.KEYWORD:
             if kw in ql:
                 # limit scanning to only necessary answers
@@ -484,8 +485,8 @@ class FlashCard:
                 "desc": d_disp, "ref": r_disp, "ok": ok
             })
             self._feedback(ok, chosen, q_disp, a_disp, d_disp, r_disp, qid)
-            print(f"{BRIGHT_GREEN}Số câu đúng hiện tại: {score}")
-            print(f"{BRIGHT_RED}Số câu sai hiện tại: {max_qs - score}")
+            print(f"{BRIGHT_MAGENTA}Số câu còn lại: {max_qs - score}")
+            print(f"{BRIGHT_GREEN}Số câu đúng hiện tại: {score}")            
                 
         self._export_results(results, score, len(results))
 
