@@ -1,0 +1,6 @@
+﻿id,answer,question,desc,ref
+f92caff2-e826-449c-9f71-555f8877cfbb,Hiển thị toàn bộ nội dung file a.txt,Lệnh {BRIGHT_GREEN}cat {BRIGHT_BLUE}a.txt{RESET} dùng để làm gì?,,
+abddeba7-9857-4537-9001-794302cff991,Hiển thị toàn bộ nội dung file a.txt kèm với số thứ tự,Lệnh {BRIGHT_GREEN}cat -n {BRIGHT_BLUE}a.txt{RESET} dùng để làm gì?,,
+b031b7f8-50b5-4c7e-8791-9f534533c6f3,"Hiển thị toàn bộ nội dung nối tiếp nhau của các file a.txt, b.txt",Lệnh {BRIGHT_GREEN}cat {BRIGHT_BLUE}a.txt b.txt{RESET} dùng để làm gì?,,
+1abbb768-a077-4dad-815c-8020a55cab4f,"Thêm nội dung mới vào cuối file a.txt, nếu không có file a.txt sẽ tự động tạo",Lệnh {BRIGHT_GREEN}cat >> {BRIGHT_BLUE}a.txt{RESET} dùng để làm gì?,,
+054b9094-69b1-4ed1-9be6-509f8f19708c,Tạo file mới tên a.txt và nhập nội dung,Lệnh {BRIGHT_GREEN}cat > {BRIGHT_BLUE}a.txt{RESET} dùng để làm gì?,,

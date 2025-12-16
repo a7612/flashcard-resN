@@ -1,5 +1,0 @@
-﻿id,answer,question,desc,ref
-6fe1b45a-ecdf-4db5-b897-24d13dbe7f1d,"Dùng để hiển thị các trang hướng dẫn cho hầu hết các lệnh, chương trình, hàm thư viện, ... trong hệ thống",Lệnh {BRIGHT_GREEN}man{RESET} dùng để làm gì?,,
-8c4cb08b-6acc-4bfe-b50a-ffda9678ae65,"Dùng để hiển thị nội dung tập tin, tập tin này chứa thông tin nhận dạng về bản phân phối Linux đang chạy",Lệnh {BRIGHT_GREEN}cat /etc/issue{RESET} dùng để làm gì?,,
-06d7112a-46f9-4c30-8200-96f74cf9669b,Dùng để hiển thị trợ giúp và cú pháp cho các lệnh nội bộ của shell đang sử dụng,Lệnh {BRIGHT_GREEN}help{RESET} dùng để làm gì?,* Lệnh nội bộ: Built-in commands\n* Shell - thông thường là Bash,
-831c38f6-bbb0-4fce-a0e8-81501cc34622,Dùng để hiển thị tên người dùng đang đăng nhập và sử dụng hệ thống đó,Lệnh {BRIGHT_GREEN}whoami{RESET} dùng để làm gì?,,
