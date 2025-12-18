@@ -90,9 +90,10 @@ class FlashCard:
         if not text:
             return text
         # Replace escaped sequences first
-        text = text.replace("\\n", "\n").replace("\\t", "\t").replace("{BACKSLASH}", "\\")
+        text = text.replace("\\n", "\n").replace("\\t", "\t")
         # replace ".\n" -> "\n" (as original)
-        text = text.replace(".\n", "\n")
+        text = text.replace(".\n", "\n")        
+        text = text.replace("{BACKSLASH}", "\\")
         # swap tokens
         
         return self._color_token_re.sub(lambda m: self.color_map.get(m.group(0), m.group(0)), text)
@@ -448,10 +449,10 @@ class FlashCard:
             if check_continue in ["exit()", "quit()"]:
                 print(f"\n🔚 Tổng kết sau {i-1} câu...\n")
                 break
-            q_disp = self._replace_colors(q)
-            a_disp = self._replace_colors(a)
-            d_disp = self._replace_colors(d)
-            r_disp = self._replace_colors(r)
+            # q_disp = self._replace_colors(q)
+            # a_disp = self._replace_colors(a)
+            # d_disp = self._replace_colors(d)
+            # r_disp = self._replace_colors(r)
             print(f"\nĐang chuẩn bị câu hỏi tiếp theo")
             time.sleep(0.01)
             print(f"{random.randint(0,25)}% - random dataset: {BRIGHT_YELLOW}{source}{RESET}\n{random.randint(26,50)}% - Chọn id: {BRIGHT_CYAN}{qid}{RESET}")
@@ -460,8 +461,14 @@ class FlashCard:
             time.sleep(0.03)
             print(f"100% - Thành công")
             print(f"{BRIGHT_BLUE}{'='*48}{RESET}")
+            # print(f"{RESET}{i}. {q_disp}\n")
+            # opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
+            q_disp = self._replace_colors(q)
             print(f"{RESET}{i}. {q_disp}\n")
-            opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
+            opts = self._get_options(q_disp, a, data, all_ans, n_opts)            
+            a_disp = self._replace_colors(a)
+            d_disp = self._replace_colors(d)
+            r_disp = self._replace_colors(r)
             random.shuffle(opts)
             mapping = dict(zip(string.ascii_lowercase, opts))
             for k, v in list(mapping.items())[:len(opts)]:
