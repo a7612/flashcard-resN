@@ -1,1 +1,2 @@
 ﻿id,answer,question,desc,ref
+15f82b9a-42d0-4738-bc98-0e3e26e6eb94,Cross-Site Scripting (XSS),Chèn các script vào các trang web để đánh cắp dữ liệu. Đây là kỹ thuật tấn công nào?,,

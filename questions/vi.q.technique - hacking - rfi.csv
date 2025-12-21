@@ -1,0 +1,2 @@
+﻿id,answer,question,desc,ref
+27144c72-e609-4bc1-836b-3c8e63937dba,Remote File Inclusion (RFI),Tải các tệp độc hại bên ngoài vào một ứng dụng web. Đây là kỹ thuật tấn công nào?,,

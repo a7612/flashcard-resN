@@ -464,7 +464,7 @@ class FlashCard:
             # print(f"{RESET}{i}. {q_disp}\n")
             # opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
             q_disp = self._replace_colors(q)
-            print(f"{RESET}{i}. {q_disp}\n")
+            print(f"{RESET}Câu hỏi số {i}:\n\n{q_disp}\n")
             opts = self._get_options(q_disp, a, data, all_ans, n_opts)            
             a_disp = self._replace_colors(a)
             d_disp = self._replace_colors(d)
@@ -472,7 +472,7 @@ class FlashCard:
             random.shuffle(opts)
             mapping = dict(zip(string.ascii_lowercase, opts))
             for k, v in list(mapping.items())[:len(opts)]:
-                print(f"{RESET}{BRIGHT_GREEN}{k}){RESET} {v}{RESET}\n")
+                print(f"{RESET}{BRIGHT_CYAN}{k}){RESET} {v}{RESET}\n")
             if _CONFIG.DEBUG:
                 if source:
                     print(f"\n{RESET}File nguồn: {BRIGHT_YELLOW}{source}{RESET}")
