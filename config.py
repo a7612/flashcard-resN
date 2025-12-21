@@ -10,7 +10,8 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    'api nào', 'biện pháp đối phó nào', 'cái nào', 'công cụ nào', 'cổng nào', 'danh mục nào', 'giai đoạn nào', 'giao thức nào', 'hacker nào', 'hành vi nào', 'khu vực nào', 'kỹ thuật nào', 'làm gì', 'lệnh nào', 'lổ hổng nào', 'lỗ hổng nào', 'mã nào', 'như thế nào', 'phòng thủ nào', 'phương pháp nào', 'phạm vi nào', 'phần cứng nào', 'phần mềm độc hại nào', 'quy định nào', 'thuật toán mã hóa nào', 'thành phần nào', 'toán tử tìm kiếm nâng cao nào', 'tên gọi chung', 'tùy chọn nào', 'tấn công nào', 'tệp nào', 'từ viết tắt', 'đánh giá lỗ hổng nào', 'được gọi là gì'
+    "làm gì",
+    "lệnh nào", "công nghệ nào",
 ]
 
 
