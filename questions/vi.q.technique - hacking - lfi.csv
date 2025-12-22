@@ -1,2 +1,0 @@
-﻿id,answer,question,desc,ref
-95c12521-7ebe-4bcf-a473-6ee240905878,Local File Inclusion (LFI),Đọc các tệp máy chủ cục bộ thông qua mã dễ bị tổn thương. Đây là kỹ thuật tấn công nào?,,

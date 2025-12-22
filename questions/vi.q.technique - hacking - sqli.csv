@@ -1,3 +1,0 @@
-﻿id,answer,question,desc,ref
-1c27e3b3-afb4-4cc7-a925-73108f9d3868,SQL Injection (SQLi),Chèn các truy vấn SQL độc hại vào các trường nhập liệu. Đây là kỹ thuật tấn công nào?,,
-4a0e26fa-d7bd-4f2a-9eaf-e968589551e6,SQL Injection (SQLi),"Lỗ hổng xảy ra khi kẻ tấn công can thiệp vào các câu lệnh truy vấn SQL mà một ứng dụng thực hiện đối với cơ sở dữ liệu, đây là kỹ thuật tấn công nào?",,
