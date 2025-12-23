@@ -12,6 +12,8 @@ MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 KEYWORD = [
     "làm gì",
     "lệnh nào", "công nghệ nào", "tệp nào", "nguyên nhân nào", "kỹ thuật tấn công nào",
+    # Tr
+    "word - what is", "translate to vietnamese",
 ]
 
 
