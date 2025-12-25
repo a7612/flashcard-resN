@@ -1,0 +1,8 @@
+﻿id,answer,question,desc,ref
+3738d22d-9498-4464-8996-60199e29d11f,{BRIGHT_RED}sudo {BRIGHT_GREEN}ufw allow 22/tcp{RESET},Một quản trị đang sử dụng Linux muốn tường lửa chỉ cho phép lưu lượng giao thức TCP của dịch vụ SSH đi qua. Lệnh nào sau đây giúp ích cho người quản trị viên?,,
+b212395b-abda-4710-8512-7e3e32b9299d,{BRIGHT_RED}sudo {BRIGHT_GREEN}ufw allow 22{RESET},Một quản trị đang sử dụng Linux muốn tường lửa cho phép lưu lượng của dịch vụ SSH đi qua. Lệnh nào sau đây giúp ích cho người quản trị viên?,,
+edd2c104-1009-4d4a-bdf4-3b81000b5988,{BRIGHT_RED}sudo {BRIGHT_GREEN}ufw allow ssh/tcp{RESET},Một quản trị đang sử dụng Linux muốn tường lửa chỉ cho phép lưu lượng giao thức TCP của dịch vụ SSH đi qua. Lệnh nào sau đây giúp ích cho người quản trị viên?,,
+f0d539bd-9b2d-4cb4-8e52-6cdfde1bc113,{BRIGHT_RED}sudo {BRIGHT_GREEN}ufw allow ssh{RESET},Một quản trị đang sử dụng Linux muốn tường lửa cho phép lưu lượng của dịch vụ SSH đi qua. Lệnh nào sau đây giúp ích cho người quản trị viên?,,
+db6c39ec-f78c-4fcf-b9c2-55d0a8d9e025,{BRIGHT_RED}sudo {BRIGHT_GREEN}ufw enable{RESET},Một quản trị đang sử dụng Linux muốn kích hoạt tường lửa. Lệnh nào sau đây giúp ích cho người quản trị viên?,,
+5c601e6d-ac24-4da4-af18-71a2e151d245,{BRIGHT_RED}sudo {BRIGHT_GREEN}ufw reload{RESET},Một quản trị đang sử dụng Linux muốn tải lại cái quy tắc của tường lửa. Lệnh nào sau đây giúp ích cho người quản trị viên?,,
+12ab0bd1-2009-4d4e-ba42-de3ddc936545,{BRIGHT_RED}sudo {BRIGHT_GREEN}ufw status{RESET},Một quản trị đang sử dụng Linux muốn kiểm tra xem tường lửa có đang hoạt động hay không và hiện tại nó đang chặn hay cho phép lưu lượng. Lệnh nào sau đây giúp ích cho người quản trị viên?,,

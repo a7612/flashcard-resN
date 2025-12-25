@@ -1,0 +1,2 @@
+﻿id,answer,question,desc,ref
+f903db90-099c-43d2-972a-3625a13c711b,{BRIGHT_GREEN}ss -ntlp{RESET} | {BRIGHT_GREEN}grep -i ssh{RESET},Một quản trị đang sử dụng Linux muốn kiểm tra xem dịch vụ SSH có đang hoạt động hay không và nó đang chạy trên cổng (port) nào. Lệnh nào sau đây giúp ích cho người quản trị viên?,,
