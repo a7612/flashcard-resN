@@ -1,3 +1,0 @@
-﻿id,answer,question,desc,ref
-eb785fd9-2431-402e-99fe-876423015c72,"{BRIGHT_GREEN}grep {BRIGHT_BLUE}""GET"" access.log{RESET}",Một quản trị đang sử dụng Linux muốn lọc ra tất cả các dòng chứa phương thức {BRIGHT_BLUE}HTTP GET{RESET} từ file {BRIGHT_BLUE}access.log{RESET}. Lệnh nào sau đây giúp ích cho người quản trị viên?,,
-22b45114-c5ce-49d7-aac6-2d568e9c9ded,{BRIGHT_GREEN}grep {BRIGHT_BLUE}GET access.log{RESET},Một quản trị đang sử dụng Linux muốn lọc ra tất cả các dòng chứa phương thức {BRIGHT_BLUE}HTTP GET{RESET} từ file {BRIGHT_BLUE}access.log{RESET}. Lệnh nào sau đây giúp ích cho người quản trị viên?,,

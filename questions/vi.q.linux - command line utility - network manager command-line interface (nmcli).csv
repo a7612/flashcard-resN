@@ -1,4 +1,0 @@
-﻿id,answer,question,desc,ref
-74fa8c28-ae4d-4dba-a2d0-f3e6cbf3e67b,"{BRIGHT_GREEN}nmcli connection show {BRIGHT_BLUE}""Ethernet""{RESET} | {BRIGHT_GREEN}grep {BRIGHT_BLUE}""ipv4.method""{RESET}",Một quản trị đang sử dụng Linux muốn kiểm tra xem kết nối mạng có tên là {BRIGHT_BLUE}Ethernet{RESET} đang dùng địa chỉ IP động (DHCP) hay IP tĩnh (Static). Lệnh nào sau đây giúp ích cho người quản trị viên?,,
-3c504f48-aab6-42d5-99a0-9fc98db8f6c7,"{BRIGHT_GREEN}nmcli connection modify {BRIGHT_BLUE}""Ethernet"" {BRIGHT_GREEN}ipv4.method auto{RESET}",Một quản trị đang sử dụng Linux muốn thiết lập kết nối mạng có tên là {BRIGHT_BLUE}Ethernet{RESET} dùng địa chỉ IP động (DHCP). Lệnh nào sau đây giúp ích cho người quản trị viên?,,
-32d7612a-7a0a-47c3-a6ca-7cfbb5e2eeab,{BRIGHT_GREEN}nmcli connection show{RESET},Một quản trị đang sử dụng Linux muốn quản lý các kết nối mạng bằng cách liệt kê và xem chi tiết. Lệnh nào sau đây giúp ích cho người quản trị viên?,,
