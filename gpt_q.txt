@@ -1,6 +1,0 @@
-Anh cần em làm chuyên gia có tầm nhìn vô địch trong thực tế để cố vấn cho anh. Tạo ra 25 câu qiuz tiếng việt về chủ đề "_" trong "_" nha.  
-
-* Lưu ý: 
-1) Có "cả câu hỏi song ngữ (vi - en), 4 options câu trả lời (3 sai, 1 đúng), có mô tả".
-2) Nếu có "từ viết tắt" thì luôn luôn làm theo form sau: Từ viết tắt (Tiếng Anh của từ - Tiếng Việt sát nghĩa của từ). "Vd: AP (Access Point - Điểm truy cập), AES (Advanced Encryption Standard - Tiêu chuẩn mã hoá tiên tiến), ..." "Áp dụng cho tất cả câu hỏi, trả lời, mô tả".
-3) Nếu có từ tiếng anh chỉ "keyword" thì luôn luôn làm theo form sau: Tiếng Anh (Tiếng Việt sát nghĩa của từ). "vd: Router (Bộ định tuyến), Switch (Bộ chuyển mạch), ..." "Áp dụng cho tất cả câu hỏi, trả lời, mô tả".
