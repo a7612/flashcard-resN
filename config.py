@@ -10,7 +10,7 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    "thuật ngữ nào", "vị trí nào", "thuộc tính nào",
+    "thuật ngữ nào", "vị trí nào", "thuộc tính nào", "quy trình nào", "mục đích nào", "công cụ nào",
     "translate to english",
 ]
 
