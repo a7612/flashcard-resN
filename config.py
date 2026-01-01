@@ -11,7 +11,7 @@ MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
     "bao nhiêu",
-    "thuật ngữ nào", "vị trí nào", "thuộc tính nào", "quy trình nào", "mục đích nào", "công cụ nào", "đơn vị hành chính nào",
+    "thuật ngữ nào", "vị trí nào", "thuộc tính nào", "quy trình nào", "mục đích nào", "công cụ nào", "đơn vị hành chính nào", "lĩnh vực nào", "những lĩnh vực chính nào",
     "fill in the blank",
 ]
 
