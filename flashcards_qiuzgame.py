@@ -464,7 +464,7 @@ class FlashCard:
             # print(f"{RESET}{i}. {q_disp}\n")
             # opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
             q_disp = self._replace_colors(q)
-            print(f"{RESET}Câu hỏi số {i}: {qid}\n\n{q_disp}\n")
+            print(f"{RESET}Câu hỏi số {i}: {qid} - {BRIGHT_GREEN}{source}{RESET}\n\n{q_disp}\n")
             opts = self._get_options(q_disp, a, data, all_ans, n_opts)            
             a_disp = self._replace_colors(a)
             d_disp = self._replace_colors(d)
