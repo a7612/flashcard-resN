@@ -17,7 +17,7 @@ b73c0a5d-29ba-41f8-b688-0ab5c7ef3205,Dynamic analysis (Phân tích động),"Try
 074d7521-46a8-41fb-a587-14c1e1f08f4f,"File System, RAM, System logs, Network logs",Tryhackme - Defensive Security Intro: Liệt kê các đối tượng sự cố an ninh mà các DF (Digital Forensics) quan tâm?,* File System (Hệ thống tệp)\n* System Memory (RAM - Bộ nhớ hệ thống)\n* System logs (Nhật ký hệ thống)\n* Network logs (Nhật ký mạng),
 01cb750a-7210-463f-9a0d-f396108f4988,Forensics (Khám nghiệm),Tryhackme - Defensive Security Intro: Lĩnh vực nào sau đây áp dụng khoa học để điều tra tội phạm và xác lập các tình tiết thực tế?,,
 ea59638a-9f03-4a9e-a3ec-b427375a65de,Giảm thiểu thiệt hại và phục hồi trong thời gian ngắn nhất có thể,Tryhackme - Defensive Security Intro: Mục tiêu của phản ứng sự cố là gì?,,
-8adc933a-3515-4e11-9a06-0f27a58388ad,Hiểu rõ các thủ đoạn của hacker để từ đó tăng cường khả năng phòng thủ cho hệ thống của chúng ta.,Tryhackme - Offensive Security Intro: Mục tiêu của bảo mật tấn công là gì?,,
+8adc933a-3515-4e11-9a06-0f27a58388ad,Hiểu rõ các thủ đoạn của hacker để từ đó tăng cường khả năng phòng thủ cho hệ thống,Tryhackme - Offensive Security Intro: Mục tiêu của bảo mật tấn công là gì?,,
 894eb6ea-660d-4fcc-8147-660dcfa6f3be,Incident (Sự cố),Tryhackme - Defensive Security Intro: Đối tượng nào sau đây thường ám chỉ một vụ vi phạm dữ liệu hoặc tấn công mạng?,,
 778523c6-9b51-4198-8086-88614a681136,Incident (Sự cố),"Tryhackme - Defensive Security Intro: Đối tượng nào sau đây thường ám chỉ những thứ ít nghiêm trọng như cấu hình sai, nỗ lực xâm nhập hoặc vi phạm chính sách?",,
 752d12dd-a3a4-44a2-afb5-e13296eeffbd,Malicious Software (Phần mềm độc hại),Tryhackme - Defensive Security Intro: Malware là viết tắt của cụm từ gì?,,
