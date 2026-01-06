@@ -10,9 +10,9 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    "viết tắt",
-    "bao nhiêu", "liệt kê các", "liệt kê quy trình", "mục tiêu",
-    "lĩnh vực nào", "lĩnh vực chuyên sâu nào", "đội ngũ nào", "đối tượng nào", "giai đoạn nào", "thuật ngữ nào", "phương pháp nào",
+    "viết tắt", "mục tiêu chính", "vì sao",
+    "được gọi là",
+    "lĩnh vực nào", "lĩnh vực chuyên sâu nào", "đội ngũ nào", "đối tượng nào", "giai đoạn nào", "tư duy nào", "phương pháp nào", "quá trình nào", "kỹ thuật nào", "nguyên tắc nào", "điểm nào",
     "fill in the blank",
 ]
 
