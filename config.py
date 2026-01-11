@@ -14,7 +14,7 @@ KEYWORD = [
     "ngày, tháng nào",
     "viết tắt", "mục tiêu chính", "vì sao", "bao nhiêu",
     "được gọi là",
-    "lĩnh vực nào", "lĩnh vực chuyên sâu nào", "đội ngũ nào", "đối tượng nào", "giai đoạn nào", "tư duy nào", "phương pháp nào", "quá trình nào", "kỹ thuật nào", "nguyên tắc nào", "điểm nào", "cái nào",
+    "lĩnh vực nào", "lĩnh vực chuyên sâu nào", "đội ngũ nào", "đối tượng nào", "giai đoạn nào", "tư duy nào", "phương pháp nào", "quá trình nào", "kỹ thuật nào", "nguyên tắc nào", "điểm nào", "cái nào", "thuật ngữ nào",
     "fill in the blank",
 ]
 
