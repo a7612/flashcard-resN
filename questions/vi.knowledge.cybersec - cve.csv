@@ -1,0 +1,2 @@
+﻿id,answer,question,desc,ref
+eaefedab-20d8-4470-8197-0af63dc7bcfb,CVE-2017-11882,"CVE: Mô tả sau đây chỉ ID CVE nào?\n\n- Microsoft Office 2007 Gói dịch vụ 3 (SP3), Microsoft Office 2010 Gói dịch vụ 2 (SP2), Microsoft Office 2013 Gói dịch vụ 1 (SP1) và Microsoft Office 2016 cho phép kẻ tấn công thực thi mã tùy ý trong ngữ cảnh của người dùng hiện tại do lỗi xử lý không đúng các đối tượng trong bộ nhớ; lỗi này còn được gọi là 'Lỗ hổng làm hỏng bộ nhớ Microsoft Office' (Microsoft Office Memory Corruption Vulnerability).",,

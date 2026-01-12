@@ -12,7 +12,7 @@ MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 KEYWORD = [
     "ai là tác giả của câu nói này?",
     "thường được biết đến với tên gọi là gì",
-    "ngày, tháng nào", "kỹ thuật nào",
+    "ngày, tháng nào", "kỹ thuật nào", "thuật ngữ nào", "quy trình nào",
 ]
 
 
