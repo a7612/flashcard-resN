@@ -1,6 +1,0 @@
-﻿id,answer,question,desc,ref
-1374241d-6c8f-4af4-a153-c48379b9c74d,Client (Máy khách),Định nghĩa: Cái nào là một thiết bị dùng để yêu cầu dữ liệu trên các mạng lưới?,* Network: Mạng lưới\n* Request Data: Yêu cầu dữ liệu,
-3ec51a25-3616-4d4e-a131-ea045315b342,Internet,Định nghĩa: Cái nào là một mạng lưới máy tính toàn cầu giúp giao tiếp và trao đổi dữ liệu với nhau?,* Communicatice data: Giao tiếp dữ liệu\n* Exchange data: Trao đổi dữ liệu,
-9dc1b1c1-b6c4-41a5-86e4-3b07adfbf91d,Powershell,Định nghĩa: Cái nào là một lớp vỏ dòng lệnh và ngôn ngữ lập trình mạnh mẽ được phát triển bởi Microsoft?,* Command-line shell: Lớp vỏ dòng lệnh\n* Scripting language: ngôn ngữ kịch bản/lập trình,
-33334c8e-9823-424e-9515-bf7c752d8d7c,Powershell,"Định nghĩa: Cái nào được sử dụng để tự động hóa, quản lý cấu hình và quản trị Windows, Azure, Microsoft 365, các máy chủ và nhiều hệ thống CNTT khác?",* Automation: Tự động hóa\n* Configuration management: Quản lý cấu hình\n* Administrator: Quản trị,
-848cc141-58f0-4cd6-9120-ccfb21f420b3,Server (Máy chủ),Định nghĩa: Cái nào là một thiết bị lưu trữ dữ liệu và gửi dữ liệu khi có yêu cầu trên mạng lưới?,* Network: Mạng lưới\n* Storage data: Lưu trữ dữ liệu\n* Sent/Reponse Data: Gửi/Phản hồi dữ liệu,
