@@ -10,7 +10,7 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    "ai là tác giả của câu nói này?",
+    "ai là tác giả của câu nói này?", "đâu là nhân vật",
     "thường được biết đến với tên gọi là gì",
     "ngày, tháng nào", "kỹ thuật nào", "thuật ngữ nào", "quy trình nào",
 ]
