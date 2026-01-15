@@ -20,7 +20,7 @@ KEYWORD = [
 # print(KEYWORD)
 
 
-KEYWORD_BOOL = ["đúng/sai"]
+KEYWORD_BOOL = ["đúng hay sai"]
 
 # ====== ANSI COLORS ======
 RESET   = "\033[0m"   # reset về mặc định
