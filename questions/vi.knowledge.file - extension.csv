@@ -1,0 +1,3 @@
+﻿id,answer,question,desc,ref
+d7fb6599-e9a6-4838-a486-89d91b2c0cb5,Executable,File - Extensions: Đuôi file {BRIGHT_BLUE}.exe{RESET} tên đầy đủ là gì?,*  Executable: Thực thi file,
+98270559-4acc-433a-a95c-2bb175c38988,Link,File - Extensions: Đuôi file {BRIGHT_BLUE}.lnk{RESET} tên đầy đủ là gì?,* Link: Kết nối đường dẫn đến file\n- Thường được xem là shortcut trên Desktop,
