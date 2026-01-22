@@ -1,0 +1,2 @@
+﻿id,answer,question,desc,ref
+7cef8b67-6398-4571-b3c5-aa163b6855b4,{BRIGHT_GREEN}ping{RESET},Lệnh nào sau đây được sử dụng để kiểm tra khả năng kết nối giữa hai máy tính thông qua địa chỉ IP?,- Lệnh {BRIGHT_GREEN}ping{RESET} gửi các gói tin ICMP Echo Request để kiểm tra xem một máy chủ có phản hồi hay không.,
