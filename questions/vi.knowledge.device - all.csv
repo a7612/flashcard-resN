@@ -1,2 +1,3 @@
 ﻿id,answer,question,desc,ref
 8673db02-911b-4fdb-9442-65ad29bee533,Firewall,Device: Thiết bị nào có khả năng ngăn chặn các truy cập trái phép vào mạng nội bộ bằng cách kiểm tra các gói tin dựa trên các quy tắc bảo mật?,* Firewall: Tường lửa\n- Tường lửa kiểm soát lưu lượng mạng vào/ra dựa trên các tập luật để bảo vệ hệ thống.,
+43ff99eb-9edc-44da-8b1b-e52afeddc352,"Nhận toàn bộ khung dữ liệu, kiểm tra lỗi (CRC) rồi mới chuyển tiếp",Device: Kỹ thuật {BRIGHT_CYAN}Store-and-Forward{RESET} trên Switch hoạt động như thế nào?,Kỹ thuật này đảm bảo tính toàn vẹn của dữ liệu bằng cách loại bỏ các khung bị lỗi trước khi gửi đi.,
