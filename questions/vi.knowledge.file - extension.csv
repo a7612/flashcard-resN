@@ -1,8 +1,0 @@
-﻿id,answer,question,desc,ref
-d7fb6599-e9a6-4838-a486-89d91b2c0cb5,Executable,File - Extensions: Đuôi file {BRIGHT_BLUE}.exe{RESET} tên đầy đủ là gì?,*  Executable: Phần mở rộng của tập tin thực thi,
-6facade0-52da-4ef3-a301-109077fefe9d,Joint Photographic Experts Group,File - Extensions: Đuôi file {BRIGHT_BLUE}.jpeg{RESET} tên đầy đủ là gì?,* Joint Photographic Experts Group: Phần mở rộng của tập tin của nhóm chuyên gia nhiếp ảnh liên hợp,
-fe401697-5c92-42c2-9147-71e3e8ac12fa,Joint Photographic Experts Group,File - Extensions: Đuôi file {BRIGHT_BLUE}.jpg{RESET} tên đầy đủ là gì?,* Joint Photographic Experts Group: Phần mở rộng của tập tin của nhóm chuyên gia nhiếp ảnh liên hợp,
-98270559-4acc-433a-a95c-2bb175c38988,Link,File - Extensions: Đuôi file {BRIGHT_BLUE}.lnk{RESET} tên đầy đủ là gì?,* Link: Phần mở rộng của tập tin của đường dẫn kết nối\n- Thường được xem là shortcut trên Desktop,
-bfab97bf-0bb7-41ef-83a3-af0426fd36dd,Microsoft Installer,File - Extensions: Đuôi file {BRIGHT_BLUE}.msi{RESET} tên đầy đủ là gì?,* Microsoft Installer: Phần mở rộng của tập tin cài đặt phần mềm chuẩn Microsoft\n- Dùng để cài đặt phần mềm,
-176c25cf-dd05-44c7-be29-cd1456546ed0,Portable Network Graphics,File - Extensions: Đuôi file {BRIGHT_BLUE}.png{RESET} tên đầy đủ là gì?,"* Portable Network Graphics: Đồ họa mạng di động\n- File ảnh, nén không mất dữ liệu",
-40db7b5e-fc3b-4681-8430-4d1651071f1e,Zip Compressed Format,File - Extensions: Đuôi file {BRIGHT_BLUE}.zip{RESET} tên đầy đủ là gì?,* Zip Compressed Format: Phần mở rộng của tập tin định dạng nén dữ liệu zip\n- Thường dùng nén file nhanh và độ tin cậy cao,

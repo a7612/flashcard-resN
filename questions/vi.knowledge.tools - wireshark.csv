@@ -1,2 +1,0 @@
-﻿id,answer,question,desc,ref
-d86e7b8a-c1a5-4eb6-9122-55f2a4f9dc5c,Mã định danh của card mạng,Tools - Wireshark: Thuật ngữ {BRIGHT_BLUE}Interface id: ...{RESET} trong mục {BRIGHT_RED}Frame{RESET} chỉ điều gì?,* Network Interface Card (NIC): Card mạng\n- Mục Frame đại diện cho tầng vật lý trong mô hình OSI,
