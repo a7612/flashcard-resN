@@ -22,8 +22,8 @@ KEYWORD = [
     "ai là tác giả của câu nói này?", "đâu là nhân vật",
     # Thời gian, số
     "chính xác là bao nhiêu", "có bao nhiêu", "khoảng bao nhiêu", "được phát triển", "giai đoạn nào", "ngày, tháng nào",
-    # Lệnh
-    "lệnh nào", "viết câu lệnh đó như thế nào",
+    # Lệnh và thư mục
+    "lệnh nào", "viết câu lệnh đó như thế nào", "tùy chọn nào", "thư mục nào",
     # Giao thức
     "giao thức nào", "giao thức đưa gói tin nào",
     # Thiết bị
