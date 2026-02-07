@@ -1,8 +1,0 @@
-﻿id,answer,question,desc,ref
-551f5c07-e2ae-4118-a71f-167c2d3f432d,{BRIGHT_GREEN}cd {BRIGHT_BLUE}/{RESET},Linux - Command: Lệnh nào di chuyển vào thư mục gốc?,,
-75d1fd5b-fc01-4d3d-bc81-5518f1caa801,{BRIGHT_GREEN}cd {BRIGHT_BLUE}~alice{RESET},Linux - Command: Lệnh nào di chuyển vào thư mục người dùng tên {BRIGHT_BLUE}alice{RESET}?,,
-933f76c5-a168-465a-9e8b-c24d85058c83,{BRIGHT_GREEN}cd {BRIGHT_BLUE}~bob{RESET},Linux - Command: Lệnh nào di chuyển vào thư mục người dùng tên {BRIGHT_BLUE}bob{RESET}?,,
-520d0f55-ecd2-4071-b3a5-f23be23d7997,{BRIGHT_GREEN}cd {BRIGHT_BLUE}~kali{RESET},Linux - Command: Lệnh nào di chuyển vào thư mục người dùng tên {BRIGHT_BLUE}kali{RESET}?,,
-849a1d9d-6101-4f4e-9ba1-ef41132faadc,{BRIGHT_GREEN}cd {BRIGHT_BLUE}~{RESET},Linux - Command: Lệnh nào di chuyển vào thư mục người dùng hiện tại của session?,,
-fab1335b-63ae-46e8-9a31-e89b74520a03,{BRIGHT_GREEN}pwd -L{RESET},Linux - Command: Lệnh nào hiển thị {BRIGHT_CYAN}đường dẫn logic hoặc liên kết mềm{RESET} của thư mục hiện tại?,,
-8adbc008-7098-4c6f-884f-7dbeb8fb1f1d,{BRIGHT_GREEN}pwd -P{RESET},Linux - Command: Lệnh nào hiển thị {BRIGHT_CYAN}đường dẫn vật lý{RESET} của thư mục hiện tại?,* Symbolic Link (Symlink): Liên kết mềm,
