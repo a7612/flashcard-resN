@@ -19,7 +19,7 @@ KEYWORD = [
     # sao
     "vì sao", "tại sao",        
     # Ai
-    "ai là tác giả của câu nói này?", "đâu là nhân vật",
+    "đâu là tác giả của câu nói này?", "đâu là nhân vật",
     # Thời gian, số
     "chính xác là bao nhiêu", "có bao nhiêu", "khoảng bao nhiêu", "được phát triển", "giai đoạn nào", "ngày, tháng nào",
     # Lệnh và thư mục
