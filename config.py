@@ -31,6 +31,9 @@ KEYWORD = [
     
     "kỹ thuật nào", "thuật ngữ nào", "quy trình nào", "tầng nào", "phân loại nào", "dạng nào", "mục tiêu nào", "lớp nào", "cờ nào", "cáp nào",   
     "translate to english",
+
+    # =============
+    "đâu là đơn vị hành chính cấp xã",
 ]
 
 
