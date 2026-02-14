@@ -160,6 +160,7 @@ class FlashCard:
         """Save sorted data and invalidate caches (LRU cache + counts)."""
         # data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
         data_sorted = sorted(data, key=lambda x: (x[2].lower().strip(), x[1].lower().strip()))
+        # data_sorted = sorted(data, key=lambda x: (x[3].lower().strip(), x[1].lower().strip()))
         with open(path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["id", "answer", "question", "desc", "ref"])
