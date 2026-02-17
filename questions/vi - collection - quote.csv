@@ -1,4 +1,4 @@
-﻿id,answer,question,desc,ref
+﻿id,answer,question,hint,desc
 b870960b-78dc-406a-9bf8-160a1a1e7130,{BRIGHT_RED}Khuyết danh{RESET},"Đâu là tác giả của câu nói này?\n\n\t""Bài tập thể dục tốt cho trái tim là cúi xuống và đỡ người khác dậy.""",,
 5fd4433f-c4ed-4bea-8ad4-ef8fe10d6c6b,Aristotle Onassis,"Đâu là tác giả của câu nói này?\n\n\t""Bí quyết thành công là biết điều mà không ai khác biết.""",,
 793ab4ea-0108-4de2-b099-c1ce5e0c247f,{BRIGHT_RED}Khuyết danh{RESET},"Đâu là tác giả của câu nói này?\n\n\t""Bạn biết rằng bạn đã đọc một cuốn sách hay khi bạn giở đến trang cuối cùng và cảm thấy như mình vừa chia tay một người bạn.""",,

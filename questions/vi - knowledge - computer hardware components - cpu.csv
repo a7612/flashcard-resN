@@ -1,9 +1,0 @@
-﻿id,answer,question,desc,ref
-72edd865-8a1e-42d6-9a86-20057ccfbbc7,Central Processing Unit,Nội dung sau đây là tác dụng cốt lõi của cái nào?\n\n\t+ Xử lý dữ liệu\n\t+ Điều khiển hệ thống\n\t+ Duy trì tính nhất quán,"* Central Processing Unit (CPU): Bộ xử lý trung tâm\n\n- Xử lý dữ liệu: Biến dữ liệu thô thành thông tin có ích. \n- Điều khiển hệ thống: Quản lý việc trao đổi dữ liệu giữa RAM, ổ cứng và các thiết bị ngoại vi. \n- Duy trì tính nhất quán: Đảm bảo các phần mềm chạy theo đúng thứ tự logic đã lập trình.",
-ed3fb1b0-6287-4212-96ba-9cf2eae3b852,Central Processing Unit,"Định nghĩa sau đây là cái gì?\n\n\t- Là ""bộ não"" của máy tính, nơi thực hiện mọi thao tác tính toán và điều khiển hệ thống.",* Central Processing Unit (CPU): Bộ xử lý trung tâm,
-b909ee13-0b91-417e-aa52-0db5cbb5b35c,Decode,Control Unit (CU) chuyển đổi lệnh đó thành các tín hiệu mà các bộ phận khác hiểu được thuộc quy trình nào trong CPU?,* Decode: Giải mã\n\n- Đây là quy trình cốt lõi thứ hai trong chu trình lệnh của CPU,
-bda211c6-4ea1-4b6e-8b7d-ce874f3d50f6,Execute,Arithmetic Logic Unit (ALU) thực hiện các phép tính hoặc thao tác dữ liệu thuộc quy trình nào trong CPU?,* Execute: Thực thi\n\n- Đây là quy trình cốt lõi thứ ba trong chu trình lệnh của CPU,
-c1028800-96a0-4b12-8e75-af944c334784,Fetch,Lấy lệnh từ bộ nhớ RAM thuộc quy trình nào trong CPU?,* Fetch: Lấy lệnh\n\n- Đây là quy trình cốt lõi đầu tiên trong chu trình lệnh của CPU,
-173489cd-ba2c-441d-9a3b-5610476c3bed,Store/Write-back,Ghi kết quả trả lại bộ nhớ hoặc thanh ghi thuộc quy trình nào trong CPU?,* Store/Write-back: Lưu trữ hoặc trả về\n\n- Đây là quy trình cốt lõi cuối cùng trong chu trình lệnh của CPU,
-1f0b03ea-df83-47b1-abef-8bf7bcbce725,"Tiếp nhận dữ liệu đầu vào, xử lý chúng theo các tập lệnh và đưa ra kết quả đầu ra.",Nhiệm vụ của CPU là gì?,,
-8e0457e2-4514-4107-8494-ccee5f5f10ad,Điều phối các thành phần khác của phần cứng và thực hiện các phép tính logic/số học.,Chức năng chính của CPU là gì?,,

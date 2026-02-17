@@ -1,4 +1,4 @@
-﻿id,answer,question,desc,ref
+﻿id,answer,question,hint,desc
 782f18aa-3d80-4995-b67f-8f1376e24fae,"Thay đổi các bit quyền hạn của tập tin {BRIGHT_BLUE}access.log{RESET}. Root, Group và User không có quyền.",Lệnh {BRIGHT_GREEN}chmod {BRIGHT_BLUE}000 access.log{RESET} có tác dụng gì?,,
 e7d81747-930e-4bc7-bbda-1bfc7e701d12,Thay đổi các bit quyền hạn của tập tin {BRIGHT_BLUE}access.log{RESET}. Root và Group không có quyền. User có quyền thực thi.,Lệnh {BRIGHT_GREEN}chmod {BRIGHT_BLUE}001 access.log{RESET} có tác dụng gì?,,
 2b1a17b8-8de9-4e60-abaa-26e769f962de,Thay đổi các bit quyền hạn của tập tin {BRIGHT_BLUE}access.log{RESET}. Root và Group không có quyền. User có quyền ghi.,Lệnh {BRIGHT_GREEN}chmod {BRIGHT_BLUE}002 access.log{RESET} có tác dụng gì?,,

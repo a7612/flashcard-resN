@@ -150,8 +150,8 @@ class FlashCard:
                     qid,
                     r.get("answer", "").strip(),
                     r.get("question", "").strip(),
+                    r.get("hint", "").strip(),
                     r.get("desc", "").strip(),
-                    r.get("ref", "").strip(),
                     src
                 ))
             return data
@@ -163,7 +163,7 @@ class FlashCard:
         # data_sorted = sorted(data, key=lambda x: (x[3].lower().strip(), x[1].lower().strip()))
         with open(path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(["id", "answer", "question", "desc", "ref"])
+            writer.writerow(["id", "answer", "question", "hint", "desc"])
             for row in data_sorted:
                 writer.writerow(row[:5])
 
@@ -237,9 +237,9 @@ class FlashCard:
                 print(f"\n{BRIGHT_CYAN}{i:>2}){'-'*60}\n\n❓\tCâu hỏi: {RESET}{q_disp}")
                 print(f"{GREEN}➤\tĐáp án: {RESET}{a_disp}")
                 if d_disp:
-                    print(f"{YELLOW}💡\tMô tả: {RESET}\n{d_disp}{RESET}")
+                    print(f"{YELLOW}💡\tGợi ý: {RESET}\n{d_disp}{RESET}")
                 if r_disp:
-                    print(f"{CYAN}🔗\tReference: {RESET}\n{r_disp}{RESET}")
+                    print(f"{CYAN}🔗\tMô Tả: {RESET}\n{r_disp}{RESET}")
                 
         return data
 
@@ -271,8 +271,8 @@ class FlashCard:
                 self.clearsrc()
                 print(f"{RED}⚠️ Câu hỏi đã tồn tại, bỏ qua!{RESET}")
                 continue
-            d = self._safe_input("💡 Mô tả (có thể bỏ trống): ")
-            r = self._safe_input("🔗 Reference (có thể bỏ trống): ")
+            d = self._safe_input("💡 Gợi ý (có thể bỏ trống): ")
+            r = self._safe_input("🔗 Mô Tả (có thể bỏ trống): ")
             data.append((str(uuid.uuid4()), a, q, d or "", r or ""))
             self._save(path, data)
             log_action("ADD_Q", f"{os.path.basename(path)} | Q: {q}")
@@ -304,8 +304,8 @@ class FlashCard:
             if mode == "sửa":
                 new_q = self._safe_input(f"❓ Câu hỏi mới (cũ: {entry[2]}): ")
                 new_a = self._safe_input(f"✅ Đáp án mới (cũ: {entry[1]}): ")
-                new_d = self._safe_input(f"💡 Mô tả mới (cũ: {entry[3]}): ")
-                new_r = self._safe_input(f"🔗 Reference mới (cũ: {entry[4]}): ")
+                new_d = self._safe_input(f"💡 Gợi ý mới (cũ: {entry[3]}): ")
+                new_r = self._safe_input(f"🔗 Mô Tả mới (cũ: {entry[4]}): ")
                 entry[2] = new_q or entry[2]
                 entry[1] = new_a or entry[1]
                 entry[3] = new_d or entry[3]
@@ -374,24 +374,18 @@ class FlashCard:
     def _feedback(self, ok, chosen, q, a, d, r, qid):
         if ok:
             if chosen != a :
-                if d:
-                    print(f"\n{YELLOW}💡 Mô tả: {RESET}\n{d}")
                 if r:
-                    print(f"\n{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
+                    print(f"\n{CYAN}🔗 Mô tả:{RESET}\n{r}")
                 print(f"\n{BRIGHT_GREEN}{'O'*48}\nHAY! - {GREEN}Đáp án là: {RESET}{chosen}\n{GREEN}{'O'*48}\n")
                 log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
             else:
-                if d:
-                    print(f"\n{YELLOW}💡 Mô tả: {RESET}\n{d}")
                 if r:
-                    print(f"\n{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
+                    print(f"\n{CYAN}🔗 Mô tả:{RESET}\n{r}")
                 print(f"\n{BRIGHT_GREEN}{'O'*48}\nHAY! - {GREEN}Đáp án là: {RESET}{a}\n{GREEN}{'O'*48}\n")
                 log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Đúng + 1 điểm")
         else:
-            if d:
-                print(f"\n{YELLOW}💡 Mô tả: {RESET}\n{d}")
             if r:
-                print(f"\n{CYAN}🔗 Tham chiếu:{RESET}\n{r}")
+                print(f"\n{CYAN}🔗 Mô tả:{RESET}\n{r}")
             print(f"\n{BRIGHT_RED}{'X'*48}\nGÀ! - {RED}Đáp án là: {RESET}{a}\n{RED}{'X'*48}\n")
             log_action(f"CHOSEN:{qid}", f"{chosen} - {q} Sai")
 
@@ -420,9 +414,9 @@ class FlashCard:
             w.writerow(["wrong", wrong])
             w.writerow(["percent", f"{percent:.1f}"])
             w.writerow([])
-            w.writerow(["idx", "question", "correct", "ok", "desc", "reference"])
+            w.writerow(["idx", "question", "correct", "ok", "hint", "Mô Tả"])
             for r in results:
-                w.writerow([r["index"], r["question"], r["correct"], r["ok"], r["desc"], r.get("ref", "")])
+                w.writerow([r["index"], r["question"], r["correct"], r["ok"], r["hint"], r.get("desc", "")])
         print(f"{BRIGHT_GREEN}✅ Đã export kết quả: {csv_path}{RESET}")
 
     def _ask_choice(self, mapping):
@@ -476,6 +470,8 @@ class FlashCard:
             mapping = dict(zip(string.ascii_lowercase, opts))
             for k, v in list(mapping.items())[:len(opts)]:
                 print(f"{RESET}{BRIGHT_CYAN}{k}){RESET} {v}{RESET}\n")
+            if d:
+                    print(f"\n{YELLOW}💡 Gợi ý: {RESET}\n{d_disp}")
             if _CONFIG.DEBUG:
                 if source:
                     print(f"\n{RESET}File nguồn: {BRIGHT_YELLOW}{source}{RESET}")
@@ -492,7 +488,7 @@ class FlashCard:
                 score += 1
             results.append({
                 "index": i, "question": q_disp, "correct": a_disp,
-                "desc": d_disp, "ref": r_disp, "ok": ok
+                "hint": d_disp, "desc": r_disp, "ok": ok
             })
             self._feedback(ok, chosen, q_disp, a_disp, d_disp, r_disp, qid)
         self._export_results(results, score, len(results))
@@ -546,7 +542,7 @@ class FlashCard:
             print("⚠️ File đã tồn tại.")
         else:
             with open(path, "w", encoding="utf-8-sig", newline="") as f:
-                csv.writer(f).writerow(["id", "answer", "question", "desc", "ref"])
+                csv.writer(f).writerow(["id", "answer", "question", "hint", "desc"])
             log_action(act, path)
             self.clearsrc()
             print(f"✅ Đã tạo {name}.csv")
@@ -593,8 +589,8 @@ class FlashCard:
             "3": ("sửa",    f"{RESET}{BRIGHT_YELLOW}✏️ Sửa toàn bộ nội dung"),
             "4": ("sửaQ",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa câu hỏi cụ thể"),
             "5": ("sửaA",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa đáp án cụ thể"),
-            "6": ("sửaD",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa mô tả cụ thểS"),
-            "7": ("sửaR",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa tham khảo cụ thẻS"),
+            "6": ("sửaD",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa gợi ý cụ thể"),
+            "7": ("sửaR",   f"{RESET}{BRIGHT_YELLOW}✏️ Sửa mô tả cụ thẻ"),
         }
         while True:
             self.clearsrc()
