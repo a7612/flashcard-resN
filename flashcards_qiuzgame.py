@@ -85,17 +85,28 @@ class FlashCard:
             if k.isupper() and isinstance(v, str) and v.startswith("\033")
         }
 
-    def _replace_colors(self, text: str):
+    def _replace_colors(self, text):
         """Fast replacement of {TOKEN} -> ANSI using prebuilt map and compiled regex."""
+        # 1. Chống crash nếu text là None hoặc rỗng
         if not text:
-            return text
-        # Replace escaped sequences first
+            return ""
+
+        # 2. XỬ LÝ LỖI TUPLE (Fix lỗi bạn đang gặp)
+        # Nếu lỡ truyền cả một dòng (Tuple) vào, ta chỉ lấy phần tử nội dung (thường là index 1)
+        if isinstance(text, (tuple, list)):
+            # Thường row là (id, back, front...), ta lấy index 1 (back) hoặc index 0 tùy cấu trúc
+            # Ở đây mình ép về chuỗi của phần tử đầu tiên để an toàn
+            text = str(text[1]) if len(text) > 1 else str(text[0])
+        else:
+            # Nếu là kiểu dữ liệu khác (int, float...), cũng ép về string luôn
+            text = str(text)
+
+        # 3. Thực hiện chuẩn hóa như bình thường
         text = text.replace("\\n", "\n").replace("\\t", "\t")
-        # replace ".\n" -> "\n" (as original)
         text = text.replace(".\n", "\n")        
         text = text.replace("{BACKSLASH}", "\\")
-        # swap tokens
         
+        # 4. Swap tokens
         return self._color_token_re.sub(lambda m: self.color_map.get(m.group(0), m.group(0)), text)
 
     # ----------------- File listing -----------------
@@ -105,56 +116,53 @@ class FlashCard:
     def _list_files(self, show=True):
         files = self._files()
         if not files:
-            if show:
-                print("⚠️ Không có file câu hỏi.")
+            if show: print("⚠️ Không có file câu hỏi.")
             return []
+
         if show:
             print(f"{BRIGHT_GREEN}\n📂 Danh sách file:{RESET}\n")
-            for i, fname in enumerate(files, 1):
-                count = self._count_questions_cached(fname)
-                print(f"{i:>2}) {fname:<25} {BRIGHT_GREEN}---{RESET} ({BRIGHT_CYAN}{count} {BRIGHT_RED}câu hỏi{RESET})")
+            # Nén toàn bộ vòng lặp for thành một chuỗi duy nhất để in
+            out = "\n".join(
+                f"{i:>2}) {f:<25} {BRIGHT_GREEN}---{RESET} ({BRIGHT_CYAN}{self._count_questions_cached(f)} {BRIGHT_RED}câu hỏi{RESET})"
+                for i, f in enumerate(files, 1)
+            )
+            print(out)
+            
         return files
 
     def _count_questions_cached(self, fname):
-        """Cache simple counts to avoid opening files repeatedly within short-lived runs."""
         if fname in self._file_counts_cache:
             return self._file_counts_cache[fname]
+        
         path = os.path.join(self.qdir, fname)
         try:
             with open(path, encoding="utf-8-sig") as f:
-                reader = csv.reader(f)
-                count = sum(1 for _ in reader) - 1
-                if count < 0:
-                    count = 0
+                # Đếm tất cả dòng trừ dòng tiêu đề, đảm bảo không âm
+                count = max(0, sum(1 for _ in f) - 1)
         except Exception:
             count = 0
+
         self._file_counts_cache[fname] = count
         return count
 
     # ----------------- CSV loading/saving (cached) -----------------
-    @lru_cache(maxsize=64)
+    @lru_cache(maxsize=128)
     def _load(self, path):
-        """Return list of tuples from CSV. Cached for performance; clear cache on writes."""
-        if not os.path.exists(path):
-            return []
+        if not os.path.exists(path): return []
+        
         with open(path, encoding="utf-8-sig") as f:
-            reader = csv.DictReader(f)
             src = os.path.basename(path)
-            data = []
-            for r in reader:
-                qid = r.get("id", "").strip()
-                if not qid:  # Nếu trống -> generate ID mới
-                    print("Có dữ liệu thiếu ID. Đang bổ sung... ")
-                    qid = str(uuid.uuid4())
-                data.append((
-                    qid,
+            return [
+                (
+                    r.get("id", "").strip() or str(uuid.uuid4()), 
                     r.get("answer", "").strip(),
                     r.get("question", "").strip(),
                     r.get("hint", "").strip(),
                     r.get("desc", "").strip(),
                     src
-                ))
-            return data
+                )
+                for r in csv.DictReader(f)
+            ]
 
     def _save(self, path, data):
         """Save sorted data and invalidate caches (LRU cache + counts)."""
@@ -179,32 +187,27 @@ class FlashCard:
 
     # ----------------- Small input helper to avoid repeating loops -----------------
     def _safe_input(self, prompt, validator=None, allow_exit=True, lower=False):
-        """
-        Prompt until validator returns True (validator receives raw input).
-        Validator returns (ok, transformed_value) or boolean True.
-        """
         while True:
             try:
                 v = input(prompt).strip()
             except (KeyboardInterrupt, EOFError):
                 return None
-            if allow_exit and (v.lower() == "exit()"):
-                return None
-            if lower:
-                v_check = v.lower()
-            else:
-                v_check = v
-            if validator is None:
-                return v
-            res = validator(v_check)
-            if isinstance(res, tuple):
-                ok, val = res
-            else:
-                ok, val = bool(res), v
-            if ok:
-                return val
-            print("⚠️ Lựa chọn không hợp lệ, nhập lại đi!")
 
+            # 1. Check exit nhanh gọn
+            if allow_exit and v.lower() == "exit()": return None
+
+            # 2. Chuẩn hóa input để check
+            v_check = v.lower() if lower else v
+            
+            # 3. Nếu không có validator, trả về luôn
+            if not validator: return v
+
+            # 4. Xử lý kết quả từ validator (ép về tuple để xử lý đồng nhất)
+            res = validator(v_check)
+            ok, val = res if isinstance(res, tuple) else (bool(res), v)
+
+            if ok: return val
+            print("⚠️ Lựa chọn không hợp lệ, nhập lại đi!")
     # ----------------- File choose / show / CRUD -----------------
     def _choose_file(self, action="chọn"):
         files = self._list_files()
@@ -353,21 +356,32 @@ class FlashCard:
         filled = int(width * percent // 100)
         return "[" + "=" * filled + " " * (width - filled) + f"] {percent:.1f}%"
 
-    def _get_options(self, q, a, data, all_ans, n_opts):
+    def _get_options(self, qid, q, a, data, all_ans, n_opts):
         ql = q.lower()
+        
+        # 1. Xử lý câu hỏi Đúng/Sai
         if any(kw in ql for kw in _CONFIG.KEYWORD_BOOL):
             return ["Đúng", "Sai"]
-        # check special keywords map
         
+        # 2. Xử lý theo Keyword đặc biệt trong Config
         for kw in _CONFIG.KEYWORD:
             if kw in ql:
-                # limit scanning to only necessary answers
+                # group khởi tạo với đáp án đúng của câu hiện tại
                 group = {a}
-                for _, ans, ques, *_ in data:
-                    if kw in ques.lower():
-                        group.add(ans)
-                opts = self._options(a, group, n_opts)
+                for row in data:
+                    # row: (id, ans, ques, hint, desc, source)
+                    # Chỉ lấy đáp án từ những câu hỏi KHÁC ID hiện tại nhưng có cùng keyword
+                    if row[0] != qid and kw in row[2].lower():
+                        group.add(row[1])
+                
+                # Nếu group quá ít (không đủ n_opts), lấy thêm từ all_ans cho đủ
+                if len(group) < (n_opts or 4):
+                    group.update(random.sample(all_ans, min(len(all_ans), 10)))
+
+                opts = self._options(a, list(group), n_opts)
                 return [self._replace_colors(opt) for opt in dict.fromkeys(opts)]
+
+        # 3. Mặc định lấy từ toàn bộ danh sách đáp án (nhưng lọc bỏ ID hiện tại nếu cần)
         opts = self._options(a, all_ans, n_opts)
         return [self._replace_colors(opt) for opt in dict.fromkeys(opts)]
 
@@ -419,97 +433,145 @@ class FlashCard:
                 w.writerow([r["index"], r["question"], r["correct"], r["ok"], r["hint"], r.get("desc", "")])
         print(f"{BRIGHT_GREEN}✅ Đã export kết quả: {csv_path}{RESET}")
 
-    def _ask_choice(self, mapping):
-        def validator(x):
-            return (x in mapping, mapping.get(x))
-        return self._safe_input("👉 Nhập đáp án: ", validator=validator, allow_exit=False, lower=True)
+    def _check_answer(self, chosen, qid, data):
+        # 1. Tìm đúng câu hỏi trong data dựa trên ID
+        target_card = next((row for row in data if row[0] == qid), None)
+        if not target_card: return False
+        
+        # 2. Lấy đáp án đúng (raw) từ data
+        correct_ans_raw = target_card[1]
+        
+        # 3. Hàm làm sạch "siêu cấp": Xóa ANSI + Xóa {TOKEN}
+        def _super_clean(text):
+            if not text: return ""
+            # Xóa mã ANSI terminal (\x1B...)
+            ansi_re = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+            text = ansi_re.sub('', str(text))
+            # Xóa các token màu do bạn định nghĩa (ví dụ: {BRIGHT_GREEN})
+            text = re.sub(r'\{[A-Z0-9_]+\}', '', text)
+            # Loại bỏ khoảng trắng, đưa về chữ thường và xóa dấu chấm cuối
+            return text.strip().lower().rstrip('.')
 
-    def _check_answer(self, chosen, q, a, data):
-        # gather correct answers for q (case-insensitive normalized)
-        q_norm = q.strip().lower()
-        corrects = (ans for _, ans, ques, *_ in data if ques.strip().lower() == q_norm)
-        chosen_norm = chosen.strip().lower()
-        return any(chosen_norm == self._replace_colors(ca).strip().lower() for ca in corrects)
+        # 4. So sánh 2 bên sau khi đã được "tắm rửa" sạch sẽ
+        return _super_clean(chosen) == _super_clean(correct_ans_raw)
 
-    def _quiz(self, data, n_opts=None, max_qs=None, source = None):
+    def _quiz(self, data, n_opts=None, max_qs=None, source=None):
         if not data:
-            print("❌ Không có câu hỏi.")
+            print("❌ Không có dữ liệu câu hỏi.")
             return
+
+        # 1. Chuẩn bị pool câu hỏi (Lấy mẫu ngẫu nhiên nếu có max_qs)
         pool = data[:] if not max_qs else random.sample(data, min(max_qs, len(data)))
-        all_ans = [a for _, a, _, _, _ , source in data]
+        
+        # Quan trọng: all_ans phải chứa cả ID để tránh trùng lặp nội dung nhưng khác ID
+        # Cấu trúc data giả định: (qid, a, q, d, r, source)
+        all_ans = data[:] 
+        
         results = []
         score = 0
-        for i, (qid, a, q, d, r, source) in enumerate(pool, 1):
-            print(f"{BRIGHT_MAGENTA}Số câu còn lại: {max_qs - i + 1}")
-            print(f"{BRIGHT_GREEN}Số câu đúng hiện tại: {score}") 
-            check_continue = input(f'Nhập {BRIGHT_GREEN}bất kỳ để tiếp tục{RESET} hoặc {BRIGHT_RED}"exit()" để tổng kết ngay{RESET}: ').strip().lower()
-            if check_continue in ["exit()", "quit()"]:
-                print(f"\n🔚 Tổng kết sau {i-1} câu...\n")
-                break
-            # q_disp = self._replace_colors(q)
-            # a_disp = self._replace_colors(a)
-            # d_disp = self._replace_colors(d)
-            # r_disp = self._replace_colors(r)
-            # print(f"\nĐang chuẩn bị câu hỏi tiếp theo")
-            # time.sleep(0.01)
-            # print(f"{random.randint(0,25)}% - random dataset: {BRIGHT_YELLOW}{source}{RESET}\n{random.randint(26,50)}% - Chọn id: {BRIGHT_CYAN}{qid}{RESET}")
-            # time.sleep(0.02)
-            # print(f"{random.randint(50,75)}% - Đang chuẩn bị data: {BRIGHT_CYAN}{qid}{RESET}\n{random.randint(76,99)}% - Random Option: {BRIGHT_CYAN}{qid}{RESET}")
-            # time.sleep(0.03)
-            # print(f"100% - Thành công")
-            print(f"{BRIGHT_BLUE}{'='*48}{RESET}")
-            # print(f"{RESET}{i}. {q_disp}\n")
-            # opts = self._get_options(q_disp, a_disp, data, all_ans, n_opts)
-            q_disp = self._replace_colors(q)
-            print(f"{RESET}Câu hỏi số {i}: {qid} - {BRIGHT_GREEN}{source}{RESET}\n\n{q_disp}\n")
-            opts = self._get_options(q_disp, a, data, all_ans, n_opts)            
-            a_disp = self._replace_colors(a)
-            d_disp = self._replace_colors(d)
-            r_disp = self._replace_colors(r)
-            random.shuffle(opts)
-            mapping = dict(zip(string.ascii_lowercase, opts))
-            for k, v in list(mapping.items())[:len(opts)]:
-                print(f"{RESET}{BRIGHT_CYAN}{k}){RESET} {v}{RESET}\n")
-            if d:
-                    print(f"\n{YELLOW}💡 Gợi ý: {RESET}\n{d_disp}")
-            if _CONFIG.DEBUG:
-                if source:
-                    print(f"\n{RESET}File nguồn: {BRIGHT_YELLOW}{source}{RESET}")
-                print(f"{RESET}ID Câu hỏi: {BRIGHT_YELLOW}{qid}\n{RESET}")
-            print(f"{BRIGHT_BLUE}{'='*48}{RESET}")    
-            chosen = self._ask_choice(mapping)
-            # clearsrc
+        total_qs = len(pool)
+
+        for i, (qid, a, q, d, r, src) in enumerate(pool, 1):
             self.clearsrc()
-            print(f"{'='*48}")
-            print(f"{RESET}{i}. {q_disp}")
-            print(f"{YELLOW}Chọn:{RESET} {chosen}")
-            ok = self._check_answer(chosen, q, a_disp, data)
+            print(f"{BRIGHT_MAGENTA}📊 Tiến độ: {i}/{total_qs} | {BRIGHT_GREEN}Đúng: {score}{RESET}")
+            print(f"{BRIGHT_BLUE}{'='*50}{RESET}")
+
+            # Chuẩn hóa hiển thị (render màu và xuống dòng)
+            q_disp = self._replace_colors(q)
+            a_disp = self._replace_colors(a) # Đây là đáp án đúng CỦA CÂU NÀY
+            d_disp = self._replace_colors(d) if d else ""
+            r_disp = self._replace_colors(r) if r else ""
+
+            print(f"{RESET}Câu hỏi {i} [ID: {BRIGHT_BLACK}{qid}{RESET}]:")
+            if _CONFIG.DEBUG:
+                print(f"{BRIGHT_BLACK}Nguồn: {src}{RESET}")
+            
+            print(f"\n{q_disp}\n")
+
+            # 2. TỐI ƯU OPTIONS: Lấy đáp án nhiễu dựa trên ID để không bị lẫn
+            # Hàm _get_options mới nên nhận vào qid của câu hiện tại để loại trừ chính xác
+            opts = self._get_options(qid, q, a, data, all_ans, n_opts)
+            random.shuffle(opts)
+            
+            keys = string.ascii_uppercase[:len(opts)]
+            mapping = dict(zip(keys, opts))
+
+            for k, v in mapping.items():
+                # v ở đây là nội dung text của đáp án
+                print(f"  {BRIGHT_CYAN}{k}.{RESET} {v}")
+
+            print(f"\n{BRIGHT_BLUE}{'='*50}{RESET}")
+
+            # 3. Vòng lặp nhận input
+            while True:
+                user_input = input(f"👉 Trả lời ({BRIGHT_YELLOW}A-{keys[-1]}{RESET}), '?' (Gợi ý), hoặc 'exit': ").strip().upper()
+                
+                if user_input == 'EXIT':
+                    self._export_results(results, score, len(results))
+                    return
+
+                if user_input == '?':
+                    # Đảm bảo d_disp là của qid hiện tại (đã xử lý ở trên)
+                    print(f"\n{YELLOW}💡 Gợi ý (ID: {qid}):{RESET}\n{d_disp}\n")
+                    continue
+
+                if user_input in mapping:
+                    chosen_text = mapping[user_input]
+                    break
+                
+                print(f"{BRIGHT_RED}❌ Lựa chọn không hợp lệ.{RESET}")
+
+            # 4. KIỂM TRA ĐÁP ÁN: So sánh trực tiếp nội dung text đã chọn với a_disp của câu hiện tại
+            # Vì ta đã xác định a_disp theo qid ở đầu vòng lặp, nên so sánh này là tuyệt đối đúng
+            ok = self._check_answer(chosen_text, qid, data) # So sánh text thô (a) chưa qua render màu
+            
             if ok:
                 score += 1
+            
+            # Lưu kết quả khớp 100% với qid
             results.append({
                 "index": i, "question": q_disp, "correct": a_disp,
-                "hint": d_disp, "desc": r_disp, "ok": ok
+                "hint": d_disp, "desc": r_disp, "ok": ok, "qid": qid
             })
-            self._feedback(ok, chosen, q_disp, a_disp, d_disp, r_disp, qid)
+
+            # 5. FEEDBACK: Truyền thẳng qid vào để hàm feedback không bốc nhầm data
+            self._feedback(ok, chosen_text, q_disp, a_disp, d_disp, r_disp, qid)
+            
+            if i < total_qs:
+                input(f"\n{BRIGHT_BLACK}Nhấn Enter để qua câu tiếp theo...{RESET}")
+
         self._export_results(results, score, len(results))
 
     def play_file(self):
         print(f"{'='*16} Chơi theo file {'='*16}\n")
         path = self._choose_file("chơi")
-        difficult_choice = input(f"0 - Mặc định: {_CONFIG.MAX_GENERATE_NORMAL_QUESTIONS} flashcard, {_CONFIG.MAX_GENERATE_NORMAL_ANSWERS} options\n1 - Dễ (10 flashcard, 1 options, thích hợp cho việc học)\n2 - Trung bình (20 flashcard, 4 options / TF, khuyến nghị)\n3 - Khó (50 flashcard, 6 options / TF)\n4 - Hardcore (100 flashcard, 8 ~ 24 options)\n\nVui lòng chọn độ khó hoặc nhập exit() để thoát:")
-        if difficult_choice == str(0):
+        menu_text = (
+            f"{BRIGHT_WHITE}┌{'─'*60}┐\n"
+            f"│{BRIGHT_CYAN}{' CHỌN ĐỘ KHÓ QUYẾT CHIẾN ':^60}{BRIGHT_WHITE}│\n"
+            f"├{'─'*60}┤\n"
+            f"│ {BRIGHT_GREEN}0 - Mặc định:{RESET} {_CONFIG.MAX_GENERATE_NORMAL_QUESTIONS} thẻ, {_CONFIG.MAX_GENERATE_NORMAL_ANSWERS} đáp án                             {BRIGHT_WHITE}│\n"
+            f"│ {BRIGHT_BLUE}1 - Dễ:{RESET} 10 thẻ, 1 đáp án {BRIGHT_BLACK}(Thích hợp để học){RESET}                {BRIGHT_WHITE}│\n"
+            f"│ {BRIGHT_YELLOW}2 - Trung bình:{RESET} 20 thẻ, 4 đáp án {BRIGHT_BLACK}(Khuyến nghị){RESET}             {BRIGHT_WHITE}│\n"
+            f"│ {BRIGHT_RED}3 - Khó:{RESET} 50 thẻ, 6 đáp án                                  {BRIGHT_WHITE}│\n"
+            f"│ {BRIGHT_MAGENTA}4 - Hardcore:{RESET} 100 thẻ, 8 ~ 24 đáp án                       {BRIGHT_WHITE}│\n"
+            f"└{'─'*60}┘\n"
+            f"\n👉 {BRIGHT_YELLOW}Lựa chọn của bạn{RESET} (hoặc {BRIGHT_RED}'exit()'{RESET} để thoát): "
+        )
+
+        difficult_choice = int(input(menu_text))
+        if difficult_choice == 0:
             if path:
                 self._quiz(self._load(path), n_opts=_CONFIG.MAX_GENERATE_NORMAL_ANSWERS, max_qs=_CONFIG.MAX_GENERATE_NORMAL_QUESTIONS)
-        if difficult_choice == str(1):            
+        if difficult_choice == 1:            
             if path:
                 self._quiz(self._load(path), n_opts=1, max_qs=10)
-        if difficult_choice == str(2):
+        if difficult_choice == 2:
             if path:
                 self._quiz(self._load(path), n_opts=4, max_qs=20)
-        if difficult_choice == str(3):
+        if difficult_choice == 3:
             if path:
                 self._quiz(self._load(path), n_opts=6, max_qs=50)
-        if difficult_choice == str(4):
+        if difficult_choice == 4:
             if path:
                 self._quiz(self._load(path), n_opts=random.randint(8, 24), max_qs=100)
 
@@ -518,17 +580,29 @@ class FlashCard:
         data = []
         for f in self._files():
             data.extend(self._load(os.path.join(self.qdir, f)))
-        difficult_choice = input(f"0 - Mặc định: {_CONFIG.MAX_GENERATE_ALL_QUESTIONS} flashcard, {_CONFIG.MAX_GENERATE_ALL_ANSWERS} options\n1 - Dễ (10 flashcard, 1 options, thích hợp cho việc học)\n2 - Trung bình (20 flashcard, 4 options / TF, khuyến nghị)\n3 - Khó (50 flashcard, 6 options / TF)\n4 - Hardcore (100 flashcard, 8 ~ 24 options)\n\nVui lòng chọn độ khó hoặc nhập exit() để thoát:")
+        menu_text = (
+            f"{BRIGHT_WHITE}┌{'─'*60}┐\n"
+            f"│{BRIGHT_CYAN}{' CHỌN ĐỘ KHÓ QUYẾT CHIẾN ':^60}{BRIGHT_WHITE}│\n"
+            f"├{'─'*60}┤\n"
+            f"│ {BRIGHT_GREEN}0 - Mặc định:{RESET} {_CONFIG.MAX_GENERATE_NORMAL_QUESTIONS} thẻ, {_CONFIG.MAX_GENERATE_NORMAL_ANSWERS} đáp án                             {BRIGHT_WHITE}│\n"
+            f"│ {BRIGHT_BLUE}1 - Dễ:{RESET} 10 thẻ, 1 đáp án {BRIGHT_BLACK}(Thích hợp để học){RESET}                {BRIGHT_WHITE}│\n"
+            f"│ {BRIGHT_YELLOW}2 - Trung bình:{RESET} 20 thẻ, 4 đáp án {BRIGHT_BLACK}(Khuyến nghị){RESET}             {BRIGHT_WHITE}│\n"
+            f"│ {BRIGHT_RED}3 - Khó:{RESET} 50 thẻ, 6 đáp án                                  {BRIGHT_WHITE}│\n"
+            f"│ {BRIGHT_MAGENTA}4 - Hardcore:{RESET} 100 thẻ, 8 ~ 24 đáp án                       {BRIGHT_WHITE}│\n"
+            f"└{'─'*60}┘\n"
+            f"\n👉 {BRIGHT_YELLOW}Lựa chọn của bạn{RESET} (hoặc {BRIGHT_RED}'exit()'{RESET} để thoát): "
+        )
+        difficult_choice = int(input(menu_text))
         self.clearsrc()
-        if difficult_choice == str(0):
+        if difficult_choice == 0:
             self._quiz(data, n_opts=_CONFIG.MAX_GENERATE_ALL_ANSWERS, max_qs=_CONFIG.MAX_GENERATE_ALL_QUESTIONS)
-        if difficult_choice == str(1):            
+        if difficult_choice == 1:            
             self._quiz(data, n_opts=1, max_qs=10)
-        if difficult_choice == str(2):
+        if difficult_choice == 2:
             self._quiz(data, n_opts=4, max_qs=20)
-        if difficult_choice == str(3):
+        if difficult_choice == 3:
             self._quiz(data, n_opts=6, max_qs=50)
-        if difficult_choice == str(4):
+        if difficult_choice == 4:
             self._quiz(data, n_opts=random.randint(8, 24), max_qs=100)
         
             
