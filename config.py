@@ -33,7 +33,7 @@ KEYWORD = [
     "translate to english",
 
     # =============
-    "đâu là đơn vị hành chính cấp xã",
+    "đâu là đơn vị hành chính cấp xã", "địa chỉ nào",
 ]
 
 

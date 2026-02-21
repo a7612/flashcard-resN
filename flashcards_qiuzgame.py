@@ -146,12 +146,12 @@ class FlashCard:
         return count
 
     # ----------------- CSV loading/saving (cached) -----------------
-    @lru_cache(maxsize=128)
-    def _load(self, path):
+    @lru_cache(maxsize=64)
+    def _load_flashcard(self, path):
         if not os.path.exists(path): return []
-        
         with open(path, encoding="utf-8-sig") as f:
             src = os.path.basename(path)
+            # Đảm bảo trả về ĐÚNG 6 giá trị theo thứ tự: id, a, q, d, r, src
             return [
                 (
                     r.get("id", "").strip() or str(uuid.uuid4()), 
@@ -163,11 +163,10 @@ class FlashCard:
                 )
                 for r in csv.DictReader(f)
             ]
-
-    def _save(self, path, data):
+    def _save_flashcard(self, path, data):
         """Save sorted data and invalidate caches (LRU cache + counts)."""
-        # data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
-        data_sorted = sorted(data, key=lambda x: (x[2].lower().strip(), x[1].lower().strip()))
+        data_sorted = sorted(data, key=lambda x: (x[1].lower().strip(), x[2].lower().strip()))
+        # data_sorted = sorted(data, key=lambda x: (x[2].lower().strip(), x[1].lower().strip()))
         # data_sorted = sorted(data, key=lambda x: (x[3].lower().strip(), x[1].lower().strip()))
         with open(path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
@@ -177,7 +176,7 @@ class FlashCard:
 
         # invalidate caches
         try:
-            self._load.cache_clear()
+            self._load_flashcard.cache_clear()
         except Exception:
             pass
         # invalidate count cache for this filename
@@ -192,21 +191,17 @@ class FlashCard:
                 v = input(prompt).strip()
             except (KeyboardInterrupt, EOFError):
                 return None
-
-            # 1. Check exit nhanh gọn
-            if allow_exit and v.lower() == "exit()": return None
-
-            # 2. Chuẩn hóa input để check
-            v_check = v.lower() if lower else v
-            
-            # 3. Nếu không có validator, trả về luôn
-            if not validator: return v
-
-            # 4. Xử lý kết quả từ validator (ép về tuple để xử lý đồng nhất)
+            if allow_exit and (v.lower() == "exit()"): return None
+            if lower: v_check = v.lower()
+            else: v_check = v
+            if validator is None: return v
             res = validator(v_check)
-            ok, val = res if isinstance(res, tuple) else (bool(res), v)
-
-            if ok: return val
+            if isinstance(res, tuple):
+                ok, val = res
+            else:
+                ok, val = bool(res), v
+            if ok:
+                return val
             print("⚠️ Lựa chọn không hợp lệ, nhập lại đi!")
     # ----------------- File choose / show / CRUD -----------------
     def _choose_file(self, action="chọn"):
@@ -221,7 +216,7 @@ class FlashCard:
         return self._safe_input(prompt, validator=validator)
 
     def _show(self, path, show=True):
-        data = self._load(path)
+        data = self._load_flashcard(path)
         if not data:
             if show:
                 print("❌ File trống.")
@@ -257,7 +252,7 @@ class FlashCard:
 
     # CRUD split into smaller ops to avoid repeat-loading
     def _add_question(self, path):
-        data = list(self._load(path))
+        data = list(self._load_flashcard(path))
         while True:
             self._show(path, show=True)
             q = self._safe_input(f"\n❓ Nhập câu hỏi (hoặc nhập exit() để thoát):{RESET} ")
@@ -277,26 +272,26 @@ class FlashCard:
             d = self._safe_input("💡 Gợi ý (có thể bỏ trống): ")
             r = self._safe_input("🔗 Mô Tả (có thể bỏ trống): ")
             data.append((str(uuid.uuid4()), a, q, d or "", r or ""))
-            self._save(path, data)
+            self._save_flashcard(path, data)
             log_action("ADD_Q", f"{os.path.basename(path)} | Q: {q}")
             self.clearsrc()
             print(f"{GREEN}➕ Đã thêm câu hỏi mới.{RESET}")
 
     def _delete_question(self, path):
-        data = list(self._load(path))
+        data = list(self._load_flashcard(path))
         while True:
             self._show(path)
             idx = self._ask_index(data, "xoá")
             if idx is None:
                 break
             removed = data.pop(idx)
-            self._save(path, data)
+            self._save_flashcard(path, data)
             log_action("DEL_Q", f"{os.path.basename(path)} | Q: {removed[2]}")
             self.clearsrc()
             print(f"🗑️ Đã xoá: {removed[2]}")
 
     def _edit_question(self, path, mode="sửa"):
-        data = list(self._load(path))
+        data = list(self._load_flashcard(path))
         field_map = {"sửaQ": 2, "sửaA": 1, "sửaD": 3, "sửaR": 4}
         while True:
             self._show(path)
@@ -321,7 +316,7 @@ class FlashCard:
                 if new_val:
                     entry[fi] = new_val
             data[idx] = tuple(entry)
-            self._save(path, data)
+            self._save_flashcard(path, data)
             log_action("EDIT_Q", f"{os.path.basename(path)} | Q: {entry[2]}")
             self.clearsrc()
             print("✅ Đã sửa thành công.")
@@ -561,25 +556,25 @@ class FlashCard:
         difficult_choice = int(input(menu_text))
         if difficult_choice == 0:
             if path:
-                self._quiz(self._load(path), n_opts=_CONFIG.MAX_GENERATE_NORMAL_ANSWERS, max_qs=_CONFIG.MAX_GENERATE_NORMAL_QUESTIONS)
+                self._quiz(self._load_flashcard(path), n_opts=_CONFIG.MAX_GENERATE_NORMAL_ANSWERS, max_qs=_CONFIG.MAX_GENERATE_NORMAL_QUESTIONS)
         if difficult_choice == 1:            
             if path:
-                self._quiz(self._load(path), n_opts=1, max_qs=10)
+                self._quiz(self._load_flashcard(path), n_opts=1, max_qs=10)
         if difficult_choice == 2:
             if path:
-                self._quiz(self._load(path), n_opts=4, max_qs=20)
+                self._quiz(self._load_flashcard(path), n_opts=4, max_qs=20)
         if difficult_choice == 3:
             if path:
-                self._quiz(self._load(path), n_opts=6, max_qs=50)
+                self._quiz(self._load_flashcard(path), n_opts=6, max_qs=50)
         if difficult_choice == 4:
             if path:
-                self._quiz(self._load(path), n_opts=random.randint(8, 24), max_qs=100)
+                self._quiz(self._load_flashcard(path), n_opts=random.randint(8, 24), max_qs=100)
 
     def play_all(self):
         print(f"{'='*16} Chơi ngẫu nhiên {'='*16}\n")
         data = []
         for f in self._files():
-            data.extend(self._load(os.path.join(self.qdir, f)))
+            data.extend(self._load_flashcard(os.path.join(self.qdir, f)))
         menu_text = (
             f"{BRIGHT_WHITE}┌{'─'*60}┐\n"
             f"│{BRIGHT_CYAN}{' CHỌN ĐỘ KHÓ QUYẾT CHIẾN ':^60}{BRIGHT_WHITE}│\n"
