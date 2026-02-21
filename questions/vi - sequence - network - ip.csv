@@ -1,0 +1,9 @@
+﻿id,answer,question,hint,desc
+6e1cc051-ee4d-4eb2-a823-bef2fa6b68d1,0.0.0.0 - 127.255.255.255,Class A có địa chỉ IP nằm ở dãy các địa chỉ khoảng nào sau đây?,,
+4988a937-858f-495c-ab35-1ab5f95a8b61,0.0.0.0/8,Địa chỉ nào thường dùng khi thiết bị chưa có hoặc đi xin địa chỉ IP?,,
+ee11cee7-33fc-479d-b407-6de451becbfd,10.0.0.0/8,"Địa chỉ nào thường dùng cho mạng Lan lớn trong các tòa nhà, công ty?",+ IP nội bộ (Private IP) thuộc class A\n+ IP này không thể lướt web trực tiếp,
+a62a9b8b-5ac4-492e-af86-cd2bc4929583,100.64.0.0/10,Địa chỉ nào thường được nhà cung cấp dịch vụ mạng để chia sẻ cho đối tác hoặc khách hàng?,+ IP công cộng,
+911e3798-2890-4fd3-b383-c7287e20567b,128.0.0.0 - 191.255.255.255,Class B có địa chỉ IP nằm ở dãy các địa chỉ khoảng nào sau đây?,,
+24e0bd13-d5a0-4d80-a8f9-1db7859c2329,192.0.0.0 - 223.255.255.255,Class C có địa chỉ IP nằm ở dãy các địa chỉ khoảng nào sau đây?,,
+73a1784b-ad1b-4fe8-b560-f22bf8767c62,224.0.0.0 - 239.255.255.255,Class D có địa chỉ IP nằm ở dãy các địa chỉ khoảng nào sau đây?,,
+e8c4a906-87fb-4f2b-9b24-33525afb9f5a,240.0.0.0 - 255.255.255.255,Class E có địa chỉ IP nằm ở dãy các địa chỉ khoảng nào sau đây?,,
