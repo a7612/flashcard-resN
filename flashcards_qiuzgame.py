@@ -1,14 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Optimized FlashCard CLI (performance-focused)
-- Caches CSV loads
-- Uses logging module with daily rotation
-- Precompiled color token replacement
-- Minimized redundant I/O
-- Small helper utilities for repeated patterns
-"""
-
 import os
 import csv
 import uuid
@@ -224,10 +215,6 @@ class FlashCard:
         if show:
             print("\n📋 DANH SÁCH CÂU HỎI:")
             for i, (_, a, q, d, r, source) in enumerate(data, 1):
-                # q_disp = q
-                # a_disp = a
-                # d_disp = d
-                # r_disp = r
                 q_disp = self._replace_colors(q)
                 a_disp = self._replace_colors(a)
                 d_disp = self._replace_colors(d)
@@ -651,6 +638,19 @@ class FlashCard:
         print(f"✅ Đã đổi tên file. {path}")
 
     # ----------------- Menus -----------------
+    def show_stats(self):
+        """Hiển thị tổng số file và tổng số câu hỏi trong toàn bộ kho dữ liệu."""
+        files = self._files()
+        # Tính tổng bằng List Comprehension để tối ưu tốc độ
+        total_q = sum(self._count_questions_cached(f) for f in files)
+        
+        print(f"{BRIGHT_WHITE}┌{'─'*40}┐{RESET}")
+        print(f"{BRIGHT_WHITE}│{BRIGHT_CYAN}{' 📊 THỐNG KÊ KHO CÂU HỎI ':^39}{BRIGHT_WHITE}│{RESET}")
+        print(f"{BRIGHT_WHITE}├{'─'*40}┤{RESET}")
+        print(f"{BRIGHT_WHITE}│{RESET}  📂 Tổng số bộ đề: {BRIGHT_YELLOW}{len(files):<20}{RESET}{BRIGHT_WHITE}│{RESET}")
+        print(f"{BRIGHT_WHITE}│{RESET}  ❓ Tổng số câu hỏi: {BRIGHT_GREEN}{total_q:<18}{RESET}{BRIGHT_WHITE}│{RESET}")
+        print(f"{BRIGHT_WHITE}└{'─'*40}┘{RESET}")
+
     def manage_questions(self):
         actions = {
             "1": ("thêm",   f"{RESET}{BRIGHT_GREEN}➕ Thêm nội dung"),
@@ -663,13 +663,13 @@ class FlashCard:
         }
         while True:
             self.clearsrc()
-            print(f"\n{BRIGHT_CYAN}====={BRIGHT_GREEN} 📋 QUẢN LÝ NỘI DUNG  {RESET}{BRIGHT_CYAN}====={RESET}")
-            print(f"\n{BRIGHT_GREEN}===\nCác chức năng hiện tại:\n{RESET}")
-            [print(f"{BRIGHT_GREEN} {k}) {label}{RESET}") for k, (_, label) in actions.items()]
+            print(f"\n{BRIGHT_YELLOW}{"="*22}{BRIGHT_YELLOW} 📋 QUẢN LÝ NỘI DUNG  {RESET}{BRIGHT_YELLOW}{"="*22}{RESET}")
+            self.show_stats()
+            print(f"\n{BRIGHT_YELLOW}Các chức năng hiện tại:\n{RESET}")
+            [print(f"{BRIGHT_YELLOW} {k}) {label}{RESET}") for k, (_, label) in actions.items()]
             print(f"\n{BRIGHT_GREEN}Hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} 🔙 quay lại{RESET}")
             ch = input(f"\n{BRIGHT_GREEN}👉 Nhập lựa chọn: {RESET}").strip().lower()
             if ch == "exit()":
-                self.clearsrc()
                 break
             if ch in actions:
                 self._crud(actions[ch][0])
@@ -684,14 +684,14 @@ class FlashCard:
         }
         while True:
             try:
-                print(f"\n{BRIGHT_CYAN}====={BRIGHT_GREEN} 📂 QUẢN LÝ FILE  {RESET}{BRIGHT_CYAN}====={RESET}")
+                print(f"\n{BRIGHT_CYAN}{"="*22}{BRIGHT_GREEN} 📂 QUẢN LÝ FILE  {RESET}{BRIGHT_CYAN}{"="*22}{RESET}")
+                self.show_stats()
                 self._list_files()
-                print(f"\n{BRIGHT_CYAN}===\nCác chức năng hiện tại:\n{RESET}")
+                print(f"\n{BRIGHT_CYAN}Các chức năng hiện tại:\n{RESET}")
                 [print(f"{BRIGHT_CYAN} {k}) {label}{RESET}") for k, (_, label, _) in actions.items()]
                 print(f"\n{BRIGHT_CYAN}Hoặc nhập {BRIGHT_RED}exit(){BRIGHT_CYAN} 🔙 quay lại{RESET}")
                 ch = input(f"\n{BRIGHT_CYAN}👉 Nhập lựa chọn: {RESET}").strip().lower()
                 if ch == "exit()":
-                    self.clearsrc()
                     break
                 if ch in actions:
                     act, _, func = actions[ch]
@@ -710,7 +710,9 @@ class FlashCard:
             "0": (lambda: print(f"{BRIGHT_RED}👋 Tạm biệt!"), f"{BRIGHT_RED}🚪 Thoát{RESET}"),
         }
         while True:
-            print(f"{BLUE}\n===== 📚 FLASHCARD QUIZ GAME ====={RESET}")
+            self.clearsrc()
+            print(f"{BRIGHT_BLUE}{"="*22} 📚 FLASHCARD QUIZ GAME {"="*22}{RESET}")
+            self.show_stats()
             for k, (_, label) in actions.items():
                 print(f" {k}) {label}")
             ch = input("\n👉 Nhập lựa chọn: ").strip()
