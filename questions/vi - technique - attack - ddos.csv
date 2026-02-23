@@ -1,0 +1,2 @@
+﻿id,answer,question,hint,desc
+59c876b0-b933-44b6-8d4f-c0cc374d4f59,Distributed Denial of Service,Loại tấn công nào làm tràn ngập hệ thống bằng lưu lượng truy cập?,"+ Kẻ tấn công sẽ huy động một mạng lưới các thiết bị (botnet) để gửi một lượng lớn lưu lượng truy cập (traffic) cùng lúc vào một hệ thống hoặc trang web, khiến nó bị quá tải và không thể truy cập được.",* Distributed Denial of Service (DDoS): Tấn công từ chối dịch vụ phân tán

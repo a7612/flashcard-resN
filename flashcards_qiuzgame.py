@@ -111,13 +111,35 @@ class FlashCard:
             return []
 
         if show:
-            print(f"{BRIGHT_GREEN}\n📂 Danh sách file:{RESET}\n")
-            # Nén toàn bộ vòng lặp for thành một chuỗi duy nhất để in
-            out = "\n".join(
-                f"{i:>2}) {f:<25} {BRIGHT_GREEN}---{RESET} ({BRIGHT_CYAN}{self._count_questions_cached(f)} {BRIGHT_RED}câu hỏi{RESET})"
-                for i, f in enumerate(files, 1)
-            )
-            print(out)
+            # 1. Tìm độ dài của tên file dài nhất để làm chuẩn (min là 25)
+            max_name_len = max(len(f) for f in files) if files else 25
+            print(f"{BRIGHT_BLACK}{'─' * (max_name_len + max_name_len%4)}{RESET}")
+            print(f"{BRIGHT_GREEN}📂 DANH SÁCH BỘ ĐỀ:{RESET}")
+            print(f"{BRIGHT_BLACK}{'─' * (max_name_len + max_name_len%4)}{RESET}")
+            # 2. Render danh sách với padding động
+            out = []
+            for i, f in enumerate(files, 1):
+                count = self._count_questions_cached(f)
+                if count >= 64:
+                    count_color = BRIGHT_GREEN  # Hoàn hảo
+                    status_icon = "✅"
+                elif count >= 32:
+                    count_color = BRIGHT_YELLOW # Trung bình
+                    status_icon = "🟡"
+                else:
+                    count_color = BRIGHT_RED    # Ít câu hỏi
+                    status_icon = "❗"
+                # Dùng f-string với biến độ dài {max_name_len}
+                # :>2 là căn phải số thứ tự, :<{max_name_len} là căn trái tên file
+                line = (f" {BRIGHT_CYAN}{i:>2}.{RESET} "
+                        f"{f:<{max_name_len}} "
+                        f"{BRIGHT_BLACK}─{RESET} "
+                        f"({count_color}{count:>3} câu{RESET})")
+                        # f"{status_icon} ({count_color}{count:>3}{RESET} {BRIGHT_WHITE}câu{RESET})")
+                out.append(line)
+            
+            print("\n".join(out))
+            print(f"{BRIGHT_BLACK}{'─' * (max_name_len + max_name_len%4)}{RESET}")
             
         return files
 
@@ -182,7 +204,7 @@ class FlashCard:
                 v = input(prompt).strip()
             except (KeyboardInterrupt, EOFError):
                 return None
-            if allow_exit and (v.lower() == "exit()"): return None
+            if allow_exit and (v.lower() == "/exit"): return None
             if lower: v_check = v.lower()
             else: v_check = v
             if validator is None: return v
@@ -199,7 +221,7 @@ class FlashCard:
         files = self._list_files()
         if not files:
             return None
-        prompt = f"\n👉 Nhập ID để {action} (hoặc gõ exit() để thoát): "
+        prompt = f"\n👉 Nhập ID để {action} (hoặc gõ /exit để thoát): "
         def validator(x):
             if x.isdigit() and 0 < int(x) <= len(files):
                 return True, os.path.join(self.qdir, files[int(x) - 1])
@@ -235,16 +257,16 @@ class FlashCard:
             if x.isdigit() and 1 <= int(x) <= len(data):
                 return True, int(x)-1
             return False, None
-        return self._safe_input(f"\n🔢 Nhập ID để {action} (hoặc nhập exit() để thoát): ", validator=validator)
+        return self._safe_input(f"\n🔢 Nhập ID để {action} (hoặc nhập /exit để thoát): ", validator=validator)
 
     # CRUD split into smaller ops to avoid repeat-loading
     def _add_question(self, path):
         data = list(self._load_flashcard(path))
         while True:
             self._show(path, show=True)
-            q = self._safe_input(f"\n❓ Nhập câu hỏi (hoặc nhập exit() để thoát):{RESET} ")
+            q = self._safe_input(f"\n❓ Nhập câu hỏi (hoặc nhập /exit để thoát):{RESET} ")
             if q is None: break
-            a = self._safe_input(f"✅ Nhập đáp án (hoặc nhập exit() để thoát):{RESET} ")
+            a = self._safe_input(f"✅ Nhập đáp án (hoặc nhập /exit để thoát):{RESET} ")
             if a is None: break
             if not q or not a:
                 continue
@@ -537,7 +559,7 @@ class FlashCard:
             f"│ {BRIGHT_RED}3 - Khó:{RESET} 50 thẻ, 6 đáp án                                  {BRIGHT_WHITE}│\n"
             f"│ {BRIGHT_MAGENTA}4 - Hardcore:{RESET} 100 thẻ, 8 ~ 24 đáp án                       {BRIGHT_WHITE}│\n"
             f"└{'─'*60}┘\n"
-            f"\n👉 {BRIGHT_YELLOW}Lựa chọn của bạn{RESET} (hoặc {BRIGHT_RED}'exit()'{RESET} để thoát): "
+            f"\n👉 {BRIGHT_YELLOW}Lựa chọn của bạn{RESET} (hoặc {BRIGHT_RED}'/exit'{RESET} để thoát): "
         )
 
         difficult_choice = int(input(menu_text))
@@ -572,7 +594,7 @@ class FlashCard:
             f"│ {BRIGHT_RED}3 - Khó:{RESET} 50 thẻ, 6 đáp án                                  {BRIGHT_WHITE}│\n"
             f"│ {BRIGHT_MAGENTA}4 - Hardcore:{RESET} 100 thẻ, 8 ~ 24 đáp án                       {BRIGHT_WHITE}│\n"
             f"└{'─'*60}┘\n"
-            f"\n👉 {BRIGHT_YELLOW}Lựa chọn của bạn{RESET} (hoặc {BRIGHT_RED}'exit()'{RESET} để thoát): "
+            f"\n👉 {BRIGHT_YELLOW}Lựa chọn của bạn{RESET} (hoặc {BRIGHT_RED}'/exit'{RESET} để thoát): "
         )
         difficult_choice = int(input(menu_text))
         self.clearsrc()
@@ -663,13 +685,13 @@ class FlashCard:
         }
         while True:
             self.clearsrc()
-            print(f"\n{BRIGHT_YELLOW}{"="*22}{BRIGHT_YELLOW} 📋 QUẢN LÝ NỘI DUNG  {RESET}{BRIGHT_YELLOW}{"="*22}{RESET}")
+            print(f"\n{BRIGHT_YELLOW}{"@"*22}{BRIGHT_YELLOW} 📋 QUẢN LÝ NỘI DUNG  {RESET}{BRIGHT_YELLOW}{"@"*22}{RESET}")
             self.show_stats()
-            print(f"\n{BRIGHT_YELLOW}Các chức năng hiện tại:\n{RESET}")
+            # print(f"\n{BRIGHT_YELLOW}Các chức năng hiện tại:\n{RESET}")
             [print(f"{BRIGHT_YELLOW} {k}) {label}{RESET}") for k, (_, label) in actions.items()]
-            print(f"\n{BRIGHT_GREEN}Hoặc nhập {BRIGHT_RED}exit(){BRIGHT_GREEN} 🔙 quay lại{RESET}")
-            ch = input(f"\n{BRIGHT_GREEN}👉 Nhập lựa chọn: {RESET}").strip().lower()
-            if ch == "exit()":
+            ch = input(f"\n{BRIGHT_CYAN}👉 Nhập lựa chọn hoặc nhập {BRIGHT_RED}/exit{BRIGHT_CYAN} để quay lại: {RESET}").strip().lower()
+            self.clearsrc()
+            if ch == "/exit":
                 break
             if ch in actions:
                 self._crud(actions[ch][0])
@@ -684,14 +706,13 @@ class FlashCard:
         }
         while True:
             try:
-                print(f"\n{BRIGHT_CYAN}{"="*22}{BRIGHT_GREEN} 📂 QUẢN LÝ FILE  {RESET}{BRIGHT_CYAN}{"="*22}{RESET}")
+                print(f"\n{BRIGHT_CYAN}{"@"*22}{BRIGHT_GREEN} 📂 QUẢN LÝ FILE  {RESET}{BRIGHT_CYAN}{"@"*22}{RESET}")
                 self.show_stats()
                 self._list_files()
-                print(f"\n{BRIGHT_CYAN}Các chức năng hiện tại:\n{RESET}")
+                # print(f"\n{BRIGHT_CYAN}Các chức năng hiện tại:\n{RESET}")
                 [print(f"{BRIGHT_CYAN} {k}) {label}{RESET}") for k, (_, label, _) in actions.items()]
-                print(f"\n{BRIGHT_CYAN}Hoặc nhập {BRIGHT_RED}exit(){BRIGHT_CYAN} 🔙 quay lại{RESET}")
-                ch = input(f"\n{BRIGHT_CYAN}👉 Nhập lựa chọn: {RESET}").strip().lower()
-                if ch == "exit()":
+                ch = input(f"\n{BRIGHT_CYAN}👉 Nhập lựa chọn hoặc nhập {BRIGHT_RED}/exit{BRIGHT_CYAN} để quay lại: {RESET}").strip().lower()
+                if ch == "/exit":
                     break
                 if ch in actions:
                     act, _, func = actions[ch]
@@ -711,7 +732,7 @@ class FlashCard:
         }
         while True:
             self.clearsrc()
-            print(f"{BRIGHT_BLUE}{"="*22} 📚 FLASHCARD QUIZ GAME {"="*22}{RESET}")
+            print(f"{BRIGHT_BLUE}{"@"*22} 📚 FLASHCARD QUIZ GAME {"@"*22}{RESET}")
             self.show_stats()
             for k, (_, label) in actions.items():
                 print(f" {k}) {label}")

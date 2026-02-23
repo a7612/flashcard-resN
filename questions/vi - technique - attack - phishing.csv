@@ -1,0 +1,4 @@
+﻿id,answer,question,hint,desc
+d031eaf6-ee37-494f-a88b-b8ae56fbbf09,Smishing,Loại lừa đảo nào sử dụng tin nhắn văn bản?,+ Nó là sự kết hợp giữa SMS (tin nhắn văn bản) và Phishing.,* Smishing: Tấn công bằng cách lừa đảo qua tin nhắn văn bản
+fbb4186a-479f-4b32-8ba6-7294b7e48d0c,Vishing,Loại lừa đảo nào sử dụng cuộc gọi điện thoại?,+ Nó là sự kết hợp giữa Voice và Phishing.,* Vishing: Tấn công bằng cách lừa đảo qua cuộc gọi điện thoại
+c8c37da7-8a3e-4bc4-8bc1-d1f21f7f436f,Whaling,Loại lừa đảo nào nhắm đến nhân vật cao cấp trong tổ chức?,+ Sử dụng các email được thiết kế cực kỳ tinh vi.,* Whaling: Tấn công bằng cách lừa đảo các nhân vật cao cấp
