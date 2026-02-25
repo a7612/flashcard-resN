@@ -19,7 +19,7 @@ KEYWORD = [
     # sao
     "vì sao", "tại sao",        
     # Ai
-    "đâu là tác giả hay tổ chức của câu nói này?", "đâu là nhân vật",
+    "đâu là nhân vật",
     # Thời gian, số
     "chính xác là bao nhiêu", "có bao nhiêu", "khoảng bao nhiêu", "được phát triển", "giai đoạn nào", "ngày, tháng nào",
     # Lệnh và thư mục
@@ -34,6 +34,7 @@ KEYWORD = [
 
     # =============
     "đâu là đơn vị hành chính cấp xã", "địa chỉ nào", "địa chỉ khoảng nào", "lỗ hỏng nào",
+    "đâu là tác giả hay tổ chức của câu nói này",
 ]
 
 

@@ -134,7 +134,7 @@ class FlashCard:
                 line = (f" {BRIGHT_CYAN}{i:>2}.{RESET} "
                         f"{f:<{max_name_len}} "
                         f"{BRIGHT_BLACK}─{RESET} "
-                        f"({count_color}{count:>3} câu{RESET})")
+                        f"({count_color}{count:>5} câu{RESET})")
                         # f"{status_icon} ({count_color}{count:>3}{RESET} {BRIGHT_WHITE}câu{RESET})")
                 out.append(line)
             
