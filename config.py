@@ -10,31 +10,24 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    # Tổng quan
-    "định nghĩa",
-    # chính
-    "chức năng chính", "có tác dụng gì", "điều gì", "để làm gì", "như thế nào",
-    # tên
-    "tên đầy đủ", "tên gọi là gì", "được gọi là gì",
-    # sao
-    "vì sao", "tại sao",        
-    # Ai
-    "đâu là nhân vật",
-    # Thời gian, số
-    "chính xác là bao nhiêu", "có bao nhiêu", "khoảng bao nhiêu", "được phát triển", "giai đoạn nào", "ngày, tháng nào",
-    # Lệnh và thư mục
-    "lệnh nào", "viết câu lệnh đó như thế nào", "tùy chọn nào", "thư mục nào",
-    # Giao thức
-    "giao thức nào", "giao thức đưa gói tin nào",
-    # Thiết bị
-    "thiết bị nào",
-    
-    "kỹ thuật nào", "thuật ngữ nào", "quy trình nào", "tầng nào", "phân loại nào", "dạng nào", "mục tiêu nào", "lớp nào", "cờ nào", "cáp nào",   
-    "translate to english",
-
-    # =============
-    "đâu là đơn vị hành chính cấp xã", "địa chỉ nào", "địa chỉ khoảng nào", "lỗ hỏng nào",
+    # Ai?
     "đâu là tác giả hay tổ chức của câu nói này",
+    # Nơi
+    "đâu là đơn vị hành chính cấp xã",
+    # số lượng
+    "bao nhiêu",
+    # Dịch thuật
+    "translate to english",
+    # tương tác
+    "phỏng vấn",
+    # gì
+    "tác dụng gì",
+    # nào
+        # date
+        "ngày, tháng nào?",
+        # số học
+        "dãy thập phân nào",
+    "lỗ hỏng nào", "thư mục nào",
 ]
 
 

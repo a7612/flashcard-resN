@@ -124,15 +124,21 @@ class FlashCard:
                     count_color = BRIGHT_GREEN  # Hoàn hảo
                     status_icon = "✅"
                 elif count >= 32:
+                    count_color = BRIGHT_CYAN # Trung bình
+                    status_icon = "🟡"
+                elif count >= 16:
                     count_color = BRIGHT_YELLOW # Trung bình
                     status_icon = "🟡"
+                elif count >= 8:
+                    count_color = BRIGHT_MAGENTA # Trung bình
+                    status_icon = "🟡"
                 else:
-                    count_color = BRIGHT_RED    # Ít câu hỏi
+                    count_color = BRIGHT_RED   # Ít câu hỏi
                     status_icon = "❗"
                 # Dùng f-string với biến độ dài {max_name_len}
                 # :>2 là căn phải số thứ tự, :<{max_name_len} là căn trái tên file
-                line = (f" {BRIGHT_CYAN}{i:>2}.{RESET} "
-                        f"{f:<{max_name_len}} "
+                line = (f" {BRIGHT_BLUE}{i:>2}.{RESET} "
+                        f"{count_color}{f:<{max_name_len}}{RESET} "
                         f"{BRIGHT_BLACK}─{RESET} "
                         f"({count_color}{count:>5} câu{RESET})")
                         # f"{status_icon} ({count_color}{count:>3}{RESET} {BRIGHT_WHITE}câu{RESET})")
@@ -731,7 +737,6 @@ class FlashCard:
             "0": (lambda: print(f"{BRIGHT_RED}👋 Tạm biệt!"), f"{BRIGHT_RED}🚪 Thoát{RESET}"),
         }
         while True:
-            self.clearsrc()
             print(f"{BRIGHT_BLUE}{"@"*22} 📚 FLASHCARD QUIZ GAME {"@"*22}{RESET}")
             self.show_stats()
             for k, (_, label) in actions.items():
