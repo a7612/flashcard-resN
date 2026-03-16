@@ -27,7 +27,7 @@ KEYWORD = [
         "ngày, tháng nào?",
         # số học
         "dãy thập phân nào",
-    "lỗ hỏng nào", "thư mục nào",
+    "lỗ hỏng nào", "thư mục nào", "phương thức nào", "phần mềm nào", "thuật ngữ nào"
 ]
 
 

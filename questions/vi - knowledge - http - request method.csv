@@ -1,0 +1,10 @@
+﻿id,answer,question,hint,desc
+0d4be51f-1b4f-48c4-9fb7-e47869d4b6b9,CONNECT,Phương thức nào trong HTTP thiết lập một đường truyền tới máy chủ được xác định bởi tài nguyên đích?,,
+310749d3-74fb-4b80-a091-e70a8e5b333c,DELETE,Phương thức nào trong HTTP xóa tài nguyên được chỉ định?,,
+0e9b0bde-b233-4403-a07f-829dfb976bb8,GET,Phương thức nào trong HTTP yêu cầu phản hồi một bản representation của tài nguyên được chỉ định?,+ Các yêu cầu sử dụng chỉ nên dùng để truy xuất dữ liệu và không nên chứa nội dung yêu cầu.,
+8b7cc969-bac0-405f-afd7-a0a12eaa5d25,HEAD,Phương thức nào trong HTTP yêu cầu phản hồi một bản representation nhưng không có phần thân?,,
+9291d187-d4e5-41eb-b220-41db9d0e7160,OPTIONS,Phương thức nào trong HTTP mô tả các tùy chọn giao tiếp cho tài nguyên đích?,,
+70e77175-251b-47f2-8a87-c6aab558d781,PATCH,Phương thức nào trong HTTP áp dụng các sửa đổi một phần cho một tài nguyên?,,
+803d407d-fc2f-4a70-b3d8-2478e475b54b,POST,Phương thức nào trong HTTP gửi một thực thể đến tài nguyên được chỉ định?,+ Thường được hiểu là tạo tài nguyên.,
+98d2a093-fca0-4c12-b07b-c7c7387bdb39,PUT,Phương thức nào trong HTTP thay thế tất cả các bản thể hiện hiện tại của tài nguyên đích bằng nội dung yêu cầu?,+ Nói tóm gọn là cập nhật tài nguyên,
+88ed4349-cf31-4563-a8e1-c7191cfcb80f,TRACE,Phương thức nào trong HTTP thực hiện một bài kiểm tra vòng lặp tin nhắn dọc theo đường dẫn đến tài nguyên đích?,+ Loop-back test,
