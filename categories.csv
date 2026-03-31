@@ -1,9 +1,3 @@
-category,keyword,type
-bool,đúng,bool
-bool,sai,bool
-thiết bị, firewall, normal
-thiết bị, router, normal
-thiết bị, switch, normal
-thiết bị, hub, normal
-thiết bị, ap, normal
-
+id,name,keywords
+a1b2c3d4-e5f6-7890-1234-567890abcdef,Lịch sử Việt Nam,lịch sử,vua,triều đại,kháng chiến
+b2c3d4e5-f6a7-8901-2345-67890abcdef1,Địa lý Việt Nam,địa lý,tỉnh,thành phố,sông,núi,biển

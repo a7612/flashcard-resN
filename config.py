@@ -10,24 +10,14 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    # Ai?
+    # C
+    "chiến thuật nào", "kỹ thuật nào",
+    # T
+    "thành phần nào",
+    # Full
     "đâu là tác giả hay tổ chức của câu nói này",
-    # Nơi
-    "đâu là đơn vị hành chính cấp xã",
-    # số lượng
+    # Số lượng
     "bao nhiêu",
-    # Dịch thuật
-    "translate to english",
-    # tương tác
-    "phỏng vấn",
-    # gì
-    "tác dụng gì",
-    # nào
-        # date
-        "ngày, tháng nào?",
-        # số học
-        "dãy thập phân nào",
-    "lỗ hỏng nào", "thư mục nào", "phương thức nào", "phần mềm nào", "thuật ngữ nào"
 ]
 
 

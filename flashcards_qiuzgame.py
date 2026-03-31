@@ -45,7 +45,7 @@ class QuizGame:
             answer_text = Text.from_ansi(a); answer_text.stylize("bold yellow")
             console.print(Text().append("\n 🌪️ TIẾC QUÁ... ", style="bold white on red").append(" Đáp án đúng: ").append(answer_text))
         
-        if r: console.print(Text("  📖 Giải thích: ", style="cyan").append(Text.from_ansi(r)))
+        if r: console.print(Text("  📖 Mô tả thêm: \n", style="cyan").append(Text.from_ansi(r)))
         console.print("") 
 
     def _export_results(self, results, score, total):
@@ -94,7 +94,7 @@ class QuizGame:
             while True:
                 u = console.input(f"\n👉 Chọn ([bold cyan]A-{list(mapping)[-1]}[/]) / '?' Gợi ý / '/exit': ").strip().upper()
                 if u == 'EXIT': return self._export_results(results, score, len(results))
-                if u == '?': print(f"\n{YELLOW}💡 GỢI Ý:{RESET}\n{d_d}\n"); continue
+                if u == '?': print(f"{YELLOW}💡 Gợi ý:{RESET}\n{d_d}"); continue
                 if u in mapping: chosen = mapping[u]; break
                 print(f"{BRIGHT_RED}❌ Lựa chọn không hợp lệ.{RESET}")
 
@@ -201,9 +201,11 @@ class FlashCard:
         while True:
             self._show(path, show=True)
             q = self._safe_input(f"\n📂 File: {BRIGHT_YELLOW}{path}{RESET}\n❓ Câu hỏi mới (/exit):{RESET} ")
-            if not q: break
+            if q is None: break
+            if not q: console.print("[red]⚠️ Cần phải đủ giá trị q và a[/]"); continue
             a = self._safe_input(f"✅ Đáp án chuẩn:{RESET} ")
-            if not a: break
+            if a is None: break
+            if not a: console.print("[red]⚠️ Cần phải đủ giá trị q và a[/]"); continue
             if any(q.lower().strip() == old_q.lower().strip() and a.lower().strip() == old_a.lower().strip() for _, old_a, old_q, *_ in data):
                 self.clearsrc(); console.print(Text("⚠️ Câu hỏi này đã tồn tại!", style="bold red")); continue
             d, r = self._safe_input("💡 Gợi ý (Enter để bỏ qua): "), self._safe_input("📖 Mô tả thêm: ")
@@ -250,6 +252,7 @@ class FlashCard:
         game.run(all_data, *game.get_difficulty())
 
     def _create_file(self, act):
+        self._list_files()
         name = self._safe_input("📝 Tên bộ đề mới (không cần .csv): ")
         if name and not os.path.exists(p := os.path.join(self.qdir, f"{name}.csv")):
             with open(p, "w", encoding="utf-8-sig", newline="") as f: csv.writer(f).writerow(["id", "answer", "question", "hint", "desc"])
@@ -283,15 +286,14 @@ class FlashCard:
             for k, v in options.items(): table.add_row(k, v[1])
             console.print(table)
             ch = console.input(f"\n👉 Lệnh của bạn: ").strip()
-            if ch in options: 
-                if ch == "0": break
+            if ch == "/exit" or ch == "0": break
+            if ch in options:
                 self.clearsrc(); log_action("MENU", options[ch][1]); options[ch][0]()
                 if "FLASHCARD" in title: continue
-            elif ch == "/exit": break
             else: console.print("[red]⛔ Lệnh không hợp lệ![/]")
 
     def manage_questions(self):
-        opts = {"1": ("thêm", "📝 Soạn câu mới"), "2": ("xoá", "🗑️ Gỡ bỏ câu"), "3": ("sửa", "🛠️ Sửa tổng lực"), "4": ("sửaQ", "🔍 Sửa câu hỏi"), "5": ("sửaA", "💡 Sửa đáp án"), "6": ("sửaD", "⚡ Sửa gợi ý"), "7": ("sửaR", "📖 Sửa mô tả"), "/exit": ("exit", "Thoát")}
+        opts = {"1": ("thêm", "📝 Soạn câu mới"), "2": ("xoá", "🗑️ Gỡ bỏ câu"), "3": ("sửa", "🛠️ Sửa tổng lực"), "4": ("sửaQ", "🔍 Sửa câu hỏi"), "5": ("sửaA", "💡 Sửa đáp án"), "6": ("sửaD", "⚡ Sửa gợi ý"), "7": ("sửaR", "📖 Sửa mô tả"), "0": ("exit", "Thoát")}
         self._run_menu("⚙️ BIÊN TẬP DỮ LIỆU", {k: (lambda m=v[0]: self._crud(m), v[1]) for k, v in opts.items()})
 
     def manage_files(self):
