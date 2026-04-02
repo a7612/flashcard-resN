@@ -1,2 +1,0 @@
-﻿id,answer,question,hint,desc
-b9993ad7-bc90-4c4a-a75d-7632270b77b5,Cung cấp giao diện giữa các ứng dụng. Các node sử dụng để giao tiếp và mạng lưới cơ bản mà qua đó các thông điệp của các node được truyền tải.,Network: Lớp ứng dụng cung cấp những gì?,OSI - Application Layer,

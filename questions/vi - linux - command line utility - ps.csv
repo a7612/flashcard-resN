@@ -1,0 +1,5 @@
+﻿id,answer,question,hint,desc
+d2a76b0e-3e85-44fd-9926-adb353911aae,Báo cáo tóm tắt tình trạng hiện tại của các quy trình. Hiển thị thông tin chi tiết tiến trình tất cả người dùng và các tiến trình terminal không điều khiển.,Lệnh {BRIGHT_GREEN}ps -aux{RESET} có tác dụng gì?,,
+98d37719-e1b2-49cd-907a-3572ed0639bc,Báo cáo tóm tắt tình trạng hiện tại của các quy trình. Hiển thị thông tin chi tiết tiến trình tất cả người dùng và các tiến trình terminal không điều khiển. Lấy mẫu {BRIGHT_BLUE}root{RESET} để tìm kiếm và lọc.,"Lệnh {BRIGHT_GREEN}ps -aux{RESET} | {BRIGHT_GREEN}grep {BRIGHT_BLUE}""root""{RESET} có tác dụng gì?",,
+8ecf6bf2-87cc-4dcb-b644-d1062d65b436,Báo cáo tóm tắt tình trạng hiện tại của các quy trình. Hiển thị thông tin chi tiết tiến trình tất cả người dùng.,Lệnh {BRIGHT_GREEN}ps -au{RESET} có tác dụng gì?,,
+818f7a8e-22f9-4083-af81-0d764eab1ee7,Báo cáo tóm tắt tình trạng hiện tại của các quy trình. Không hiển thị tiêu đề.,Lệnh {BRIGHT_GREEN}ps -h{RESET} có tác dụng gì?,,

@@ -1,0 +1,21 @@
+﻿id,answer,question,hint,desc
+efd79e4b-6fda-40e6-a7f0-469e0ecf1d96,7,Network: Mô hình OSI có bao nhiêu lớp?,- APSTNDP,"- Quá trình đóng gói tin: Application Layer, Presentation Layer, Session Layer, Transport Layer, Network Layer, Data-link Layer, Physical Layer. Mở gói tin thì ngược lại"
+c9ddecbf-134c-4c5e-9e78-e38be937053e,Application Layer,Network: Lớp nào là lớp cuối cùng trong quá trình mở gói tin của mô hình OSI?,- Mô hình OSI,* Application Layer: Lớp ứng dụng
+92dc66d2-b28a-4341-9bcf-38a82830e5dc,Application Layer,Network: Lớp nào là lớp đầu tiên trong quá trình đóng gói tin của mô hình OSI?,- Mô hình OSI,* Application Layer: Lớp ứng dụng
+dee0a960-7317-4efc-89fc-573fe9746ef7,Data-link Layer,Network: Lớp nào là lớp thứ hai trong quá trình mở gói tin của mô hình OSI?,- Mô hình OSI,* Data-link Layer: Lớp liên kết dữ liệu
+ed798e21-566d-4397-8896-4cc321527ced,Data-link Layer,Network: Lớp nào là lớp thứ sáu trong quá trình đóng gói tin của mô hình OSI?,- Mô hình OSI,* Data-link Layer: Lớp liên kết dữ liệu
+2e6155f5-6592-47b9-a24e-1e5f71cecce1,Data-link Layer,Network: Lớp nào trong mô hình OSI chịu trách nhiệm kiểm soát truy cập môi trường địa chỉ MAC?,- Liên kết đáng tin cậy giữa hai nút kết nối trực tiếp với nhau,* Data-link Layer: Lớp liên kết dữ liệu
+47ed8694-5435-4257-aa75-0e520aa1cfe0,Data-link Layer,Network: Lớp nào trong mô hình OSI chịu trách nhiệm phát hiện lỗi vật lý?,- Liên kết đáng tin cậy giữa hai nút kết nối trực tiếp với nhau,* Data-link Layer: Lớp liên kết dữ liệu
+d5c2331e-b885-445b-a892-4f72ad740878,Data-link Layer,Network: Lớp nào trong mô hình OSI chịu trách nhiệm đóng gói dữ liệu thành các frame?,- Liên kết đáng tin cậy giữa hai nút kết nối trực tiếp với nhau,* Data-link Layer: Lớp liên kết dữ liệu
+d7edbac9-7579-4e9e-8149-f168212dfcca,Network Layer,Network: Lớp nào là lớp thứ ba trong quá trình mở gói tin của mô hình OSI?,- Mô hình OSI,* Network Layer: Lớp mạng
+f2b4129d-3cb7-456e-a52f-4fbe158f20ac,Network Layer,Network: Lớp nào là lớp thứ năm trong quá trình đóng gói tin của mô hình OSI?,- Mô hình OSI,* Network Layer: Lớp mạng
+f156078c-55fd-4589-b1bf-092fb9efff22,Network Layer,Network: Lớp nào trong mô hình OSI chịu trách nhiệm định tuyến và gán địa chỉ IP?,- Quyết định con đường tốt nhất để dữ liệu đi từ mạng này sang mạng khác,* Network Layer: Lớp mạng
+d9608376-4bd4-4810-b831-49d728a6ff40,Physical Layer,Network: Lớp nào là lớp cuối cùng trong quá trình đóng gói tin của mô hình OSI?,- Mô hình OSI,* Physical Layer: Lớp vật lý
+c2ec8b87-a8cc-432a-8fe6-780665a5e203,Physical Layer,Network: Lớp nào là lớp đầu tiên trong quá trình mở gói tin của mô hình OSI?,- Mô hình OSI,* Physical Layer: Lớp vật lý
+bcfb0b3e-808e-49d2-a9f2-25cde614ba3d,Physical Layer,Network: Lớp nào trong mô hình OSI chịu trách nhiệm truyền tải dữ liệu thô qua các phương tiện vật lý?,"- Dữ liệu thô: bit 0 và 1\n- Phương tiện vật lý: cáp đồng, cáp quang và sóng vô tuyến",* Physical Layer: Lớp vật lý
+d174109b-9815-4fc8-aa75-8054a6a9f752,Presentation Layer,Network: Lớp nào là lớp thứ hai trong quá trình đóng gói tin của mô hình OSI?,- Mô hình OSI,* Presentation Layer: Lớp trình bày
+0753fe5e-27b7-43b9-9ba8-fb201ca63043,Presentation Layer,Network: Lớp nào là lớp thứ sáu trong quá trình mở gói tin của mô hình OSI?,- Mô hình OSI,* Presentation Layer: Lớp trình bày
+f81f779f-f331-478e-9fae-453f6a1f36fc,Session Layer,Network: Lớp nào là lớp thứ ba trong quá trình đóng gói tin của mô hình OSI?,- Mô hình OSI,* Session Layer: Lớp phiên
+2f615bb1-bc86-49dd-b8c4-a2e2e3fadb88,Session Layer,Network: Lớp nào là lớp thứ năm trong quá trình mở gói tin của mô hình OSI?,- Mô hình OSI,* Session Layer: Lớp phiên
+f6b6d3bb-3487-4a1f-867e-5c8352e127ff,Transport Layer,Network: Lớp nào là lớp thứ tư trong quá trình mở gói tin của mô hình OSI?,- Mô hình OSI,* Transport Layer: Lớp truyền tải
+14d766ae-e507-4d06-8057-ce0c94b590b7,Transport Layer,Network: Lớp nào là lớp thứ tư trong quá trình đóng gói tin của mô hình OSI?,- Mô hình OSI,* Transport Layer: Lớp truyền tải

@@ -1,0 +1,4 @@
+﻿id,answer,question,hint,desc
+dcd855e3-d582-44c0-b540-e9abe6a5f444,"Khám phá mạng, quét bảo mật và cổng địa chỉ mạng {BRIGHT_BLUE}192.168.1.0/24{RESET}. Vô hiệu hóa quét cổng.",Linux: Lệnh {BRIGHT_GREEN}nmap -sn {BRIGHT_BLUE}192.168.1.0/24{RESET} có tác dụng gì?,,
+38311370-5220-4d06-8620-22789f5dc852,"Khám phá mạng, quét bảo mật và cổng địa chỉ {BRIGHT_BLUE}192.168.1.22{RESET}. Quét tuân thủ quy tắc bắt tay ba bước và bật tính năng phát hiện hệ điều hành.",Linux: Lệnh {BRIGHT_GREEN}nmap -sT -O {BRIGHT_BLUE}192.168.1.22{RESET} có tác dụng gì?,,
+bad5e582-bc20-44a9-a379-d871b5f32ab0,"Khám phá mạng, quét bảo mật và cổng địa chỉ {BRIGHT_BLUE}192.168.1.22{RESET}. Quét tuân thủ quy tắc bắt tay ba bước và kiểm tra các cổng đang mở để xác định thông tin về dịch vụ và phiên bản.",Linux: Lệnh {BRIGHT_GREEN}nmap -sT -sV {BRIGHT_BLUE}192.168.1.22{RESET} có tác dụng gì?,,

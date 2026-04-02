@@ -1,3 +1,0 @@
-﻿id,answer,question,hint,desc
-69f37053-ac47-4f8f-b73c-265550f2e777,Là thư mục gốc. Nơi chứa tất cả các tệp cần thiết để khởi động hệ điều hành trước khi các hệ thống tệp khác được gắn kết.,Linux: {BRIGHT_BLUE}/{RESET} là gì?,- Hệ thống tệp gốc,"- Sau khi khởi động, tất cả các hệ thống tệp khác được gắn kết tại các điểm gắn kết tiêu chuẩn dưới dạng thư mục con của gốc."
-489f9473-e200-4842-abc7-e7dc6818edf0,Là tệp thư mục. Nơi chứa các tệp nhị phân lệnh cần thiết.,Linux: {BRIGHT_BLUE}/bin{RESET} là gì?,,

@@ -10,16 +10,14 @@ MAX_GENERATE_NORMAL_ANSWERS = 1   # số đáp án khi chơi 1 file
 MAX_GENERATE_ALL_ANSWERS = 4     # số đáp án khi chơi all
 
 KEYWORD = [
-    # C
-    "chiến thuật nào", "kỹ thuật nào",
-    # T
-    "thành phần nào",
-    # Full
-    "đâu là tác giả hay tổ chức của câu nói này",
-    # Số lượng
+    # số lượng
     "bao nhiêu",
-]
 
+    # gì
+    "có tác dụng gì",
+    # nào
+    "lớp nào", "giai đoạn nào",
+]
 
 # KEYWORD.sort()
 # print(KEYWORD)
