@@ -26,10 +26,25 @@ class FileManager:
             table.add_column("ID", justify="right", style="cyan")
             table.add_column("Tên Bộ Đề", style="bold white")
             table.add_column("Số câu", justify="right")
+            table.add_column("Trạng thái", justify="left")
             for i, f in enumerate(files, 1):
                 c = self.count_questions(f)
-                color = "green" if c >= 64 else "cyan" if c >= 32 else "yellow"
-                table.add_row(str(i), f"📚 {f}", f"[{color}]{c}[/]")
+                
+                # Phân loại trạng thái dựa trên số lượng câu
+                if c == 0:
+                    status = "[red]🌑 Trống[/]"
+                    color = "red"
+                elif c < 16:
+                    status = "[yellow]🚧 Cần bổ sung[/]"
+                    color = "yellow"
+                elif c < 22:
+                    status = "[cyan]📂 Đang biên soạn[/]"
+                    color = "cyan"
+                else:
+                    status = "[bold green]💎 Đủ chỉ tiêu[/]"
+                    color = "bold green"
+
+                table.add_row(str(i), f"📚 {f}", f"[{color}]{c}[/]", status)
             console.print(table)
         return files
 

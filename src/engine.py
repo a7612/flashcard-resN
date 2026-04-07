@@ -53,6 +53,17 @@ class QuizGame:
 
     def run(self, data, n_opts=None, max_qs=None, source=None):
         if not data: return print("❗ Không tìm thấy dữ liệu câu hỏi.")
+
+        # Loại bỏ các câu hỏi có nội dung trùng lặp (dựa trên cột question - index 2)
+        unique_data = []
+        seen_questions = set()
+        for row in data:
+            q_clean = str(row[2]).strip().lower()
+            if q_clean not in seen_questions:
+                unique_data.append(row)
+                seen_questions.add(q_clean)
+        data = unique_data
+
         pool, results, score = (random.sample(data, min(max_qs, len(data))) if max_qs else data[:]), [], 0
         for i, (qid, a, q, d, r) in enumerate(pool, 1):
             _clear_screen()
