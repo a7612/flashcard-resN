@@ -3,27 +3,60 @@ from rich.table import Table
 from rich.text import Text
 from rich import box
 from config import *
-from src.core import _CONFIG, console, log_action, _replace_colors, _clear_screen
+from src.core import _CONFIG, console, log_action, _replace_colors, _clear_screen, _handle_error, _get_now
 
 class QuizGame:
     def __init__(self, app): self.app = app
 
+    def _clean_text(self, text):
+        """Loại bỏ Rich Markup [style]...[/style] để so sánh đáp án."""
+        clean = re.sub(r'\[/?[a-zA-Z #0-9,._-]+\]', '', str(text))
+        return clean.strip().lower().rstrip('.')
+
     def _get_options(self, qid, q, a, data, all_ans, n_opts):
         if any(k in q.lower() for k in _CONFIG.KEYWORD_BOOL): return ["Đúng", "Sai"]
-        target = {a}; related = [r[1] for r in data if r[1].strip() != a.strip() and any(k in r[2].lower() for k in _CONFIG.KEYWORD if k in q.lower())]
+        
+        target = {a}
+        related = []
+        q_lower = q.lower()
+        for r in data:
+            ans_val = r[1]
+            ques_val = r[2].lower()
+            if ans_val.strip() != a.strip():
+                # Lọc bỏ các đáp án quá dài so với đáp án chuẩn để tránh "rác"
+                if len(a) < 20 and len(ans_val) > 100:
+                    continue
+                
+                # Tìm đáp án liên quan dựa trên từ khóa câu hỏi
+                for k in _CONFIG.KEYWORD:
+                    if k in q_lower and k in ques_val:
+                        related.append(ans_val)
+                        break
+                        
         target.update(related)
-        candidates = [x[1] for x in all_ans if x[1].strip() != a.strip() and x[1] not in target]
+        candidates = []
+        for x in all_ans:
+            ans_candidate = x[1]
+            if ans_candidate.strip() != a.strip() and ans_candidate not in target:
+                candidates.append(ans_candidate)
+                
         if len(target) < (n_opts or 4): target.update(random.sample(candidates, min(len(candidates), (n_opts or 4) - len(target))))
-        final = list(target - {a, "Đúng", "Sai"}); opts = random.sample(final, min(final_len := len(final), max(0, (n_opts or 4) - 1))) + [a]
-        return [_replace_colors(o) for o in dict.fromkeys(opts)]
+        
+        final_pool = list(target - {a, "Đúng", "Sai"})
+        opts = random.sample(final_pool, min(len(final_pool), max(0, (n_opts or 4) - 1)))
+        opts.append(a)
+        
+        colored_opts = []
+        for o in dict.fromkeys(opts):
+            colored_opts.append(_replace_colors(o))
+        return colored_opts
 
     def _feedback(self, ok, chosen, q, a, d, r, qid):
         log_action(f"CHOSEN:{qid}", f"{chosen} - {q} {'Đúng' if ok else 'Sai'}")
-        if ok: console.print(Text().append("\n ✨ CHÍNH XÁC! ", style="bold white on green").append(" ").append(Text.from_ansi(chosen)))
+        if ok: console.print(f"\n[bold white on green] ✨ CHÍNH XÁC! [/] {chosen}")
         else:
-            ans_txt = Text.from_ansi(a); ans_txt.stylize("bold yellow")
-            console.print(Text().append("\n 🌪️ TIẾC QUÁ... ", style="bold white on red").append(" Đáp án đúng: ").append(ans_txt))
-        if r: console.print(Text("  📖 Mô tả thêm: \n", style="cyan").append(Text.from_ansi(r)))
+            console.print(f"\n[bold white on red] 🌪️ TIẾC QUÁ... [/] Đáp án đúng: [bold yellow]{a}[/]")
+        if r: console.print(f"[cyan]  📖 Mô tả thêm: \n[/]{r}")
         console.print("") 
 
     def _export_results(self, results, score, total):
@@ -36,11 +69,14 @@ class QuizGame:
         console.print(table)
         bar = "█"*int(30*pct//100) + "░"*(30-int(30*pct//100))
         console.print(f"\n[green]✅ Đúng: {score:<5}[/] [red]❌ Sai: {wrong:<5}[/] [cyan]📊 {pct:.1f}% [{bar}][/]\n")
-        ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        ts = _get_now().strftime("%Y%m%d_%H%M%S")
         csv_p = os.path.join(_CONFIG.EXPORT_DIR, f"quiz_results_{ts}.csv")
-        with open(csv_p, "w", encoding="utf-8-sig", newline="") as f:
-            csv.writer(f).writerows([["timestamp", datetime.datetime.now().isoformat()], ["user", os.getlogin()], ["total", total], ["score", score], ["percent", f"{pct:.1f}"], [], ["idx", "question", "correct", "ok", "hint", "desc"]] + [[r["index"], r["question"], r["correct"], r["ok"], r["hint"], r.get("desc", "")] for r in results])
-        print(f"{BRIGHT_GREEN}💾 Đã xuất báo cáo: {csv_p}{RESET}")
+        try:
+            with open(csv_p, "w", encoding="utf-8-sig", newline="") as f:
+                csv.writer(f).writerows([["timestamp", _get_now().isoformat()], ["user", os.getlogin()], ["total", total], ["score", score], ["percent", f"{pct:.1f}"], [], ["idx", "question", "correct", "ok", "hint", "desc"]] + [[r["index"], r["question"], r["correct"], r["ok"], r["hint"], r.get("desc", "")] for r in results])
+            console.print(f"[bold green]💾 Đã xuất báo cáo: {csv_p}[/]")
+        except Exception as e:
+            console.print(f"[red]❌ Lỗi I/O khi xuất file CSV báo cáo: {e}[/]")
 
     def get_difficulty(self):
         table = Table(title="⚡ CHỌN MỨC ĐỘ THỬ THÁCH", box=box.SIMPLE)
@@ -48,41 +84,68 @@ class QuizGame:
         for k, v in [("0", "⚙️ Mặc định"), ("1", "🍃 Dễ (10 câu)"), ("2", "🔥 Vừa (20 câu)"), ("3", "💀 Khó (50 câu)"), ("4", "👑 Hardcore (100 câu)")]: table.add_row(k, v)
         console.print(table)
         try: ch = int(console.input(f"\n👉 Lựa chọn của bạn: "))
-        except: ch = 0
+        except (ValueError, EOFError, KeyboardInterrupt): ch = 0
         return {1: (1, 10), 2: (4, 20), 3: (6, 50), 4: (random.randint(8, 24), 100)}.get(ch, (_CONFIG.MAX_GENERATE_NORMAL_ANSWERS, _CONFIG.MAX_GENERATE_NORMAL_QUESTIONS))
 
     def run(self, data, n_opts=None, max_qs=None, source=None):
-        if not data: return print("❗ Không tìm thấy dữ liệu câu hỏi.")
+        if not data:
+            console.print("[yellow]⚠️ Không có dữ liệu câu hỏi để bắt đầu.[/]")
+            return
 
-        # Loại bỏ các câu hỏi có nội dung trùng lặp (dựa trên cột question - index 2)
-        unique_data = []
-        seen_questions = set()
+        try:
+            # Clean duplicates
+            data = self._deduplicate_data(data)
+            pool = random.sample(data, min(max_qs, len(data))) if max_qs else data[:]
+            results, score = [], 0
+
+            for i, (qid, a, q, d, r) in enumerate(pool, 1):
+                ok, chosen, info = self._ask_question(i, len(pool), qid, a, q, d, r, data, n_opts, score)
+                if chosen == "EXIT_SIGNAL": break
+                
+                if ok: score += 1
+                results.append({"index": i, "question": info[0], "correct": info[1], "hint": info[2], "desc": info[3], "ok": ok})
+                self._feedback(ok, chosen, *info, qid)
+                
+                if i < len(pool) and not self._wait_next(): break
+
+            self._export_results(results, score, len(results))
+        except Exception as e:
+            log_action("ERROR_RUN", str(e))
+            _handle_error(f"💥 Lỗi hệ thống trong quá trình Quiz: {e}")
+
+    def _deduplicate_data(self, data):
+        unique, seen = [], set()
         for row in data:
-            q_clean = str(row[2]).strip().lower()
-            if q_clean not in seen_questions:
-                unique_data.append(row)
-                seen_questions.add(q_clean)
-        data = unique_data
+            if (q := str(row[2]).strip().lower()) not in seen:
+                unique.append(row); seen.add(q)
+        return unique
 
-        pool, results, score = (random.sample(data, min(max_qs, len(data))) if max_qs else data[:]), [], 0
-        for i, (qid, a, q, d, r) in enumerate(pool, 1):
-            _clear_screen()
-            console.rule(f"[bold white on blue] 📝 QUIZ TIME [/] [cyan]Câu {i}/{len(pool)}[/] │ [green]Score: {score}[/] │ [dim]ID: {qid[-6:]}[/]")
-            q_d, a_d, d_d, r_d = map(_replace_colors, (q, a, d or "", r or ""))
-            console.print(Text("\n").append(Text.from_ansi(q_d)).append("\n"), style="bold white")
-            opts = self._get_options(qid, q, a, data, data, n_opts); random.shuffle(opts)
-            mapping = {k: v for k, v in zip(string.ascii_uppercase[:len(opts)], opts)}
-            for k, v in mapping.items(): console.print(Text().append(f"  ({k}) ", style="bold cyan").append(Text.from_ansi(v)))
-            while True:
-                u = console.input(f"\n👉 Chọn ([bold cyan]A-{list(mapping)[-1]}[/]) / '?' Gợi ý / '/exit': ").strip().upper()
-                if u == 'EXIT': return self._export_results(results, score, len(results))
-                if u == '?': print(f"{YELLOW}💡 Gợi ý:{RESET}\n{d_d}"); continue
-                if u in mapping: chosen = mapping[u]; break
-                print(f"{BRIGHT_RED}❌ Lựa chọn không hợp lệ.{RESET}")
-            clean = lambda t: re.sub(r'\{[A-Z0-9_]+\}|\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])', '', str(t)).strip().lower().rstrip('.')
-            ok = clean(chosen) == clean(a)
-            if ok: score += 1
-            results.append({"index": i, "question": q_d, "correct": a_d, "hint": d_d, "desc": r_d, "ok": ok})
-            self._feedback(ok, chosen, q_d, a_d, d_d, r_d, qid)
-            if i < len(pool): input(f"{BRIGHT_BLACK}[Phím bất kỳ] để tiếp tục...{RESET}")
-        self._export_results(results, score, len(pool))
+    def _ask_question(self, i, total, qid, a, q, d, r, data, n_opts, current_score):
+        _clear_screen()
+        console.rule(f"[bold white on blue] 📝 QUIZ [/] [cyan]{i}/{total}[/] │ [green]Score: {current_score}[/] │ [dim]{qid[-6:]}[/]")
+        q_d, a_d, d_d, r_d = map(_replace_colors, (q, a, d or "", r or ""))
+        # Sử dụng style làm gốc để lệnh [/] bên trong q_d reset về đúng màu này
+        console.print(f"\n{q_d}\n", style="bold white")
+        
+        opts = self._get_options(qid, q, a, data, data, n_opts); random.shuffle(opts)
+        mapping = {k: v for k, v in zip(string.ascii_uppercase[:len(opts)], opts)}
+        for k, v in mapping.items():
+            # Cô lập phần (A), (B) để không bị ảnh hưởng bởi reset màu trong v
+            console.print(Text.from_markup(f"  [bold cyan]({k})[/] ").append(Text.from_markup(v)))
+
+        while True:
+            try:
+                u = console.input(f"\n👉 Đáp án: ").strip().upper()
+                if u in ['/EXIT', 'EXIT']: return False, "EXIT_SIGNAL", None
+                if u == '?': console.print(f"[yellow]💡 Gợi ý: {d_d}[/]"); continue
+                if u in mapping:
+                    chosen = mapping[u]
+                    return self._clean_text(chosen) == self._clean_text(a_d), chosen, (q_d, a_d, d_d, r_d)
+                console.print("[red]❌ Sai cú pháp![/]")
+            except (EOFError, KeyboardInterrupt): return False, "EXIT_SIGNAL", None
+
+    def _wait_next(self):
+        try: 
+            console.input("[grey50] [Enter] Tiếp tục...[/]")
+            return True
+        except: return False

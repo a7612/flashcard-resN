@@ -1,4 +1,4 @@
-import os, logging, getpass, datetime, re
+import os, logging, getpass, datetime, re, time
 from logging.handlers import TimedRotatingFileHandler
 from types import SimpleNamespace
 from rich.console import Console
@@ -15,20 +15,31 @@ if not logger.handlers:
     h.setFormatter(logging.Formatter('%(asctime)s | %(message)s')); logger.addHandler(h)
 
 log_action = lambda a, d="": logger.info(f"{getpass.getuser():<12} | {a:<20} | {d}")
-console = Console()
+console = Console(highlight=False)
 
 # --- UTILITIES ---
 def _clear_screen(): 
     if _CONFIG.CLEAR_SCREEN:
         os.system("cls" if os.name == "nt" else "clear")
 
-color_map = {f"{{{k}}}": v for k, v in _CONFIG.__dict__.items() if k.isupper() and isinstance(v, str) and v.startswith('\033')}
-_color_token_re = re.compile(r"\{[A-Z0-9_]+\}")
+def _handle_error(msg, delay=None):
+    """In thông báo lỗi theo theme và tạm dừng hệ thống."""
+    console.print(msg, style=_CONFIG.COLOR_ERROR)
+    time.sleep(delay if delay is not None else _CONFIG.ERROR_DELAY)
+
+def _get_now():
+    """Trả về thời gian hiện tại theo múi giờ GMT+7."""
+    return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=7)))
 
 def _replace_colors(text):
     if not text: return ""
-    text = str(text[1] if isinstance(text, (tuple, list)) and len(text) > 1 else (text[0] if isinstance(text, (tuple, list)) else text))
-    return _color_token_re.sub(lambda m: color_map.get(m.group(0), m.group(0)), text.replace("\\n", "\n").replace("\\t", "\t").replace("{BACKSLASH}", "\\"))
+    if isinstance(text, (tuple, list)):
+        text = text[1] if len(text) > 1 else text[0]
+    # Chuyển đổi các ký tự điều khiển
+    t = str(text).replace("\\n", "\n").replace("\\t", "\t").replace("{BACKSLASH}", "\\")
+    # Thủ thuật KISS: Để 1 dấu [/] reset toàn bộ màu phía sau mà không gây crash:
+    # Ta thay [/] bằng [/][white] và bọc toàn bộ chuỗi trong thẻ [white]...[/]
+    return f"[white]{t.replace('[/]', '[/][white]')}[/]"
 
 def _safe_input(prompt, validator=None, allow_exit=True):
     while True:
@@ -38,5 +49,5 @@ def _safe_input(prompt, validator=None, allow_exit=True):
         if validator:
             ok, val = validator(v)
             if ok: return val
-            console.print("[red]⛔ Giá trị không hợp lệ![/]")
+            console.print(f"[{_CONFIG.COLOR_ERROR}]⛔ Giá trị không hợp lệ![/]")
         else: return v
