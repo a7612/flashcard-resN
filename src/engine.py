@@ -14,11 +14,14 @@ class QuizGame:
         return clean.strip().lower().rstrip('.')
 
     def _get_options(self, qid, q, a, data, all_ans, n_opts):
-        if any(k in q.lower() for k in _CONFIG.KEYWORD_BOOL): return ["Đúng", "Sai"]
+        q_lower = q.lower()
+        if any(k in q_lower for k in _CONFIG.KEYWORD_BOOL): return ["Đúng", "Sai"]
+        
+        # Đảm bảo n_opts tối thiểu là 4 nếu không được chỉ định rõ ràng hoặc bằng 1
+        n_target = n_opts if (n_opts and n_opts > 1) else 4
         
         target = {a}
         related = []
-        q_lower = q.lower()
         for r in data:
             ans_val = r[1]
             ques_val = r[2].lower()
@@ -40,10 +43,11 @@ class QuizGame:
             if ans_candidate.strip() != a.strip() and ans_candidate not in target:
                 candidates.append(ans_candidate)
                 
-        if len(target) < (n_opts or 4): target.update(random.sample(candidates, min(len(candidates), (n_opts or 4) - len(target))))
+        if len(target) < n_target:
+            target.update(random.sample(candidates, min(len(candidates), n_target - len(target))))
         
         final_pool = list(target - {a, "Đúng", "Sai"})
-        opts = random.sample(final_pool, min(len(final_pool), max(0, (n_opts or 4) - 1)))
+        opts = random.sample(final_pool, min(len(final_pool), max(0, n_target - 1)))
         opts.append(a)
         
         colored_opts = []

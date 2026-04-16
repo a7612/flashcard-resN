@@ -1,4 +1,21 @@
-exports
-logs
-__pycache__
-no use
+# Dữ liệu phát sinh trong quá trình chạy
+exports/
+logs/
+trash/
+
+# Python bytecode và cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Môi trường ảo (Virtual Environments)
+.venv/
+venv/
+env/
+
+# Cấu hình IDE và OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

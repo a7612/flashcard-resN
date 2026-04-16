@@ -1,5 +1,5 @@
 import os, csv, datetime, getpass, time
-from src.core import _CONFIG, console, log_action, _clear_screen, _safe_input, _handle_error, _get_now
+from src.core import _CONFIG, console, log_action, _clear_screen, _safe_input, _handle_error, _get_now, _move_to_trash
 from src.process_file import FileManager
 from src.process_flashcard import FlashcardManager
 from src.engine import QuizGame
@@ -67,13 +67,17 @@ class MenuManager:
             table.caption = f"[bold white]🎯 Độ chính xác TB: [{color}]{avg:.1f}%[/{color}][/]"
         return Panel(table, title=f"[bold {_CONFIG.COLOR_HISTORY}]📜 LỊCH SỬ[/]", border_style=_CONFIG.COLOR_HISTORY, expand=False)
 
-    def _choose_file_path(self):
+    def _choose_file_path(self, allow_all=False):
         files = self.file_mgr.list_files(show=True) # Đảm bảo luôn hiển thị danh sách file
         if not files:
             console.print("[yellow]⚠️ Thư mục hiện đang trống.[/]")
             time.sleep(1) # Cho người dùng thời gian đọc thông báo
             return None
-        return _safe_input("👉 Nhập ID bộ đề (hoặc /exit): ", lambda x: (x.isdigit() and 1 <= int(x) <= len(files), os.path.join(self.file_mgr.qdir, files[int(x)-1])))
+        
+        prompt = f"👉 Nhập ID bộ đề {'hoặc /all ' if allow_all else ''}(hoặc /exit): "
+        validator = lambda x: ((x.isdigit() and 1 <= int(x) <= len(files)) or (allow_all and x.lower() == "/all"), 
+                              os.path.join(self.file_mgr.qdir, files[int(x)-1]) if x.isdigit() else x.lower())
+        return _safe_input(prompt, validator)
 
     def run_menu(self, title, options, show_file_list=False, show_sidebar=True, clear=True, show_questions_path=None):
         while True:
@@ -149,6 +153,13 @@ class MenuManager:
 
         console.input(f"\n[{_CONFIG.COLOR_INFO}]Nhấn Enter để quay lại...[/]")
 
+    def _handle_manage_questions_for_path(self):
+        """Xử lý việc chọn file và sau đó hiển thị/chạy CRUD cho câu hỏi."""
+        path = self._choose_file_path()
+        if path:
+            self.card_mgr.show_questions(path) # Luôn hiển thị câu hỏi trước
+            self._run_question_crud_menu(path) # Sau đó vào menu CRUD
+
     def _run_question_crud_menu(self, path):
         """Chạy menu CRUD cho các câu hỏi trong một file cụ thể."""
         m = self.card_mgr
@@ -165,15 +176,64 @@ class MenuManager:
     def manage_q_menu(self):
         opts = {
             "1": (self.check_all_integrity, "🔍 Quét lỗi toàn hệ thống"),
-            "2": (lambda: (p := self._choose_file_path()) and (self.card_mgr.show_questions(p) or self._run_question_crud_menu(p)), "📂 Chọn bộ đề biên tập"),
+            "2": (self._handle_manage_questions_for_path, "📂 Chọn bộ đề biên tập"),
             "0": (lambda: None, "Quay lại")
         }
         self.run_menu("📦 QUẢN LÝ NỘI DUNG", opts, show_sidebar=False, clear=True)
 
+    def clear_history(self):
+        """Xoá toàn bộ file kết quả trong thư mục exports."""
+        try:
+            files = [f for f in os.listdir(_CONFIG.EXPORT_DIR) if f.startswith("quiz_results_")]
+            if not files:
+                console.print("[yellow]⚠️ Không có dữ liệu lịch sử để xoá.[/]")
+                time.sleep(1)
+                return
+
+            confirm = console.input(f"\n[bold red]⚠️ Bạn có chắc muốn xoá toàn bộ {len(files)} bản ghi lịch sử? (y/n): [/]").strip().lower()
+            if confirm == 'y':
+                for f in files:
+                    _move_to_trash(os.path.join(_CONFIG.EXPORT_DIR, f))
+                console.print(f"[bold green]✅ Đã di chuyển lịch sử vào thùng rác![/]")
+                log_action("CLEAR_HISTORY", f"Removed {len(files)} files")
+                time.sleep(1.5)
+        except Exception as e:
+            _handle_error(f"❌ Lỗi khi dọn dẹp lịch sử: {e}")
+
+    def empty_trash(self):
+        """Xoá vĩnh viễn toàn bộ file trong thư mục trash."""
+        try:
+            trash_dir = _CONFIG.TRASH_DIR
+            files = [f for f in os.listdir(trash_dir) if os.path.isfile(os.path.join(trash_dir, f))]
+            if not files:
+                console.print("[yellow]⚠️ Thùng rác hiện đang trống.[/]")
+                time.sleep(1)
+                return
+
+            confirm = console.input(f"\n[bold red]🔥 CẢNH BÁO: Bạn có muốn xoá VĨNH VIỄN {len(files)} file trong thùng rác? (y/n): [/]").strip().lower()
+            if confirm == 'y':
+                for f in files:
+                    os.remove(os.path.join(trash_dir, f))
+                console.print("[bold green]✨ Đã đổ rác sạch sẽ! Dữ liệu đã bị xoá vĩnh viễn.[/]")
+                log_action("EMPTY_TRASH", f"Removed {len(files)} files")
+                time.sleep(1.5)
+        except Exception as e:
+            _handle_error(f"❌ Lỗi khi dọn thùng rác: {e}")
+
+    def _handle_file_deletion(self):
+        p = self._choose_file_path(allow_all=True)
+        if not p: return
+        if p == "/all": self.file_mgr.delete_all_files()
+        else: self.file_mgr.delete_file(p)
+
     def manage_f_menu(self):
         f = self.file_mgr
         opts = {
-            "1": (f.create_file, "🆕 Tạo bộ đề"), "2": (lambda: (p := self._choose_file_path()) and f.delete_file(p), "⚠️ Xoá bộ đề"),
-            "3": (lambda: (p := self._choose_file_path()) and f.rename_file(p), "🏷️ Đổi tên"), "0": (lambda: None, "Quay lại")
+            "1": (f.create_file, "🆕 Tạo bộ đề"),
+            "2": (self._handle_file_deletion, "⚠️ Xoá bộ đề"),
+            "3": (lambda: (p := self._choose_file_path()) and f.rename_file(p), "🏷️ Đổi tên"),
+            "4": (self.clear_history, "🧹 Xoá lịch sử thi"),
+            "5": (self.empty_trash, "🗑️ Dọn sạch thùng rác"),
+            "0": (lambda: None, "Quay lại")
         }
         self.run_menu("📂 HỆ THỐNG LƯU TRỮ", opts, show_file_list=True, show_sidebar=False, clear=False)

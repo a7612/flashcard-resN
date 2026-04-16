@@ -1,5 +1,5 @@
 import os, csv, uuid, time, re
-from src.core import _CONFIG, console, log_action, _replace_colors, _safe_input, _clear_screen, _handle_error
+from src.core import _CONFIG, console, log_action, _replace_colors, _safe_input, _clear_screen, _handle_error, _move_to_trash
 from rich.table import Table
 from rich.text import Text
 from rich import box
@@ -107,10 +107,25 @@ class FlashcardManager:
             data = self.show_questions(path)
             if not data: break
             try:
-                idx_info = lambda x: (x.isdigit() and 1 <= int(x) <= len(data), int(x)-1 if x.isdigit() else 0)
-                val = _safe_input("🔢 Nhập STT để xoá (hoặc '/exit'): ", idx_info)
+                idx_info = lambda x: (
+                    x.isdigit() and 1 <= int(x) <= len(data) or x.lower() == "/all",
+                    int(x)-1 if x.isdigit() else x.lower()
+                )
+                val = _safe_input("🔢 Nhập STT để xoá hoặc '/all' để xoá hết (hoặc '/exit'): ", idx_info)
                 if val is None: break
                 
+                if val == "/all":
+                    confirm = _safe_input("❗ Xác nhận xoá TOÀN BỘ câu hỏi trong file này? (y/n) ")
+                    if confirm == "y":
+                        _move_to_trash(path) # Backup bản cũ vào trash trước khi làm trống
+                        data = []
+                        self.save_data(path, data)
+                        console.print("[bold yellow]♻️ Đã dọn sạch câu hỏi (Bản cũ đã được lưu vào trash/).[/]")
+                        log_action("DELETE_ALL_QUESTIONS", path)
+                        time.sleep(1)
+                        break
+                    continue
+
                 removed = data.pop(val)
                 self.save_data(path, data)
                 console.print(f"[red]🗑️ Đã xoá câu hỏi: {_replace_colors(removed[2])}[/]"); time.sleep(0.5)

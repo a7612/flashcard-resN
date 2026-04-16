@@ -1,8 +1,0 @@
-﻿id,answer,question,hint,desc
-2e550082-4cd1-4810-b69f-c95bcba5dbe5,20,Network: Cổng nào thường được liên kết với FTP data?,- IANA,* File Transfer Protocol (FTP): Giao thức truyền tải tệp tin
-4366cef5-6884-4493-8419-32ab3e589c36,21,Network: Cổng nào thường được liên kết với FTP control?,- IANA,* File Transfer Protocol (FTP): Giao thức truyền tải tệp tin
-f2745bb3-c9d6-4be8-83de-ba2a3c58bb8a,22,Network: Cổng nào thường được liên kết với SSH?,- IANA,* Secure Shell (SSH): Vỏ bảo mật
-8750cea9-fdfb-48d1-b393-e08cbfbaf60e,23,Network: Cổng nào thường được liên kết với Telnet?,- IANA,* Teletype Network (Telenet): Mạng truy cập từ xa
-0ae0d280-70a3-47bb-9d9e-0b844daca778,25,Network: Cổng nào thường được liên kết với SMTP?,- IANA,* Simple Mail Transfer Protocol (SMTP): Giao thức truyền tải thư điện tử
-1dc7f351-8da6-4ee9-b279-dc35d3267c31,53,Network: Cổng nào thường được liên kết với DNS?,- IANA,* Domain Name System (DNS): Hệ thống phân giải tên miền
-5d6d77fa-b6e7-4b8c-8932-4d50f7924d11,Một cách đơn giản để giao tiếp với các thiết bị trên Internet mà không cần phải nhớ những dãy số phức tạp,Network: DNS cung cấp điều gì?,,* Domain Name System (DNS): Hệ thống phân giải tên miền

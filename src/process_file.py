@@ -1,5 +1,5 @@
 import os, csv, time, datetime
-from src.core import _CONFIG, console, log_action, _safe_input, _handle_error, _get_now
+from src.core import _CONFIG, console, log_action, _safe_input, _handle_error, _get_now, VN_TZ, _move_to_trash
 from rich.table import Table
 from rich import box
 
@@ -14,6 +14,25 @@ class FileManager:
             (22, "[cyan]📂 Đang biên soạn[/]", "cyan"),
             (float('inf'), "[bold green]💎 Đủ chỉ tiêu[/]", "bold green")
         ]
+        self.auto_cleanup_trash()
+
+    def auto_cleanup_trash(self):
+        """Tự động xoá các file trong trash đã cũ hơn 30 ngày."""
+        trash_dir = _CONFIG.TRASH_DIR
+        if not os.path.exists(trash_dir): return
+        
+        now = time.time()
+        expiry_seconds = 30 * 86400 # 30 ngày
+        count = 0
+        try:
+            for f in os.listdir(trash_dir):
+                fpath = os.path.join(trash_dir, f)
+                if os.path.isfile(fpath) and (now - os.path.getmtime(fpath) > expiry_seconds):
+                    os.remove(fpath)
+                    count += 1
+            if count > 0:
+                log_action("AUTO_TRASH_CLEANUP", f"Deleted {count} expired files")
+        except: pass
 
     def _get_full_path(self, fname):
         return os.path.join(self.qdir, fname)
@@ -65,7 +84,7 @@ class FileManager:
                 
                 # Lấy thời gian cập nhật cuối cùng của file
                 mtime_ts = os.path.getmtime(self._get_full_path(f))
-                mtime_dt = datetime.datetime.fromtimestamp(mtime_ts, tz=datetime.timezone(datetime.timedelta(hours=7)))
+                mtime_dt = datetime.datetime.fromtimestamp(mtime_ts, tz=VN_TZ)
                 diff = _get_now() - mtime_dt
                 
                 # Xác định màu sắc và nội dung dựa trên độ trễ
@@ -106,12 +125,26 @@ class FileManager:
         if confirm != "y": return
         
         try:
-            os.remove(path)
+            _move_to_trash(path)
             self._cache.pop(os.path.basename(path), None)
             log_action("DELETE", path)
-            console.print("[red]🗑️ Đã xoá file thành công.[/]"); time.sleep(1)
+            console.print("[yellow]📂 Đã chuyển file vào thùng rác (trash/).[/]"); time.sleep(1)
         except Exception as e:
             _handle_error(f"❌ Không thể xoá file '{os.path.basename(path)}': {e}")
+
+    def delete_all_files(self):
+        files = self.get_files()
+        if not files: return
+        confirm = _safe_input(f"🔥 CẢNH BÁO: Bạn có chắc muốn xoá vĩnh viễn TOÀN BỘ {len(files)} bộ đề? (y/n) ")
+        if confirm != "y": return
+        
+        for f in files:
+            try:
+                _move_to_trash(self._get_full_path(f))
+                self._cache.pop(f, None)
+            except: pass
+        log_action("DELETE_ALL_FILES", f"Removed {len(files)} files")
+        console.print("[bold yellow]♻️ Đã dọn sạch kho dữ liệu vào thùng rác![/]"); time.sleep(1)
 
     def rename_file(self, path):
         new = _safe_input("🏷️ Tên mới: ")

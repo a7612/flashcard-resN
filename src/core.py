@@ -1,4 +1,4 @@
-import os, logging, getpass, datetime, re, time
+import os, logging, getpass, datetime, re, time, shutil
 from logging.handlers import TimedRotatingFileHandler
 from types import SimpleNamespace
 from rich.console import Console
@@ -6,7 +6,7 @@ from config import *
 
 # Khởi tạo cấu hình và thư mục
 _CONFIG = SimpleNamespace(**{k: v for k, v in globals().items() if k.isupper()})
-for d in [_CONFIG.LOG_DIR, _CONFIG.EXPORT_DIR, _CONFIG.QUESTIONS_DIR]: os.makedirs(d, exist_ok=True)
+for d in [_CONFIG.LOG_DIR, _CONFIG.EXPORT_DIR, _CONFIG.QUESTIONS_DIR, _CONFIG.TRASH_DIR]: os.makedirs(d, exist_ok=True)
 
 # Thiết lập Logger
 logger = logging.getLogger("flashcard"); logger.setLevel(logging.INFO)
@@ -16,6 +16,9 @@ if not logger.handlers:
 
 log_action = lambda a, d="": logger.info(f"{getpass.getuser():<12} | {a:<20} | {d}")
 console = Console(highlight=False)
+
+# Định nghĩa múi giờ GMT+7 dùng chung cho toàn hệ thống
+VN_TZ = datetime.timezone(datetime.timedelta(hours=7))
 
 # --- UTILITIES ---
 def _clear_screen(): 
@@ -29,7 +32,7 @@ def _handle_error(msg, delay=None):
 
 def _get_now():
     """Trả về thời gian hiện tại theo múi giờ GMT+7."""
-    return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=7)))
+    return datetime.datetime.now(VN_TZ)
 
 def _replace_colors(text):
     if not text: return ""
@@ -40,6 +43,22 @@ def _replace_colors(text):
     # Thủ thuật KISS: Để 1 dấu [/] reset toàn bộ màu phía sau mà không gây crash:
     # Ta thay [/] bằng [/][white] và bọc toàn bộ chuỗi trong thẻ [white]...[/]
     return f"[white]{t.replace('[/]', '[/][white]')}[/]"
+
+def _move_to_trash(path):
+    """Di chuyển file vào thư mục trash thay vì xoá vĩnh viễn."""
+    if not os.path.exists(path): return False
+    try:
+        ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        fname = os.path.basename(path)
+        name, ext = os.path.splitext(fname)
+        
+        # Tạo tên file mới trong trash để tránh trùng lặp
+        trash_fname = f"{name}_{ts}{ext}"
+        shutil.move(path, os.path.join(_CONFIG.TRASH_DIR, trash_fname))
+        return True
+    except Exception as e:
+        _handle_error(f"❌ Không thể di chuyển vào thùng rác: {e}")
+        return False
 
 def _safe_input(prompt, validator=None, allow_exit=True):
     while True:
