@@ -1,70 +1,88 @@
-import os, logging, getpass, datetime, re, time, shutil
-from logging.handlers import TimedRotatingFileHandler
+import os, datetime, time, shutil, csv
 from types import SimpleNamespace
 from rich.console import Console
 from config import *
 
 # Khởi tạo cấu hình và thư mục
 _CONFIG = SimpleNamespace(**{k: v for k, v in globals().items() if k.isupper()})
-for d in [_CONFIG.LOG_DIR, _CONFIG.EXPORT_DIR, _CONFIG.QUESTIONS_DIR, _CONFIG.TRASH_DIR]: os.makedirs(d, exist_ok=True)
+for d in [_CONFIG.LOG_DIR, _CONFIG.EXPORT_DIR, _CONFIG.QUESTIONS_DIR, _CONFIG.TRASH_DIR, "data"]: os.makedirs(d, exist_ok=True)
 
-# Thiết lập Logger
-logger = logging.getLogger("flashcard"); logger.setLevel(logging.INFO)
-if not logger.handlers:
-    h = TimedRotatingFileHandler(os.path.join(_CONFIG.LOG_DIR, "flashcard.log"), when="midnight", backupCount=14, encoding="utf-8")
-    h.setFormatter(logging.Formatter('%(asctime)s | %(message)s')); logger.addHandler(h)
+def load_filter_keywords():
+    """Nạp hoặc làm mới danh sách từ khóa từ file CSV cấu hình."""
+    _filter_csv = "data/filter_categories.csv"
+    _diff_csv = "data/difficult.csv"
+    
+    # Khởi tạo các file dữ liệu hệ thống nếu chưa có
+    if not os.path.exists(_filter_csv):
+        try:
+            with open(_filter_csv, "w", encoding="utf-8-sig", newline="") as f:
+                csv.writer(f, delimiter=';').writerow(["num", "type_question", "type_keyword", "keyword"])
+        except Exception: pass
 
-log_action = lambda a, d="": logger.info(f"{getpass.getuser():<12} | {a:<20} | {d}")
+    if not os.path.exists(_diff_csv):
+        try:
+            with open(_diff_csv, "w", encoding="utf-8-sig", newline="") as f:
+                csv.writer(f, delimiter=';').writerow(["id", "độ khó"])
+        except Exception: pass
+
+    if os.path.exists(_filter_csv):
+        try:
+            with open(_filter_csv, "r", encoding="utf-8-sig") as f:
+                head = f.read(1024); f.seek(0)
+                delim = ';' if ';' in head and ',' not in head else ','
+                reader = csv.DictReader(f, delimiter=delim)
+            
+            k_list, kb_list = [], []
+            for row in reader:
+                kw = row.get('keyword', '').strip()
+                tk = row.get('type_keyword', '').strip()
+                if not kw or not tk: continue
+                tq = row.get('type_question', '').strip().lower()
+                if tq == 'bool': kb_list.append((tk, kw))
+                else: k_list.append((tk, kw))
+                
+            _CONFIG.KEYWORD = k_list
+            _CONFIG.KEYWORD_BOOL = kb_list if kb_list else [("bool", "đúng hay sai")]
+        except Exception:
+            pass # Giữ nguyên nếu lỗi
+
+# Nạp lần đầu khi khởi động
+load_filter_keywords()
+
 console = Console(highlight=False)
 
 # Định nghĩa múi giờ GMT+7 dùng chung cho toàn hệ thống
 VN_TZ = datetime.timezone(datetime.timedelta(hours=7))
 
-# --- UTILITIES ---
+def _get_now():
+    return datetime.datetime.now(VN_TZ)
+
 def _clear_screen(): 
     if _CONFIG.CLEAR_SCREEN:
         os.system("cls" if os.name == "nt" else "clear")
 
 def _handle_error(msg, delay=None):
-    """In thông báo lỗi theo theme và tạm dừng hệ thống."""
     console.print(msg, style=_CONFIG.COLOR_ERROR)
     time.sleep(delay if delay is not None else _CONFIG.ERROR_DELAY)
 
-def _get_now():
-    """Trả về thời gian hiện tại theo múi giờ GMT+7."""
-    return datetime.datetime.now(VN_TZ)
-
-def _replace_colors(text):
-    if not text: return ""
-    if isinstance(text, (tuple, list)):
-        text = text[1] if len(text) > 1 else text[0]
-    # Chuyển đổi các ký tự điều khiển
-    t = str(text).replace("\\n", "\n").replace("\\t", "\t").replace("{BACKSLASH}", "\\")
-    # Thủ thuật KISS: Để 1 dấu [/] reset toàn bộ màu phía sau mà không gây crash:
-    # Ta thay [/] bằng [/][white] và bọc toàn bộ chuỗi trong thẻ [white]...[/]
-    return f"[white]{t.replace('[/]', '[/][white]')}[/]"
-
 def _move_to_trash(path):
-    """Di chuyển file vào thư mục trash thay vì xoá vĩnh viễn."""
     if not os.path.exists(path): return False
     try:
         ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         fname = os.path.basename(path)
         name, ext = os.path.splitext(fname)
-        
-        # Tạo tên file mới trong trash để tránh trùng lặp
         trash_fname = f"{name}_{ts}{ext}"
         shutil.move(path, os.path.join(_CONFIG.TRASH_DIR, trash_fname))
         return True
     except Exception as e:
-        _handle_error(f"❌ Không thể di chuyển vào thùng rác: {e}")
+        console.print(f"[red]❌ Không thể di chuyển vào thùng rác: {e}[/]")
         return False
 
 def _safe_input(prompt, validator=None, allow_exit=True):
     while True:
         try: v = console.input(prompt).strip()
         except (KeyboardInterrupt, EOFError): return None
-        if allow_exit and (v.lower() == "/exit"): return None
+        if allow_exit and v.lower() in ["exit", "/exit"]: return None
         if validator:
             ok, val = validator(v)
             if ok: return val

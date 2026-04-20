@@ -1,5 +1,7 @@
 import os, csv, time, datetime
-from src.core import _CONFIG, console, log_action, _safe_input, _handle_error, _get_now, VN_TZ, _move_to_trash
+from src.core import _CONFIG, console, VN_TZ
+from src.utils import _safe_input, _handle_error, _get_now, _move_to_trash
+from src.process_log import log_action
 from rich.table import Table
 from rich import box
 

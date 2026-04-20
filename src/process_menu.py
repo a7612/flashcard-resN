@@ -1,83 +1,37 @@
-import os, csv, datetime, getpass, time
-from src.core import _CONFIG, console, log_action, _clear_screen, _safe_input, _handle_error, _get_now, _move_to_trash
+import os, getpass
+from src.core import _CONFIG, console, _clear_screen, _get_now
+from src.utils import (
+    _handle_error, _move_to_trash,
+    _show_stats_util, _get_history_table_util, _choose_file_path_util, _play_action_util,
+    _check_all_integrity_util, _clear_history_util, _empty_trash_util,
+    _handle_manage_questions_for_path_util, _handle_file_deletion_util,
+    _clear_logs_util
+)
 from src.process_file import FileManager
 from src.process_flashcard import FlashcardManager
-from src.engine import QuizGame
+from src.process_categories import CategoryManager
+from src.process_log import LogManager, log_action
 from rich.table import Table
-from rich.text import Text
-from rich.columns import Columns
 from rich.panel import Panel
 from rich.align import Align
 from rich import box
 from rich.console import Group
+from rich.columns import Columns
 
 class MenuManager:
     def __init__(self):
         self.file_mgr = FileManager()
         self.card_mgr = FlashcardManager()
+        self.cate_mgr = CategoryManager()
 
     def show_stats(self):
-        try:
-            files = self.file_mgr.get_files()
-            total_q = 0
-            total_bytes = 0
-            for f in files:
-                total_q += self.file_mgr.count_questions(f)
-                full_path = os.path.join(self.file_mgr.qdir, f)
-                if os.path.exists(full_path):
-                    total_bytes += os.path.getsize(full_path)
-        except Exception as e:
-            _handle_error(f"⚠️ Lỗi khi thu thập thống kê hệ thống: {e}")
-            total_q, total_bytes, files = 0, 0, []
-            
-        size_str = f"{total_bytes/1024:.1f} KB" if total_bytes > 1024 else f"{total_bytes} B"
-        table = Table(box=box.ROUNDED, show_header=False, min_width=28, border_style=_CONFIG.COLOR_STATS) 
-        table.add_row("📂 Bộ đề", str(len(files)))
-        table.add_row("❓ Tổng câu", f"[bold green]{total_q}[/]")
-        table.add_row("💾 Lưu trữ", f"[bold magenta]{size_str}[/]")
-        return Panel(table, title=f"[bold {_CONFIG.COLOR_STATS}]📊 THỐNG KÊ[/]", border_style=_CONFIG.COLOR_STATS, expand=False)
+        return _show_stats_util(self.file_mgr)
 
     def get_history_table(self):
-        table = Table(box=box.ROUNDED, border_style=_CONFIG.COLOR_HISTORY)
-        table.add_column("Thời gian", style="dim", width=11)
-        table.add_column("Điểm", justify="center"); table.add_column("%", justify="right", style="bold yellow")
-        history_pcts = []
-        
-        all_exports = os.listdir(_CONFIG.EXPORT_DIR)
-        h_files_filtered = []
-        for f in all_exports:
-            if f.startswith("quiz_results_"):
-                h_files_filtered.append(f)
-        h_files = sorted(h_files_filtered, reverse=True)[:10]
-
-        for f_name in h_files:
-            try:
-                with open(os.path.join(_CONFIG.EXPORT_DIR, f_name), encoding="utf-8-sig") as f:
-                    meta = {}
-                    for r in csv.reader(f):
-                        if len(r) >= 2:
-                            meta[r[0]] = r[1]
-                    pct = float(meta.get('percent', 0)); history_pcts.append(pct)
-                    dt = datetime.datetime.fromisoformat(meta["timestamp"]).strftime("%d/%m %H:%M")
-                    table.add_row(dt, f"{meta.get('score', 0)}/{meta.get('total', 0)}", f"{pct:.0f}%")
-            except: pass
-        if history_pcts:
-            avg = sum(history_pcts)/len(history_pcts)
-            color = "bold green" if avg > 80 else "bold red" if avg < 50 else "bold yellow"
-            table.caption = f"[bold white]🎯 Độ chính xác TB: [{color}]{avg:.1f}%[/{color}][/]"
-        return Panel(table, title=f"[bold {_CONFIG.COLOR_HISTORY}]📜 LỊCH SỬ[/]", border_style=_CONFIG.COLOR_HISTORY, expand=False)
+        return _get_history_table_util()
 
     def _choose_file_path(self, allow_all=False):
-        files = self.file_mgr.list_files(show=True) # Đảm bảo luôn hiển thị danh sách file
-        if not files:
-            console.print("[yellow]⚠️ Thư mục hiện đang trống.[/]")
-            time.sleep(1) # Cho người dùng thời gian đọc thông báo
-            return None
-        
-        prompt = f"👉 Nhập ID bộ đề {'hoặc /all ' if allow_all else ''}(hoặc /exit): "
-        validator = lambda x: ((x.isdigit() and 1 <= int(x) <= len(files)) or (allow_all and x.lower() == "/all"), 
-                              os.path.join(self.file_mgr.qdir, files[int(x)-1]) if x.isdigit() else x.lower())
-        return _safe_input(prompt, validator)
+        return _choose_file_path_util(self.file_mgr, allow_all)
 
     def run_menu(self, title, options, show_file_list=False, show_sidebar=True, clear=True, show_questions_path=None):
         while True:
@@ -96,69 +50,49 @@ class MenuManager:
 
             if show_file_list: self.file_mgr.list_files()
             if show_questions_path: self.card_mgr.show_questions(show_questions_path)
-            ch = console.input(f"\n👉 Lệnh của bạn: ").strip()
-            if ch in ["0", "/exit"]: break
+            ch = console.input(f"\n👉 Lệnh của bạn: ").strip().lower()
             if ch in options: options[ch][0]()
+            if ch in ["0", "exit", "/exit"]: break
 
     def play_action(self, all_files=False):
-        game = QuizGame(self)
-        try:
-            if all_files:
-                data = []
-                for f in self.file_mgr.get_files(): data.extend(self.card_mgr.load_data(os.path.join(self.file_mgr.qdir, f)))
-            else:
-                path = self._choose_file_path()
-                if not path: return
-                data = self.card_mgr.load_data(path)
-            
-            if data: game.run(data, *game.get_difficulty())
-            else: console.print("[yellow]⚠️ Không có dữ liệu để chơi.[/]")
-        except Exception as e:
-            _handle_error(f"❌ Lỗi khi khởi tạo trò chơi: {e}")
+        _play_action_util(self.file_mgr, self.card_mgr, self, all_files)
 
     def check_all_integrity(self):
-        """Quét tất cả bộ đề và báo cáo lỗi định dạng."""
-        _clear_screen()
-        console.print(Panel(Align.center("[bold cyan]🔍 KIỂM TRA TOÀN DIỆN HỆ THỐNG[/]"), border_style="cyan"))
-        
-        files = self.file_mgr.get_files()
-        if not files: return console.print("[yellow]⚠️ Không có file để kiểm tra.[/]")
-
-        table = Table(box=box.MINIMAL_DOUBLE_HEAD, expand=True)
-        table.add_column("Bộ đề", style="bold white", width=30)
-        table.add_column("Kết quả kiểm tra", justify="left")
-
-        files_with_ansi = []
-        with console.status("[bold green]Đang quét dữ liệu...[/]"):
-            for f_name in files:
-                path = os.path.join(self.file_mgr.qdir, f_name)
-                errors = self.card_mgr.validate_file(path)
-                if any("mã ANSI" in e for e in errors):
-                    files_with_ansi.append(path)
-                
-                res = "\n".join([f"• {e}" for e in errors]) if errors else "[green]✅ Sạch sẽ[/]"
-                table.add_row(f_name, res)
-
-        console.print(table)
-        
-        if files_with_ansi:
-            prompt = f"\n[bold yellow]💡 Phát hiện {len(files_with_ansi)} bộ đề chứa mã ANSI cũ. Tự động sửa lỗi? (y/n): [/]"
-            if console.input(prompt).strip().lower() == 'y':
-                count = 0
-                for p in files_with_ansi:
-                    if self.card_mgr.fix_ansi_in_file(p): count += 1
-                console.print(f"[bold green]✅ Đã tự động chuyển đổi thành công {count} file![/]")
-                time.sleep(1.5)
-                return self.check_all_integrity() # Quét lại để cập nhật bảng kết quả
-
-        console.input(f"\n[{_CONFIG.COLOR_INFO}]Nhấn Enter để quay lại...[/]")
+        _check_all_integrity_util(self.file_mgr, self.card_mgr)
 
     def _handle_manage_questions_for_path(self):
-        """Xử lý việc chọn file và sau đó hiển thị/chạy CRUD cho câu hỏi."""
-        path = self._choose_file_path()
-        if path:
-            self.card_mgr.show_questions(path) # Luôn hiển thị câu hỏi trước
-            self._run_question_crud_menu(path) # Sau đó vào menu CRUD
+        _handle_manage_questions_for_path_util(self.file_mgr, self.card_mgr, self)
+
+    def _run_category_crud_menu(self):
+        """Chạy menu CRUD cho quản lý từ khóa lọc."""
+        c = self.cate_mgr
+        opts = {
+            "1": (c.add_category, "📝 Thêm từ khóa"),
+            "2": (c.delete_category, "🗑️ Xoá từ khóa"),
+            "3": (c.edit_category, "🛠️ Sửa từ khóa"),
+            "0": (lambda: None, "Quay lại")
+        }
+        self.run_menu("🏷️ QUẢN LÝ TỪ KHÓA LỌC", opts, show_sidebar=False, clear=True)
+
+    def reload_data(self):
+        """Khởi động lại toàn bộ tiến trình ứng dụng (App Restart)."""
+        log_action("APP_RELOAD", "Application restart triggered by user")
+        _clear_screen()
+        console.print("\n[bold yellow]🔄 Đang nạp lại toàn bộ tài nguyên và khởi động lại ứng dụng...[/]")
+        console.print("[dim]Vui lòng đợi trong giây lát...[/]")
+        
+        time.sleep(1)
+        # Dọn sạch input buffer để tránh các ký tự ANSI (như 2d, 33e) bị lọt vào phiên làm việc mới
+        try:
+            import msvcrt
+            while msvcrt.kbhit(): msvcrt.getch()
+        except ImportError:
+            pass # Không phải Windows
+
+        sys.stdout.flush()
+        sys.stderr.flush()
+        # Thay thế tiến trình hiện tại bằng chính nó (re-exec)
+        os.execv(sys.executable, [sys.executable] + sys.argv)
 
     def _run_question_crud_menu(self, path):
         """Chạy menu CRUD cho các câu hỏi trong một file cụ thể."""
@@ -177,54 +111,22 @@ class MenuManager:
         opts = {
             "1": (self.check_all_integrity, "🔍 Quét lỗi toàn hệ thống"),
             "2": (self._handle_manage_questions_for_path, "📂 Chọn bộ đề biên tập"),
+            "3": (self._run_category_crud_menu, "🏷️ Quản lý từ khóa lọc"),
             "0": (lambda: None, "Quay lại")
         }
         self.run_menu("📦 QUẢN LÝ NỘI DUNG", opts, show_sidebar=False, clear=True)
 
     def clear_history(self):
-        """Xoá toàn bộ file kết quả trong thư mục exports."""
-        try:
-            files = [f for f in os.listdir(_CONFIG.EXPORT_DIR) if f.startswith("quiz_results_")]
-            if not files:
-                console.print("[yellow]⚠️ Không có dữ liệu lịch sử để xoá.[/]")
-                time.sleep(1)
-                return
+        _clear_history_util()
 
-            confirm = console.input(f"\n[bold red]⚠️ Bạn có chắc muốn xoá toàn bộ {len(files)} bản ghi lịch sử? (y/n): [/]").strip().lower()
-            if confirm == 'y':
-                for f in files:
-                    _move_to_trash(os.path.join(_CONFIG.EXPORT_DIR, f))
-                console.print(f"[bold green]✅ Đã di chuyển lịch sử vào thùng rác![/]")
-                log_action("CLEAR_HISTORY", f"Removed {len(files)} files")
-                time.sleep(1.5)
-        except Exception as e:
-            _handle_error(f"❌ Lỗi khi dọn dẹp lịch sử: {e}")
+    def clear_logs(self):
+        _clear_logs_util()
 
     def empty_trash(self):
-        """Xoá vĩnh viễn toàn bộ file trong thư mục trash."""
-        try:
-            trash_dir = _CONFIG.TRASH_DIR
-            files = [f for f in os.listdir(trash_dir) if os.path.isfile(os.path.join(trash_dir, f))]
-            if not files:
-                console.print("[yellow]⚠️ Thùng rác hiện đang trống.[/]")
-                time.sleep(1)
-                return
-
-            confirm = console.input(f"\n[bold red]🔥 CẢNH BÁO: Bạn có muốn xoá VĨNH VIỄN {len(files)} file trong thùng rác? (y/n): [/]").strip().lower()
-            if confirm == 'y':
-                for f in files:
-                    os.remove(os.path.join(trash_dir, f))
-                console.print("[bold green]✨ Đã đổ rác sạch sẽ! Dữ liệu đã bị xoá vĩnh viễn.[/]")
-                log_action("EMPTY_TRASH", f"Removed {len(files)} files")
-                time.sleep(1.5)
-        except Exception as e:
-            _handle_error(f"❌ Lỗi khi dọn thùng rác: {e}")
+        _empty_trash_util()
 
     def _handle_file_deletion(self):
-        p = self._choose_file_path(allow_all=True)
-        if not p: return
-        if p == "/all": self.file_mgr.delete_all_files()
-        else: self.file_mgr.delete_file(p)
+        _handle_file_deletion_util(self.file_mgr)
 
     def manage_f_menu(self):
         f = self.file_mgr
@@ -232,8 +134,6 @@ class MenuManager:
             "1": (f.create_file, "🆕 Tạo bộ đề"),
             "2": (self._handle_file_deletion, "⚠️ Xoá bộ đề"),
             "3": (lambda: (p := self._choose_file_path()) and f.rename_file(p), "🏷️ Đổi tên"),
-            "4": (self.clear_history, "🧹 Xoá lịch sử thi"),
-            "5": (self.empty_trash, "🗑️ Dọn sạch thùng rác"),
             "0": (lambda: None, "Quay lại")
         }
         self.run_menu("📂 HỆ THỐNG LƯU TRỮ", opts, show_file_list=True, show_sidebar=False, clear=False)

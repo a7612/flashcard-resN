@@ -1,5 +1,7 @@
-import os, csv, uuid, time, re
-from src.core import _CONFIG, console, log_action, _replace_colors, _safe_input, _clear_screen, _handle_error, _move_to_trash
+import os, csv, uuid, time
+from src.core import _CONFIG, console
+from src.utils import _replace_colors, _safe_input, _clear_screen, _handle_error, _move_to_trash
+from src.process_log import log_action
 from rich.table import Table
 from rich.text import Text
 from rich import box
@@ -19,7 +21,10 @@ class FlashcardManager:
         try:
             rows = []
             with open(path, encoding="utf-8-sig") as f:
-                reader = csv.DictReader(f)
+                # Tự động nhận diện delimiter (;) hoặc (,)
+                head = f.read(2048); f.seek(0)
+                delim = ';' if ';' in head and ',' not in head else ','
+                reader = csv.DictReader(f, delimiter=delim)
                 for r in reader:
                     rows.append(list(r.values()))
             
@@ -165,60 +170,16 @@ class FlashcardManager:
                 break
 
     def validate_file(self, path):
-        """Kiểm tra mã ANSI cũ và lỗi Markup trong file."""
+        """Kiểm tra tính toàn vẹn và lỗi Markup Rich trong file."""
         errors = []
         data = self.load_data(path, force=True)
         if not data: return []
 
-        # Regex tìm mã ANSI thực (\x1b...) hoặc literal ANSI ([94m...)
-        ansi_rx = re.compile(r'\x1b\[[0-9;]*[mK]|\[\d+m')
-        
         for i, row in enumerate(data, 1):
             if len(row) < 3: continue
-            # Kiểm tra cả mã ANSI cũ và các thẻ Markup chưa đóng hết
             q_text = str(row[2])
-            a_text = str(row[1])
-            if ansi_rx.search(q_text) or ansi_rx.search(a_text):
-                errors.append(f"Dòng {i}: [bold red]Phát hiện mã ANSI cũ[/]")
             
             if q_text.count('[') != q_text.count(']'):
                 errors.append(f"Dòng {i}: [magenta]Cú pháp Markup [[ ]] không cân xứng[/]")
             
-            # Cảnh báo nếu mở nhiều thẻ mà đóng quá ít (dễ gây lem màu)
-            if q_text.count('[') > q_text.count('/]'):
-                 if "[/" not in q_text and "[" in q_text: # Trường hợp chỉ mở ko đóng
-                     pass # validate_file đã bắt ở trên, nhưng có thể bổ sung cảnh báo logic ở đây
         return errors
-
-    def fix_ansi_in_file(self, path):
-        """Tự động chuyển đổi mã ANSI sang Rich Markup và lưu lại file."""
-        data = self.load_data(path, force=True)
-        if not data: return False
-
-        # Ánh xạ mã màu ANSI sang Rich Markup
-        ansi_map = {
-            '31': 'red', '91': 'bright_red',
-            '32': 'green', '92': 'bright_green',
-            '33': 'yellow', '93': 'bright_yellow',
-            '34': 'blue', '94': 'bright_blue',
-            '35': 'magenta', '95': 'bright_magenta',
-            '36': 'cyan', '96': 'bright_cyan',
-            '37': 'white', '97': 'bright_white',
-            '90': 'grey50'
-        }
-        ansi_rx = re.compile(r'(?:\x1b\[|\[)(\d+)m')
-        
-        changed = False
-        for row in data:
-            for i in range(1, min(len(row), 5)): # Xử lý các cột nội dung
-                val = str(row[i])
-                if ansi_rx.search(val):
-                    # Thay vì dùng [/], dùng cơ chế tự đóng của Rich nếu có thể, 
-                    # nhưng đơn giản nhất là đảm bảo reset style về mặc định.
-                    row[i] = ansi_rx.sub(lambda m: f"[{ansi_map.get(m.group(1), 'white')}]" if m.group(1) != '0' else "[/]", val)
-                    changed = True
-        
-        if changed:
-            self.save_data(path, data)
-            return True
-        return False
