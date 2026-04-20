@@ -35,11 +35,12 @@ def load_filter_keywords():
             k_list, kb_list = [], []
             for row in reader:
                 kw = row.get('keyword', '').strip()
-                tk = row.get('type_keyword', '').strip()
-                if not kw or not tk: continue
+                tk_raw = row.get('type_keyword', '').strip()
+                if not kw or not tk_raw: continue
+                
                 tq = row.get('type_question', '').strip().lower()
-                if tq == 'bool': kb_list.append((tk, kw))
-                else: k_list.append((tk, kw))
+                if tq == 'bool': kb_list.append(kw)
+                else: k_list.append(kw)
                 
             _CONFIG.KEYWORD = k_list
             _CONFIG.KEYWORD_BOOL = kb_list if kb_list else [("bool", "đúng hay sai")]

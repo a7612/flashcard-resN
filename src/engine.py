@@ -24,7 +24,7 @@ class QuizGame:
         n_target = n_opts if (n_opts and n_opts > 1) else 4
 
         # 2. Nhận diện Domain (Chủ đề): Kết hợp từ khóa CSV và Tiền tố "Subject:"
-        current_domains = {tk.lower() for tk, kw in _CONFIG.KEYWORD if kw.lower() in q_lower}
+        current_domains = {kw.lower() for _, kw in _CONFIG.KEYWORD if kw.lower() in q_lower}
         # Tự động trích xuất Subject từ prefix (vd: "Cyber Security: ..." -> "cyber security")
         prefix_match = re.match(r'^([^:]{2,30}):', q)
         if prefix_match:
@@ -41,7 +41,7 @@ class QuizGame:
             if len(a) < 25 and len(cand_a) > 120: continue
 
             # Nhận diện Domain của ứng viên
-            cand_domains = {tk.lower() for tk, kw in _CONFIG.KEYWORD if kw.lower() in cand_q}
+            cand_domains = {kw.lower() for _, kw in _CONFIG.KEYWORD if kw.lower() in cand_q}
             # Trích xuất prefix của ứng viên (nếu có)
             c_prefix = re.match(r'^([^:]{2,30}):', x[2])
             if c_prefix:

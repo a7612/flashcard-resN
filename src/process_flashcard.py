@@ -10,6 +10,12 @@ class FlashcardManager:
     def __init__(self):
         self._data_cache = {}
 
+    def clear_cache(self, path=None):
+        if path:
+            self._data_cache.pop(path, None)
+        else:
+            self._data_cache.clear()
+
     def load_data(self, path, force=False):
         # Trả về từ cache nếu có và không yêu cầu load lại
         if not force and path in self._data_cache:

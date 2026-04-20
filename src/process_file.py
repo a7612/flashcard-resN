@@ -8,7 +8,8 @@ from rich import box
 class FileManager:
     def __init__(self):
         self.qdir = _CONFIG.QUESTIONS_DIR
-        self._cache = {}
+        # Cache lưu cấu trúc: { filename: (last_mtime, last_size, last_count) }
+        self._count_cache = {}
         # Dễ dàng chỉnh sửa các mốc phân loại tại đây
         self.thresholds = [
             (1, "[red]🌑 Trống[/]", "red"),
@@ -51,16 +52,29 @@ class FileManager:
             return []
 
     def count_questions(self, fname):
-        if fname in self._cache:
-            return self._cache[fname]
-            
+        path = self._get_full_path(fname)
         try: 
-            with open(self._get_full_path(fname), encoding="utf-8-sig") as f:
-                count = max(0, sum(1 for _ in f) - 1)
-                self._cache[fname] = count
-                return count
+            # 1. Kiểm tra Metadata của file
+            stat = os.stat(path)
+            mtime, size = stat.st_mtime, stat.st_size
+
+            # 2. Nếu file không đổi, trả về kết quả trong cache ngay lập tức (O(1))
+            if fname in self._count_cache:
+                c_mtime, c_size, c_count = self._count_cache[fname]
+                if mtime == c_mtime and size == c_size:
+                    return c_count
+
+            # 3. Nếu file đổi hoặc chưa có trong cache, đếm cực nhanh bằng khối nhị phân
+            with open(path, "rb") as f:
+                # Đọc từng khối 1MB để tận dụng tốc độ của C trong phương thức count()
+                count = sum(buf.count(b'\n') for buf in iter(lambda: f.read(1024 * 1024), b''))
+                
+            # Trừ 1 dòng header (Giả định file CSV chuẩn luôn có header và kết thúc bằng newline)
+            final_count = max(0, count - 1)
+            self._count_cache[fname] = (mtime, size, final_count)
+            return final_count
         except Exception as e:
-            _handle_error(f"❌ Lỗi đếm câu hỏi trong file '{fname}': {e}")
+            # Đừng dùng _handle_error ở đây để tránh làm gián đoạn luồng hiển thị danh sách
             return 0
 
     def _get_status_info(self, count):
@@ -108,19 +122,22 @@ class FileManager:
 
     def create_file(self):
         name = _safe_input("📝 Tên bộ đề mới (không cần .csv): ")
-        if not name: return
+        if not name: return None
         
         p = self._get_full_path(f"{name}.csv")
         if os.path.exists(p):
-            return console.print("[yellow]⚠️ File đã tồn tại![/]")
+            console.print("[yellow]⚠️ File đã tồn tại![/]")
+            return None
             
         try:
             with open(p, "w", encoding="utf-8-sig", newline="") as f:
                 csv.writer(f).writerow(["id", "answer", "question", "hint", "desc"])
             log_action("CREATE", p)
             console.print(f"[green]🆕 Đã tạo thành công: {name}.csv[/]"); time.sleep(1)
+            return p
         except Exception as e:
             _handle_error(f"❌ Lỗi hệ thống không thể tạo file '{name}.csv': {e}")
+            return None
 
     def delete_file(self, path):
         confirm = _safe_input(f"❗ Xác nhận xoá vĩnh viễn {os.path.basename(path)}? (y/n) ")
@@ -128,7 +145,6 @@ class FileManager:
         
         try:
             _move_to_trash(path)
-            self._cache.pop(os.path.basename(path), None)
             log_action("DELETE", path)
             console.print("[yellow]📂 Đã chuyển file vào thùng rác (trash/).[/]"); time.sleep(1)
         except Exception as e:
@@ -143,7 +159,6 @@ class FileManager:
         for f in files:
             try:
                 _move_to_trash(self._get_full_path(f))
-                self._cache.pop(f, None)
             except: pass
         log_action("DELETE_ALL_FILES", f"Removed {len(files)} files")
         console.print("[bold yellow]♻️ Đã dọn sạch kho dữ liệu vào thùng rác![/]"); time.sleep(1)
@@ -155,7 +170,6 @@ class FileManager:
         new_path = self._get_full_path(f"{new}.csv")
         try:
             os.rename(path, new_path)
-            self._cache.clear() # Xoá cache để cập nhật thông tin mới
             log_action("RENAME", f"{path}->{new_path}")
             console.print("[green]🏷️ Đã đổi tên bộ đề thành công.[/]"); time.sleep(1)
         except Exception as e:

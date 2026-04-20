@@ -3,7 +3,7 @@ from src.core import _CONFIG, console, _clear_screen, _get_now
 from src.utils import (
     _handle_error, _move_to_trash,
     _show_stats_util, _get_history_table_util, _choose_file_path_util, _play_action_util,
-    _check_all_integrity_util, _clear_history_util, _empty_trash_util,
+    _check_all_integrity_util, _clear_history_util, _empty_trash_util, _safe_input,
     _handle_manage_questions_for_path_util, _handle_file_deletion_util,
     _clear_logs_util
 )
@@ -74,26 +74,6 @@ class MenuManager:
         }
         self.run_menu("🏷️ QUẢN LÝ TỪ KHÓA LỌC", opts, show_sidebar=False, clear=True)
 
-    def reload_data(self):
-        """Khởi động lại toàn bộ tiến trình ứng dụng (App Restart)."""
-        log_action("APP_RELOAD", "Application restart triggered by user")
-        _clear_screen()
-        console.print("\n[bold yellow]🔄 Đang nạp lại toàn bộ tài nguyên và khởi động lại ứng dụng...[/]")
-        console.print("[dim]Vui lòng đợi trong giây lát...[/]")
-        
-        time.sleep(1)
-        # Dọn sạch input buffer để tránh các ký tự ANSI (như 2d, 33e) bị lọt vào phiên làm việc mới
-        try:
-            import msvcrt
-            while msvcrt.kbhit(): msvcrt.getch()
-        except ImportError:
-            pass # Không phải Windows
-
-        sys.stdout.flush()
-        sys.stderr.flush()
-        # Thay thế tiến trình hiện tại bằng chính nó (re-exec)
-        os.execv(sys.executable, [sys.executable] + sys.argv)
-
     def _run_question_crud_menu(self, path):
         """Chạy menu CRUD cho các câu hỏi trong một file cụ thể."""
         m = self.card_mgr
@@ -128,12 +108,26 @@ class MenuManager:
     def _handle_file_deletion(self):
         _handle_file_deletion_util(self.file_mgr)
 
+    def _handle_create_file_flow(self):
+        """Luồng tạo file mới và hỏi người dùng có muốn thêm nội dung ngay không."""
+        path = self.file_mgr.create_file()
+        if path:
+            fname = os.path.basename(path)
+            confirm = _safe_input(f"\n💡 Bạn vừa tạo file [{fname}], bạn có muốn thêm nội dung ngay không? (y/n): ")
+            if confirm and confirm.lower() == 'y':
+                self.card_mgr.add_question(path)
+
     def manage_f_menu(self):
-        f = self.file_mgr
         opts = {
-            "1": (f.create_file, "🆕 Tạo bộ đề"),
-            "2": (self._handle_file_deletion, "⚠️ Xoá bộ đề"),
-            "3": (lambda: (p := self._choose_file_path()) and f.rename_file(p), "🏷️ Đổi tên"),
+            "1": (self._handle_create_file_flow, "🆕 Tạo bộ đề"),
+            "2": (lambda: (self._handle_file_deletion(), self.card_mgr.clear_cache()), "⚠️ Xoá bộ đề"),
+            "3": (self._handle_rename_flow, "🏷️ Đổi tên"),
             "0": (lambda: None, "Quay lại")
         }
         self.run_menu("📂 HỆ THỐNG LƯU TRỮ", opts, show_file_list=True, show_sidebar=False, clear=False)
+
+    def _handle_rename_flow(self):
+        path = self._choose_file_path()
+        if path:
+            self.file_mgr.rename_file(path)
+            self.card_mgr.clear_cache(path) # Xoá cache đường dẫn cũ
