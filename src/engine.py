@@ -5,6 +5,7 @@ from rich import box
 from src.core import _CONFIG, console
 from src.utils import _replace_colors, _clear_screen, _handle_error, _get_now, _safe_input
 from src.process_log import log_action, log_difficulty
+import src.process_input as inp
 
 class QuizGame:
     def __init__(self): pass
@@ -15,77 +16,36 @@ class QuizGame:
         return clean.strip().lower().rstrip('.')
 
     def _get_options(self, qid, q, a, data, all_ans, n_opts):
-        q_lower = q.lower()
+        # 1. Nhận diện câu hỏi Đúng/Sai đơn giản
+        if "đúng hay sai" in q.lower(): return ["Đúng", "Sai"]
         
-        # 1. Check type_question: Nếu chứa từ khóa Bool -> trả về Đúng/Sai ngay
-        if any(kw.lower() in q_lower for _, kw in _CONFIG.KEYWORD_BOOL): 
-            return ["Đúng", "Sai"]
-        
+        # Thiết lập mục tiêu
         n_target = n_opts if (n_opts and n_opts > 1) else 4
+        a_clean = a.strip().lower()
+        pool, match_k, f_path = [], None, os.path.join("data", "filter_categories.txt")
 
-        # 2. Nhận diện Domain (Chủ đề): Kết hợp từ khóa CSV và Tiền tố "Subject:"
-        current_domains = {kw.lower() for _, kw in _CONFIG.KEYWORD if kw.lower() in q_lower}
-        # Tự động trích xuất Subject từ prefix (vd: "Cyber Security: ..." -> "cyber security")
-        prefix_match = re.match(r'^([^:]{2,30}):', q)
-        if prefix_match:
-            current_domains.add(prefix_match.group(1).lower().strip())
+        # 2. Tìm keyword (Đảm bảo 100% lowercase check)
+        if os.path.exists(f_path):
+            try:
+                with open(f_path, "r", encoding="utf-8") as f:
+                    # Đọc và lowercase toàn bộ keyword từ file
+                    kws = [l.strip().lower() for l in f if l.strip() and not l.startswith("#")]
+                match_k = next((k for k in kws if k in q.lower()), None)
+            except: pass
 
-        # Phân loại ứng viên vào 3 tầng ưu tiên
-        same_domain, neutral, different_domain = [], [], []
+        # 3. Gom pool distractors: Ưu tiên lọc theo keyword, không được thì lấy ngẫu nhiên
+        if match_k:
+            pool = list(set(str(x[1]).strip() for x in data 
+                            if match_k in str(x[2]).lower() and str(x[1]).strip().lower() != a_clean))
         
-        for x in all_ans:
-            cand_a, cand_q = x[1], str(x[2]).lower()
-            if cand_a.strip() == a.strip(): continue
+        if not pool: # Fallback nếu không có keyword hoặc keyword không tìm thấy kết quả nào
+            pool = list(set(str(x[1]).strip() for x in all_ans if str(x[1]).strip().lower() != a_clean))
 
-            # Lọc bỏ đáp án quá dài/ngắn không tương đồng để giữ thẩm mỹ
-            if len(a) < 25 and len(cand_a) > 120: continue
-
-            # Nhận diện Domain của ứng viên
-            cand_domains = {kw.lower() for _, kw in _CONFIG.KEYWORD if kw.lower() in cand_q}
-            # Trích xuất prefix của ứng viên (nếu có)
-            c_prefix = re.match(r'^([^:]{2,30}):', x[2])
-            if c_prefix:
-                cand_domains.add(c_prefix.group(1).lower().strip())
-            
-            if current_domains:
-                if current_domains.intersection(cand_domains):
-                    same_domain.append(cand_a)
-                elif not cand_domains:
-                    neutral.append(cand_a)
-                else:
-                    different_domain.append(cand_a)
-            else:
-                if not cand_domains:
-                    same_domain.append(cand_a) # Nếu Q gốc ko domain, ưu tiên candidate ko domain
-                else:
-                    different_domain.append(cand_a)
-
-        # Sắp xếp mỗi tầng theo độ dài tương đồng để tăng tính đánh lừa
-        for pool in [same_domain, neutral, different_domain]:
-            pool.sort(key=lambda x: abs(len(x) - len(a)))
-
-        target = {a}
-        def fill_from_pool(source_pool):
-            if len(target) >= n_target: return
-            # Lấy top 15 ứng viên tương đồng nhất về độ dài, sau đó bốc ngẫu nhiên
-            candidates = source_pool[:15]
-            random.shuffle(candidates)
-            for item in candidates:
-                if len(target) >= n_target: break
-                target.add(item)
-
-        # Đổ dữ liệu theo thứ tự ưu tiên
-        fill_from_pool(same_domain)
-        fill_from_pool(neutral)
-        fill_from_pool(different_domain)
-
-        final_pool = list(target - {"Đúng", "Sai"})
-        if a in final_pool: final_pool.remove(a)
-
-        opts = random.sample(final_pool, min(len(final_pool), max(0, n_target - 1)))
-        opts.append(a)
-
-        return [_replace_colors(o) for o in opts]
+        # 4. Lọc bỏ các giá trị Boolean và thực hiện "có nhiêu trả nhiêu" trong giới hạn n_target
+        pool = [o for o in pool if o not in ["Đúng", "Sai"]]
+        opts = random.sample(pool, min(len(pool), n_target - 1)) + [a]
+        random.shuffle(opts)
+        return [_replace_colors(o) for o in dict.fromkeys(opts)]
 
     def _feedback(self, ok, chosen, q, a, d, r, qid):
         log_action(f"CHOSEN:{qid}", f"{chosen} - {q} {'Đúng' if ok else 'Sai'}")
@@ -123,6 +83,7 @@ class QuizGame:
         try:
             with open(csv_p, "w", encoding="utf-8-sig", newline="") as f:
                 csv.writer(f).writerows([["timestamp", _get_now().isoformat()], ["user", getpass.getuser()], ["total", total], ["score", score], ["percent", f"{pct:.1f}"], [], ["idx", "question", "correct", "ok", "hint", "desc"]] + [[r["index"], r["question"], r["correct"], r["ok"], r["hint"], r.get("desc", "")] for r in results])
+            log_action("EXPORT_QUIZ", f"Score: {score}/{total} ({pct:.1f}%) -> {csv_p}")
             console.print(f"[bold green]💾 Đã xuất báo cáo: {csv_p}[/]")
         except Exception as e:
             console.print(f"[red]❌ Lỗi I/O khi xuất file CSV báo cáo: {e}[/]")
@@ -140,14 +101,12 @@ class QuizGame:
         ]
         for k, v in modes: table.add_row(k, v)
         console.print(table)
-        try: ch = int(console.input(f"\n👉 Lựa chọn của bạn: "))
-        except (ValueError, EOFError, KeyboardInterrupt): ch = 1
+        ch = inp.input_difficulty_mode()
         
         if ch == 5: return (4, 999, True) # Chế độ sinh tồn
         if ch == 6:
-            qs = int(_safe_input("📝 Số lượng câu hỏi: ") or 10)
-            opts = int(_safe_input("🔢 Số lượng đáp án hiển thị: ") or 4)
-            return (opts, qs, False)
+            opts, qs = inp.input_difficulty_custom()
+            return opts, qs, False
             
         return {
             1: (3, 10, False), 
@@ -211,22 +170,18 @@ class QuizGame:
             console.print(Text.from_markup(f"  [bold cyan]({k})[/] ").append(Text.from_markup(v)))
 
         while True:
-            try:
-                u = console.input(f"\n👉 Đáp án: ").strip().upper()
-                if u in ['/EXIT', 'EXIT']: return False, "EXIT_SIGNAL", None
-                if u == '?': console.print(f"[yellow]💡 Gợi ý: {d_d}[/]"); continue
-                if u in mapping:
-                    chosen = mapping[u]
-                    return self._clean_text(chosen) == self._clean_text(a_d), chosen, (q_d, a_d, d_d, r_d)
-                console.print("[red]❌ Sai cú pháp![/]")
-            except (EOFError, KeyboardInterrupt): return False, "EXIT_SIGNAL", None
+            u = inp.input_quiz_choice(mapping)
+            if u == "EXIT_SIGNAL": return False, "EXIT_SIGNAL", None
+            if u == "HINT_SIGNAL":
+                console.print(f"[yellow]💡 Gợi ý: {d_d}[/]")
+                continue
+            
+            chosen = mapping[u]
+            return self._clean_text(chosen) == self._clean_text(a_d), chosen, (q_d, a_d, d_d, r_d)
 
     def _wait_next(self, qid=None):
-        try: 
-            prompt = "[bold yellow]⭐ Hãy đánh giá độ khó của câu hỏi này (1-5, hoặc Enter để bỏ qua): [/]"
-            val = console.input(prompt).strip()
-            if qid and val.isdigit() and 1 <= int(val) <= 5:
-                log_action(f"RATING:{qid}", f"Difficulty: {val}")
-                log_difficulty(qid, val)
-            return True
-        except (EOFError, KeyboardInterrupt): return False
+        val = inp.input_difficulty_rating()
+        if qid and val:
+            log_action(f"RATING:{qid}", f"Difficulty: {val}")
+            log_difficulty(qid, val)
+        return True

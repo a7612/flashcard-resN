@@ -7,49 +7,6 @@ from config import *
 _CONFIG = SimpleNamespace(**{k: v for k, v in globals().items() if k.isupper()})
 for d in [_CONFIG.LOG_DIR, _CONFIG.EXPORT_DIR, _CONFIG.QUESTIONS_DIR, _CONFIG.TRASH_DIR, "data"]: os.makedirs(d, exist_ok=True)
 
-def load_filter_keywords():
-    """Nạp hoặc làm mới danh sách từ khóa từ file CSV cấu hình."""
-    _filter_csv = "data/filter_categories.csv"
-    _diff_csv = "data/difficult.csv"
-    
-    # Khởi tạo các file dữ liệu hệ thống nếu chưa có
-    if not os.path.exists(_filter_csv):
-        try:
-            with open(_filter_csv, "w", encoding="utf-8-sig", newline="") as f:
-                csv.writer(f, delimiter=';').writerow(["num", "type_question", "type_keyword", "keyword"])
-        except Exception: pass
-
-    if not os.path.exists(_diff_csv):
-        try:
-            with open(_diff_csv, "w", encoding="utf-8-sig", newline="") as f:
-                csv.writer(f, delimiter=';').writerow(["id", "độ khó"])
-        except Exception: pass
-
-    if os.path.exists(_filter_csv):
-        try:
-            with open(_filter_csv, "r", encoding="utf-8-sig") as f:
-                head = f.read(1024); f.seek(0)
-                delim = ';' if ';' in head and ',' not in head else ','
-                reader = csv.DictReader(f, delimiter=delim)
-            
-            k_list, kb_list = [], []
-            for row in reader:
-                kw = row.get('keyword', '').strip()
-                tk_raw = row.get('type_keyword', '').strip()
-                if not kw or not tk_raw: continue
-                
-                tq = row.get('type_question', '').strip().lower()
-                if tq == 'bool': kb_list.append(kw)
-                else: k_list.append(kw)
-                
-            _CONFIG.KEYWORD = k_list
-            _CONFIG.KEYWORD_BOOL = kb_list if kb_list else [("bool", "đúng hay sai")]
-        except Exception:
-            pass # Giữ nguyên nếu lỗi
-
-# Nạp lần đầu khi khởi động
-load_filter_keywords()
-
 console = Console(highlight=False)
 
 # Định nghĩa múi giờ GMT+7 dùng chung cho toàn hệ thống

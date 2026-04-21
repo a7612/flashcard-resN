@@ -14,6 +14,3 @@ COLOR_ERROR   = "red"
 COLOR_SUCCESS = "green"
 COLOR_WARNING = "yellow"
 COLOR_INFO    = "cyan"
-
-KEYWORD = [] # Danh sách này sẽ được nạp tự động từ data/filter_categories.csv
-KEYWORD_BOOL = [("bool", "đúng hay sai")]

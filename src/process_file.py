@@ -4,6 +4,7 @@ from src.utils import _safe_input, _handle_error, _get_now, _move_to_trash
 from src.process_log import log_action
 from rich.table import Table
 from rich import box
+import src.process_input as inp
 
 class FileManager:
     def __init__(self):
@@ -64,10 +65,16 @@ class FileManager:
                 if mtime == c_mtime and size == c_size:
                     return c_count
 
+            if size == 0: return 0
+
             # 3. Nếu file đổi hoặc chưa có trong cache, đếm cực nhanh bằng khối nhị phân
             with open(path, "rb") as f:
-                # Đọc từng khối 1MB để tận dụng tốc độ của C trong phương thức count()
                 count = sum(buf.count(b'\n') for buf in iter(lambda: f.read(1024 * 1024), b''))
+                
+                # Kiểm tra nếu byte cuối cùng không phải là newline thì cộng thêm 1 dòng
+                f.seek(-1, os.SEEK_END)
+                if f.read(1) != b'\n':
+                    count += 1
                 
             # Trừ 1 dòng header (Giả định file CSV chuẩn luôn có header và kết thúc bằng newline)
             final_count = max(0, count - 1)
@@ -86,6 +93,11 @@ class FileManager:
 
     def list_files(self, show=True):
         files = self.get_files()
+        # Tạo danh sách các cặp (filename, count) để sắp xếp
+        files_with_counts = [(f, self.count_questions(f)) for f in files]
+        # Sắp xếp: ưu tiên số câu giảm dần, sau đó là tên file tăng dần
+        files_with_counts.sort(key=lambda x: (-x[1], x[0].lower()))
+
         if show:
             table = Table(title="📂 KHO DỮ LIỆU HỆ THỐNG", box=box.SIMPLE_HEAD)
             table.add_column("ID", justify="right", style="cyan")
@@ -94,8 +106,7 @@ class FileManager:
             table.add_column("Trạng thái", justify="left")
             table.add_column("Cập nhật", justify="left")
             
-            for i, f in enumerate(files, 1):
-                c = self.count_questions(f)
+            for i, (f, c) in enumerate(files_with_counts, 1):
                 status, color = self._get_status_info(c)
                 
                 # Lấy thời gian cập nhật cuối cùng của file
@@ -118,10 +129,10 @@ class FileManager:
                 table.add_row(str(i), f"📚 {f}", f"[{color}]{c}[/]", status, updated_display)
                 
             console.print(table)
-        return files
+        return [f for f, _ in files_with_counts]
 
     def create_file(self):
-        name = _safe_input("📝 Tên bộ đề mới (không cần .csv): ")
+        name = inp.input_deck_name()
         if not name: return None
         
         p = self._get_full_path(f"{name}.csv")
@@ -140,7 +151,7 @@ class FileManager:
             return None
 
     def delete_file(self, path):
-        confirm = _safe_input(f"❗ Xác nhận xoá vĩnh viễn {os.path.basename(path)}? (y/n) ")
+        confirm = inp.confirm_delete(os.path.basename(path))
         if confirm != "y": return
         
         try:
@@ -153,7 +164,7 @@ class FileManager:
     def delete_all_files(self):
         files = self.get_files()
         if not files: return
-        confirm = _safe_input(f"🔥 CẢNH BÁO: Bạn có chắc muốn xoá vĩnh viễn TOÀN BỘ {len(files)} bộ đề? (y/n) ")
+        confirm = inp.confirm_delete(f"{len(files)} bộ đề", is_all=True)
         if confirm != "y": return
         
         for f in files:
@@ -164,7 +175,7 @@ class FileManager:
         console.print("[bold yellow]♻️ Đã dọn sạch kho dữ liệu vào thùng rác![/]"); time.sleep(1)
 
     def rename_file(self, path):
-        new = _safe_input("🏷️ Tên mới: ")
+        new = inp.input_rename_deck()
         if not new: return
         
         new_path = self._get_full_path(f"{new}.csv")

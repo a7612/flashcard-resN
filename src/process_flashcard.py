@@ -5,6 +5,7 @@ from src.process_log import log_action
 from rich.table import Table
 from rich.text import Text
 from rich import box
+import src.process_input as inp
 
 class FlashcardManager:
     def __init__(self):
@@ -89,24 +90,16 @@ class FlashcardManager:
             _clear_screen()
             self.show_questions(path, highlight_id=last_id, highlight_type='add')
             try:
-                data = self.load_data(path)
-                q = _safe_input(f"❓ Câu hỏi mới: ")
+                q, a, d, r = inp.input_question_details()
                 if q is None: break  # Thoát khi nhập /exit
-                if not q: continue   # Bỏ qua nếu để trống
-                
-                a = _safe_input(f"✅ Đáp án chuẩn: ")
                 if a is None: break
-                if not a: continue
-                
-                d = _safe_input("💡 Gợi ý (Enter để bỏ qua): ")
-                if d is None: break
-                
-                r = _safe_input("📖 Mô tả thêm (Enter để bỏ qua): ")
-                if r is None: break
+
+                data = self.load_data(path)
                 
                 last_id = str(uuid.uuid4())
                 data.append([last_id, a, q, d or "", r or ""])
                 self.save_data(path, data)
+                log_action("QUES_ADD", f"File: {os.path.basename(path)} | Q: {q[:50]}...")
                 console.print("[green]✨ Đã thêm thành công! Nhập tiếp hoặc '/exit' để dừng.[/]"); time.sleep(0.5)
             except Exception as e:
                 _handle_error(f"💥 Lỗi xử lý khi thêm câu hỏi: {e}")
@@ -118,15 +111,11 @@ class FlashcardManager:
             data = self.show_questions(path)
             if not data: break
             try:
-                idx_info = lambda x: (
-                    x.isdigit() and 1 <= int(x) <= len(data) or x.lower() == "/all",
-                    int(x)-1 if x.isdigit() else x.lower()
-                )
-                val = _safe_input("🔢 Nhập STT để xoá hoặc '/all' để xoá hết (hoặc '/exit'): ", idx_info)
+                val = inp.input_selection("🔢 Nhập STT để xoá hoặc '/all' (hoặc '/exit'): ", len(data), allow_all=True)
                 if val is None: break
                 
                 if val == "/all":
-                    confirm = _safe_input("❗ Xác nhận xoá TOÀN BỘ câu hỏi trong file này? (y/n) ")
+                    confirm = inp.confirm_delete("câu hỏi trong file này")
                     if confirm == "y":
                         _move_to_trash(path) # Backup bản cũ vào trash trước khi làm trống
                         data = []
@@ -139,6 +128,7 @@ class FlashcardManager:
 
                 removed = data.pop(val)
                 self.save_data(path, data)
+                log_action("QUES_DELETE", f"File: {os.path.basename(path)} | Q: {removed[2][:50]}...")
                 console.print(f"[red]🗑️ Đã xoá câu hỏi: {_replace_colors(removed[2])}[/]"); time.sleep(0.5)
             except Exception as e:
                 _handle_error(f"❌ Lỗi khi thực hiện xoá: {e}")
@@ -151,25 +141,25 @@ class FlashcardManager:
             data = self.show_questions(path, highlight_id=last_id, highlight_type='edit')
             if not data: break
             
-            idx_info = lambda x: (x.isdigit() and 1 <= int(x) <= len(data), int(x)-1 if x.isdigit() else 0)
-            idx = _safe_input("🔢 Nhập STT để sửa (hoặc '/exit'): ", idx_info)
+            idx = inp.input_selection("🔢 Nhập STT để sửa (hoặc '/exit'): ", len(data))
             if idx is None: break
             
             try:
                 row = list(data[idx])
                 last_id = row[0]
                 if field_idx is None: # Sửa toàn bộ
-                    for i, label in [(2, "Câu hỏi"), (1, "Đáp án"), (3, "Gợi ý"), (4, "Mô tả")]:
-                        val = _safe_input(f"✏️ {label} ({row[i]}): ")
-                        if val is None: return # Thoát hẳn method nếu đang sửa dở mà muốn exit
-                        if val: row[i] = val
+                    q, a, d, r = inp.input_question_details(row[2], row[1], row[3], row[4], is_edit=True)
+                    if q is None: return
+                    row[2], row[1], row[3], row[4] = q, a or row[1], d or row[3], r or row[4]
                 else:
-                    new_val = _safe_input(f"✏️ Nhập giá trị mới ({row[field_idx]}): ")
-                    if new_val is None: break
-                    if new_val: row[field_idx] = new_val
+                    # Logic sửa nhanh từng trường có thể giữ lại hoặc chuyển vào inp
+                    new_v = _safe_input(f"✏️ Giá trị mới ({row[field_idx]}): ")
+                    if new_v is None: break
+                    if new_v: row[field_idx] = new_v
                     
                 data[idx] = row
                 self.save_data(path, data)
+                log_action("QUES_EDIT", f"File: {os.path.basename(path)} | ID: {last_id}")
                 console.print("[green]🛠️ Đã cập nhật.[/]"); time.sleep(0.5)
             except Exception as e:
                 _handle_error(f"❌ Lỗi khi cập nhật câu hỏi tại dòng {idx+1}: {e}")

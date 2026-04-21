@@ -1,5 +1,6 @@
 import os, logging, getpass, atexit, time, csv
 from src.core import _CONFIG, console, _get_now, _move_to_trash
+import src.process_input as inp
 
 # --- CẤU HÌNH LOGGER ---
 logger = logging.getLogger("flashcard")
@@ -62,7 +63,7 @@ class LogManager:
                 console.print("[yellow]⚠️ Không có nhật ký để xoá.[/]")
                 return
 
-            confirm = console.input(f"\n[bold red]⚠️ Bạn có chắc muốn dọn sạch nhật ký cũ? (y/n): [/]").strip().lower()
+            confirm = inp.input_confirm_generic(f"\n[bold red]⚠️ Bạn có chắc muốn dọn sạch nhật ký cũ? (y/n): [/]")
             if confirm == 'y':
                 count = 0
                 for f in files:

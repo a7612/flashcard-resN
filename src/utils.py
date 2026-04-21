@@ -117,6 +117,65 @@ def _clear_logs_util():
     """Tiện ích gọi lệnh dọn dẹp nhật ký từ LogManager."""
     LogManager.clear_logs()
 
+def _manage_filter_categories_util(file_mgr, card_mgr):
+    import src.process_input as inp
+    f_path = os.path.join("data", "filter_categories.txt")
+    os.makedirs("data", exist_ok=True)
+
+    while True:
+        _clear_screen()
+        kws = []
+        if os.path.exists(f_path):
+            with open(f_path, "r", encoding="utf-8") as f:
+                kws = [l.strip().lower() for l in f if l.strip() and not l.startswith("#")]
+        
+        # Gom toàn bộ dữ liệu từ các file CSV để đếm số lượng sử dụng
+        all_data = []
+        for f_name in file_mgr.get_files():
+            all_data.extend(card_mgr.load_data(os.path.join(file_mgr.qdir, f_name)))
+        
+        # Tính toán thống kê
+        stats = []
+        for k in set(kws):
+            count = sum(1 for row in all_data if len(row) > 2 and k in str(row[2]).lower())
+            stats.append({"kw": k, "count": count})
+        
+        # Sắp xếp bảng thống kê theo số lượng câu hỏi sử dụng (giảm dần)
+        stats.sort(key=lambda x: x['count'], reverse=True)
+        
+        table = Table(title="🏷️ QUẢN LÝ TỪ KHÓA BỘ LỌC", box=box.ROUNDED)
+        table.add_column("STT", justify="right", style="cyan")
+        table.add_column("Từ khóa đang sử dụng", style="bold white")
+        table.add_column("Số câu liên quan", justify="right", style="green")
+        
+        for i, s in enumerate(stats, 1):
+            table.add_row(str(i), s['kw'], str(s['count']))
+        console.print(table)
+        
+        console.print("\n[bold cyan][A][/] Thêm  [bold yellow][E][/] Sửa  [bold red][D][/] Xoá  [bold white][Q][/] Thoát")
+        cmd = _safe_input("👉 Lựa chọn: ")
+        if not cmd or cmd.lower() == 'q': break
+        
+        action = cmd.lower()
+        if action == 'a':
+            new_k = inp.input_keyword()
+            if new_k: kws.append(new_k.strip().lower())
+        elif action in ['e', 'd'] and stats:
+            idx = inp.input_selection("🔢 Nhập STT: ", len(stats))
+            if idx is not None:
+                target_kw = stats[idx]['kw']
+                if action == 'e':
+                    upd_k = inp.input_keyword(target_kw)
+                    if upd_k: kws = [upd_k.strip().lower() if k == target_kw else k for k in kws]
+                else:
+                    if inp.input_confirm_generic(f"Xác nhận xoá '{target_kw}'? (y/n): ") == 'y':
+                        kws = [k for k in kws if k != target_kw]
+        
+        # Lưu file: Sắp xếp lại theo bảng chữ cái (Sort theo file)
+        kws = sorted(list(set(k.strip().lower() for k in kws if k.strip())))
+        with open(f_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(kws))
+
 def _handle_file_deletion_util(file_mgr):
     p = _choose_file_path_util(file_mgr, allow_all=True)
     if p == "/all": file_mgr.delete_all_files()

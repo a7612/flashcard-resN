@@ -5,11 +5,11 @@ from src.utils import (
     _show_stats_util, _get_history_table_util, _choose_file_path_util, _play_action_util,
     _check_all_integrity_util, _clear_history_util, _empty_trash_util, _safe_input,
     _handle_manage_questions_for_path_util, _handle_file_deletion_util,
-    _clear_logs_util
+    _clear_logs_util,
+    _manage_filter_categories_util
 )
 from src.process_file import FileManager
 from src.process_flashcard import FlashcardManager
-from src.process_categories import CategoryManager
 from src.process_log import LogManager, log_action
 from rich.table import Table
 from rich.panel import Panel
@@ -17,12 +17,12 @@ from rich.align import Align
 from rich import box
 from rich.console import Group
 from rich.columns import Columns
+import src.process_input as inp
 
 class MenuManager:
     def __init__(self):
         self.file_mgr = FileManager()
         self.card_mgr = FlashcardManager()
-        self.cate_mgr = CategoryManager()
 
     def show_stats(self):
         return _show_stats_util(self.file_mgr)
@@ -50,7 +50,7 @@ class MenuManager:
 
             if show_file_list: self.file_mgr.list_files()
             if show_questions_path: self.card_mgr.show_questions(show_questions_path)
-            ch = console.input(f"\n👉 Lệnh của bạn: ").strip().lower()
+            ch = inp.input_menu_choice()
             if ch in options: options[ch][0]()
             if ch in ["0", "exit", "/exit"]: break
 
@@ -58,28 +58,18 @@ class MenuManager:
         _play_action_util(self.file_mgr, self.card_mgr, self, all_files)
 
     def check_all_integrity(self):
+        log_action("SYSTEM_CHECK", "Started comprehensive integrity scan")
         _check_all_integrity_util(self.file_mgr, self.card_mgr)
 
     def _handle_manage_questions_for_path(self):
         _handle_manage_questions_for_path_util(self.file_mgr, self.card_mgr, self)
 
-    def _run_category_crud_menu(self):
-        """Chạy menu CRUD cho quản lý từ khóa lọc."""
-        c = self.cate_mgr
-        opts = {
-            "1": (c.add_category, "📝 Thêm từ khóa"),
-            "2": (c.delete_category, "🗑️ Xoá từ khóa"),
-            "3": (c.edit_category, "🛠️ Sửa từ khóa"),
-            "0": (lambda: None, "Quay lại")
-        }
-        self.run_menu("🏷️ QUẢN LÝ TỪ KHÓA LỌC", opts, show_sidebar=False, clear=True)
-
     def _run_question_crud_menu(self, path):
         """Chạy menu CRUD cho các câu hỏi trong một file cụ thể."""
         m = self.card_mgr
         opts = {
-            "1": (lambda: m.add_question(path), "📝 Thêm câu"),
-            "2": (lambda: m.delete_question(path), "🗑️ Xoá câu"),
+            "1": (lambda: (m.add_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "📝 Thêm câu"),
+            "2": (lambda: (m.delete_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "🗑️ Xoá câu"),
             "3": (lambda: m.edit_question(path), "🛠️ Sửa tổng lực"),
             "4": (lambda: m.edit_question(path, 2), "🔍 Sửa câu hỏi"),
             "5": (lambda: m.edit_question(path, 1), "💡 Sửa đáp án"),
@@ -91,10 +81,10 @@ class MenuManager:
         opts = {
             "1": (self.check_all_integrity, "🔍 Quét lỗi toàn hệ thống"),
             "2": (self._handle_manage_questions_for_path, "📂 Chọn bộ đề biên tập"),
-            "3": (self._run_category_crud_menu, "🏷️ Quản lý từ khóa lọc"),
+            "3": (lambda: _manage_filter_categories_util(self.file_mgr, self.card_mgr), "🏷️ Quản lý từ khóa bộ lọc"),
             "0": (lambda: None, "Quay lại")
         }
-        self.run_menu("📦 QUẢN LÝ NỘI DUNG", opts, show_sidebar=False, clear=True)
+        self.run_menu("📦 QUẢN LÝ NỘI DUNG", opts, show_sidebar=True, clear=True)
 
     def clear_history(self):
         _clear_history_util()
@@ -113,7 +103,7 @@ class MenuManager:
         path = self.file_mgr.create_file()
         if path:
             fname = os.path.basename(path)
-            confirm = _safe_input(f"\n💡 Bạn vừa tạo file [{fname}], bạn có muốn thêm nội dung ngay không? (y/n): ")
+            confirm = inp.input_create_content_confirm(fname)
             if confirm and confirm.lower() == 'y':
                 self.card_mgr.add_question(path)
 
@@ -124,7 +114,7 @@ class MenuManager:
             "3": (self._handle_rename_flow, "🏷️ Đổi tên"),
             "0": (lambda: None, "Quay lại")
         }
-        self.run_menu("📂 HỆ THỐNG LƯU TRỮ", opts, show_file_list=True, show_sidebar=False, clear=False)
+        self.run_menu("📂 HỆ THỐNG LƯU TRỮ", opts, show_file_list=True, show_sidebar=True, clear=True)
 
     def _handle_rename_flow(self):
         path = self._choose_file_path()
