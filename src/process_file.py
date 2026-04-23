@@ -1,4 +1,4 @@
-import os, csv, time, datetime
+import os, csv, time, datetime, re
 from src.core import _CONFIG, console, VN_TZ
 from src.utils import _safe_input, _handle_error, _get_now, _move_to_trash
 from src.process_log import log_action
@@ -18,6 +18,7 @@ class FileManager:
             (22, "[cyan]📂 Đang biên soạn[/]", "cyan"),
             (float('inf'), "[bold green]💎 Đủ chỉ tiêu[/]", "bold green")
         ]
+        self.search_keyword = None
         self.auto_cleanup_trash()
 
     def auto_cleanup_trash(self):
@@ -47,7 +48,9 @@ class FileManager:
             for f in os.listdir(self.qdir):
                 if f.endswith(".csv"):
                     files.append(f)
-            return sorted(files)
+            # Sử dụng FILE_SORT_BY cho logic sắp xếp nội bộ (chủ yếu theo tên)
+            mode = getattr(_CONFIG, 'FILE_SORT_BY', 'name_asc')
+            return sorted(files, reverse=(mode == "name_desc"))
         except Exception as e:
             console.print(f"[red]❌ Không thể truy cập thư mục dữ liệu: {e}[/]")
             return []
@@ -91,14 +94,39 @@ class FileManager:
                 return label, color
         return self.thresholds[-1][1], self.thresholds[-1][2]
 
-    def list_files(self, show=True):
+    def list_files(self, show=True, return_table=False):
         files = self.get_files()
-        # Tạo danh sách các cặp (filename, count) để sắp xếp
-        files_with_counts = [(f, self.count_questions(f)) for f in files]
-        # Sắp xếp: ưu tiên số câu giảm dần, sau đó là tên file tăng dần
-        files_with_counts.sort(key=lambda x: (-x[1], x[0].lower()))
+        # Thu thập metadata để hỗ trợ nhiều kiểu sắp xếp: (filename, count, mtime)
+        files_meta = []
+        for f in files:
+            files_meta.append((f, self.count_questions(f), os.path.getmtime(self._get_full_path(f))))
 
-        if show:
+        # Logic sắp xếp dựa trên cấu hình
+        mode = getattr(_CONFIG, 'FILE_DISPLAY_SORT_BY', 'count_desc')
+        if mode == "name_asc":
+            files_meta.sort(key=lambda x: x[0].lower())
+        elif mode == "name_desc":
+            files_meta.sort(key=lambda x: x[0].lower(), reverse=True)
+        elif mode == "count_asc":
+            files_meta.sort(key=lambda x: (x[1], x[0].lower()))
+        elif mode == "mtime_asc":
+            files_meta.sort(key=lambda x: x[2])
+        elif mode == "mtime_desc":
+            files_meta.sort(key=lambda x: x[2], reverse=True)
+        else: # Mặc định: count_desc
+            files_meta.sort(key=lambda x: (-x[1], x[0].lower()))
+
+        # Logic Tìm kiếm & Lọc
+        if self.search_keyword:
+            filtered = [m for m in files_meta if self.search_keyword.lower() in m[0].lower()]
+            if not filtered:
+                if show:
+                    console.print(f"\n[{_CONFIG.COLOR_ERROR}]❌ Không thể tìm thấy bộ đề nào chứa từ khóa: '{self.search_keyword}'[/]")
+                return ([], None) if return_table else []
+            files_meta = filtered
+
+        table = None
+        if show or return_table:
             table = Table(title="📂 KHO DỮ LIỆU HỆ THỐNG", box=box.SIMPLE_HEAD)
             table.add_column("ID", justify="right", style="cyan")
             table.add_column("Tên Bộ Đề", style="bold white")
@@ -106,11 +134,9 @@ class FileManager:
             table.add_column("Trạng thái", justify="left")
             table.add_column("Cập nhật", justify="left")
             
-            for i, (f, c) in enumerate(files_with_counts, 1):
+            for i, (f, c, mtime_ts) in enumerate(files_meta, 1):
                 status, color = self._get_status_info(c)
                 
-                # Lấy thời gian cập nhật cuối cùng của file
-                mtime_ts = os.path.getmtime(self._get_full_path(f))
                 mtime_dt = datetime.datetime.fromtimestamp(mtime_ts, tz=VN_TZ)
                 diff = _get_now() - mtime_dt
                 
@@ -126,16 +152,38 @@ class FileManager:
                     t_msg = f"{diff.days // 7} tuần trước" if diff.days >= 14 else f"{diff.days} ngày trước"
                 
                 updated_display = f"[{t_style}]{mtime_dt.strftime('%d/%m %H:%M')} ({t_msg})[/]"
-                table.add_row(str(i), f"📚 {f}", f"[{color}]{c}[/]", status, updated_display)
+                # Highlight ID nếu đang ở chế độ tìm kiếm
+                id_display = f"[bold yellow]{i}[/]" if self.search_keyword else str(i)
+                table.add_row(id_display, f"📚 {f}", f"[{color}]{c}[/]", status, updated_display)
+            
+            if show:
+                console.print(table)
                 
-            console.print(table)
-        return [f for f, _ in files_with_counts]
+        file_list = [m[0] for m in files_meta]
+        return (file_list, table) if return_table else file_list
 
     def create_file(self):
         name = inp.input_deck_name()
-        if not name: return None
+        if name is None: return None # Thoát nếu nhập /exit
         
-        p = self._get_full_path(f"{name}.csv")
+        # Tự động lọc bỏ các ký tự không hợp lệ cho tên file
+        name = re.sub(r'[<>:"/\\|?*]', '', name).strip()
+        if not name:
+            _handle_error("❌ Tên bộ đề không hợp lệ sau khi lọc ký tự đặc biệt!")
+            return None
+
+        # Kiểm tra độ dài tên file
+        if len(name) > 50:
+            _handle_error("❌ Tên bộ đề quá dài (Tối đa 50 ký tự)!")
+            return None
+        
+        filename = name if name.lower().endswith(".csv") else f"{name}.csv"
+
+        # Xác nhận trước khi tạo
+        if inp.input_confirm_generic(f"❓ Bạn có chắc muốn tạo bộ đề '{filename}'? (y/n): ") != 'y':
+            return None
+
+        p = self._get_full_path(filename)
         if os.path.exists(p):
             console.print("[yellow]⚠️ File đã tồn tại![/]")
             return None
@@ -144,10 +192,10 @@ class FileManager:
             with open(p, "w", encoding="utf-8-sig", newline="") as f:
                 csv.writer(f).writerow(["id", "answer", "question", "hint", "desc"])
             log_action("CREATE", p)
-            console.print(f"[green]🆕 Đã tạo thành công: {name}.csv[/]"); time.sleep(1)
+            console.print(f"[green]🆕 Đã tạo thành công: {filename}[/]"); time.sleep(1)
             return p
         except Exception as e:
-            _handle_error(f"❌ Lỗi hệ thống không thể tạo file '{name}.csv': {e}")
+            _handle_error(f"❌ Lỗi hệ thống không thể tạo file '{filename}': {e}")
             return None
 
     def delete_file(self, path):
@@ -175,13 +223,31 @@ class FileManager:
         console.print("[bold yellow]♻️ Đã dọn sạch kho dữ liệu vào thùng rác![/]"); time.sleep(1)
 
     def rename_file(self, path):
+        old_name = os.path.basename(path)
         new = inp.input_rename_deck()
-        if not new: return
+        if new is None: return # Thoát nếu nhập /exit
         
-        new_path = self._get_full_path(f"{new}.csv")
+        # Tự động lọc bỏ các ký tự không hợp lệ cho tên file
+        new = re.sub(r'[<>:"/\\|?*]', '', new).strip()
+        if not new:
+            _handle_error("❌ Tên mới không hợp lệ!")
+            return
+        
+        # Kiểm tra độ dài
+        if len(new) > 50:
+            _handle_error("❌ Tên mới quá dài (Tối đa 50 ký tự)!")
+            return
+
+        new_filename = new if new.lower().endswith(".csv") else f"{new}.csv"
+        
+        # Xác nhận trước khi đổi tên
+        if inp.input_confirm_generic(f"❓ Đổi tên '{old_name}' thành '{new_filename}'? (y/n): ") != 'y':
+            return
+
+        new_path = self._get_full_path(new_filename)
         try:
             os.rename(path, new_path)
             log_action("RENAME", f"{path}->{new_path}")
-            console.print("[green]🏷️ Đã đổi tên bộ đề thành công.[/]"); time.sleep(1)
+            console.print(f"[green]🏷️ Đã đổi tên bộ đề thành '{new_filename}' thành công.[/]"); time.sleep(1)
         except Exception as e:
-            _handle_error(f"❌ Không thể đổi tên thành '{new}.csv': {e}")
+            _handle_error(f"❌ Không thể đổi tên thành '{new_filename}': {e}")

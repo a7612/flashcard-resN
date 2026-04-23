@@ -55,8 +55,8 @@ def _get_history_table_util():
         table.caption = f"[bold white]🎯 Độ chính xác TB: [{color}]{avg:.1f}%[/{color}][/]"
     return Panel(table, title=f"[bold {_CONFIG.COLOR_HISTORY}]📜 LỊCH SỬ[/]", border_style=_CONFIG.COLOR_HISTORY, expand=False)
 
-def _choose_file_path_util(file_mgr, allow_all=False):
-    files = file_mgr.list_files(show=True)
+def _choose_file_path_util(file_mgr, allow_all=False, show=True):
+    files = file_mgr.list_files(show=show)
     if not files:
         console.print("[yellow]⚠️ Thư mục hiện đang trống.[/]"); time.sleep(1); return None
     prompt = f"👉 Nhập ID bộ đề {'hoặc /all ' if allow_all else ''}(hoặc /exit): "
@@ -108,7 +108,7 @@ def _empty_trash_util():
         log_action("EMPTY_TRASH", f"Cleaned {len(files)} files"); time.sleep(1.5)
 
 def _handle_manage_questions_for_path_util(file_mgr, card_mgr, menu_mgr):
-    path = _choose_file_path_util(file_mgr)
+    path = _choose_file_path_util(file_mgr, show=False)
     if path:
         card_mgr.show_questions(path)
         menu_mgr._run_question_crud_menu(path)
@@ -176,7 +176,7 @@ def _manage_filter_categories_util(file_mgr, card_mgr):
         with open(f_path, "w", encoding="utf-8") as f:
             f.write("\n".join(kws))
 
-def _handle_file_deletion_util(file_mgr):
-    p = _choose_file_path_util(file_mgr, allow_all=True)
+def _handle_file_deletion_util(file_mgr, show_list=True):
+    p = _choose_file_path_util(file_mgr, allow_all=True, show=show_list)
     if p == "/all": file_mgr.delete_all_files()
     elif p: file_mgr.delete_file(p)

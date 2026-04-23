@@ -2,13 +2,13 @@ from src.utils import _safe_input
 from src.core import console
 
 def input_deck_name():
-    return _safe_input("📝 Tên bộ đề mới (không cần .csv): ")
+    return _safe_input("📝 Tên bộ đề mới (hoặc /exit): ")
 
 def input_keyword(old_v=""):
     return _safe_input(f"🔑 Từ khóa{f' ({old_v})' if old_v else ''}: ")
 
 def input_rename_deck():
-    return _safe_input("🏷️ Tên mới: ")
+    return _safe_input("🏷️ Tên mới (hoặc /exit): ")
 
 def confirm_delete(target_name, is_all=False):
     msg = f"🔥 CẢNH BÁO: Bạn có chắc muốn xoá vĩnh viễn TOÀN BỘ {target_name}? (y/n) " if is_all \
@@ -79,5 +79,14 @@ def input_difficulty_mode():
         return int(val) if val.isdigit() else 1
     except: return 1
 
-def input_create_content_confirm(fname):
-    return _safe_input(f"\n💡 Bạn vừa tạo file [{fname}], bạn có muốn thêm nội dung ngay không? (y/n): ")
+def input_setting_delay():
+    """Nhập thời gian tạm dừng mới."""
+    return _safe_input("⏳ Nhập thời gian tạm dừng mới (giây, hiện tại mặc định là 3): ")
+
+def input_setting_dedup():
+    """Nhập lựa chọn cột để loại bỏ trùng lặp."""
+    return _safe_input("🔍 Chọn cột để kiểm tra trùng lặp (0: Theo ID, 2: Theo Nội dung câu hỏi): ")
+
+def input_search_file():
+    """Nhập từ khóa tìm kiếm tên file."""
+    return _safe_input("🔍 Nhập từ khóa tìm kiếm (Tên bộ đề): ")

@@ -151,8 +151,13 @@ class QuizGame:
     def _deduplicate_data(self, data):
         unique, seen = [], set()
         for row in data:
-            if (q := str(row[2]).strip().lower()) not in seen:
-                unique.append(row); seen.add(q)
+            # Sử dụng cấu hình để xác định trường nào dùng để loại bỏ trùng lặp.
+            # Mặc định là ID (index 0) để đảm bảo tính duy nhất cho các câu hỏi có cùng nội dung nhưng khác đáp án.
+            # Có thể cấu hình thành 2 trong config.py để loại bỏ các câu hỏi có nội dung giống nhau.
+            key_value = str(row[_CONFIG.DEDUPLICATE_COLUMN_INDEX]).strip().lower()
+            if key_value not in seen:
+                unique.append(row)
+                seen.add(key_value)
         return unique
 
     def _ask_question(self, i, total, qid, a, q, d, r, data, n_opts, current_score):

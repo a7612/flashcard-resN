@@ -17,6 +17,17 @@ class FlashcardManager:
         else:
             self._data_cache.clear()
 
+    def _sort_data(self, data):
+        """Sắp xếp danh sách câu hỏi dựa trên cấu hình QUESTION_SORT_BY."""
+        mode = getattr(_CONFIG, 'QUESTION_SORT_BY', 'answer_asc')
+        col_map = {'id': 0, 'answer': 1, 'question': 2, 'hint': 3, 'desc': 4}
+        parts = mode.split('_')
+        idx = col_map.get(parts[0], 1)
+        rev = parts[1] == 'desc' if len(parts) > 1 else False
+        # Sắp xếp chính theo cột chọn, phụ theo Answer và Question để đảm bảo thứ tự ổn định
+        data.sort(key=lambda x: (str(x[idx]).lower(), str(x[1]).lower(), str(x[2]).lower()), reverse=rev)
+        return data
+
     def load_data(self, path, force=False):
         # Trả về từ cache nếu có và không yêu cầu load lại
         if not force and path in self._data_cache:
@@ -35,6 +46,8 @@ class FlashcardManager:
                 for r in reader:
                     rows.append(list(r.values()))
             
+            # Sắp xếp dữ liệu sau khi load để hiển thị đúng chuẩn
+            self._sort_data(rows)
             self._data_cache[path] = rows
             return rows
         except (FileNotFoundError, csv.Error, PermissionError) as e:
@@ -43,7 +56,8 @@ class FlashcardManager:
 
     def save_data(self, path, data):
         try:
-            data.sort(key=lambda x: (str(x[1]).lower(), str(x[2]).lower()))
+            # Sắp xếp dữ liệu trước khi ghi xuống file
+            self._sort_data(data)
             with open(path, "w", encoding="utf-8-sig", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(["id", "answer", "question", "hint", "desc"])
