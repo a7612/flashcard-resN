@@ -173,8 +173,8 @@ class FileManager:
             return None
 
         # Kiểm tra độ dài tên file
-        if len(name) > 50:
-            _handle_error("❌ Tên bộ đề quá dài (Tối đa 50 ký tự)!")
+        if len(name) > _CONFIG.MAX_FILENAME_LENGTH:
+            _handle_error("❌ Tên bộ đề quá dài (Tối đa 100 ký tự)!")
             return None
         
         filename = name if name.lower().endswith(".csv") else f"{name}.csv"
@@ -234,8 +234,8 @@ class FileManager:
             return
         
         # Kiểm tra độ dài
-        if len(new) > 50:
-            _handle_error("❌ Tên mới quá dài (Tối đa 50 ký tự)!")
+        if len(new) > _CONFIG.MAX_FILENAME_LENGTH:
+            _handle_error("❌ Tên mới quá dài (Tối đa 100 ký tự)!")
             return
 
         new_filename = new if new.lower().endswith(".csv") else f"{new}.csv"

@@ -13,6 +13,8 @@ CLEAR_SCREEN = True
 ERROR_DELAY = 3                      # Giây tạm dừng để đọc thông báo lỗi
 SHOW_STATS = True # Bật/Tắt bảng Thống kê ở Menu
 SHOW_HISTORY = True # Bật/Tắt bảng Lịch sử ở Menu
+MENU_MODE = 'numeric' # Chế độ hiển thị menu: "numeric" (phím số) hoặc "command" (lệnh /)
+MAX_FILENAME_LENGTH = 100 # Giới hạn độ dài tên bộ đề (ký tự)
 
 # ==============================================================================
 #                              UI THEME COLORS
@@ -41,7 +43,7 @@ FILE_SORT_BY = "name_asc"
 
 # --- Sắp xếp hiển thị trên bảng "KHO DỮ LIỆU HỆ THỐNG" ---
 # 'count_desc', 'count_asc', 'name_asc', 'name_desc', 'mtime_desc', 'mtime_asc'
-FILE_DISPLAY_SORT_BY = 'count_desc' 
+FILE_DISPLAY_SORT_BY = 'name_asc' 
 
 # --- Sắp xếp nội dung câu hỏi trong phần Biên tập ---
 # 'id_asc', 'id_desc', 'answer_asc', 'answer_desc', 'question_asc', 'question_desc'

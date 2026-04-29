@@ -42,8 +42,8 @@ class MenuManager:
             console.print(Panel(Align.center(header), box=box.DOUBLE, border_style=_CONFIG.COLOR_HEADER))
             opt_table = Table(show_header=False, box=box.ROUNDED, border_style=_CONFIG.COLOR_MENU)
             for k, v in options.items():
-                # Xác định màu sắc: /exit đỏ, lệnh bắt đầu bằng / xanh lá, còn lại (số) xanh lơ
-                style = "bold red" if k == "/exit" else "bold green" if k.startswith("/") else "bold cyan"
+                # Xác định màu sắc: /exit hoặc 0 đỏ, lệnh bắt đầu bằng / xanh lá, còn lại (số) xanh lơ
+                style = "bold red" if k in ["/exit", "0"] else "bold green" if k.startswith("/") else "bold cyan"
                 opt_table.add_row(f"[{style}]{k}[/]", v[1])
 
             menu_panel = Panel(opt_table, title=f"[bold {_CONFIG.COLOR_MENU}]🎮 MENU[/]", border_style=_CONFIG.COLOR_MENU, expand=False)
@@ -99,15 +99,16 @@ class MenuManager:
 
     def manage_q_menu(self):
         self.file_mgr.search_keyword = None # Reset tìm kiếm khi bắt đầu vào menu
+        is_num = _CONFIG.MENU_MODE == "numeric"
         opts = {
-            "/c": (self._handle_manage_questions_for_path, "📂 Biên tập nội dung"),
-            "/keyword": (lambda: _manage_filter_categories_util(self.file_mgr, self.card_mgr), f"🏷️ Quản lý từ khóa\n{"[red]="*22}"),
-            "/create": (self._handle_create_file_flow, "🆕 Tạo bộ đề mới"),
-            "/rename": (self._handle_rename_flow, "🏷️ Đổi tên bộ đề"),
-            "/delete": (lambda: (self._handle_file_deletion(show_list=False), self.card_mgr.clear_cache()), f"⚠️ Xoá bộ đề\n{"[red]="*22}"),
-            "/check": (self.check_all_integrity, "🔍 Kiểm tra lỗi dữ liệu"),            
-            "/search": (self._handle_search_files, f"🔍 Tìm kiếm bộ đề\n{"[red]="*22}"),
-            "/exit": (lambda: None, "Quay lại")
+            ("1" if is_num else "/c"): (self._handle_manage_questions_for_path, "📂 Biên tập nội dung"),
+            ("2" if is_num else "/keyword"): (lambda: _manage_filter_categories_util(self.file_mgr, self.card_mgr), f"🏷️ Quản lý từ khóa\n{"[red]="*22}"),
+            ("3" if is_num else "/create"): (self._handle_create_file_flow, "🆕 Tạo bộ đề mới"),
+            ("4" if is_num else "/rename"): (self._handle_rename_flow, "🏷️ Đổi tên bộ đề"),
+            ("5" if is_num else "/delete"): (lambda: (self._handle_file_deletion(show_list=False), self.card_mgr.clear_cache()), f"⚠️ Xoá bộ đề\n{"[red]="*22}"),
+            ("6" if is_num else "/check"): (self.check_all_integrity, "🔍 Kiểm tra lỗi dữ liệu"),            
+            ("7" if is_num else "/search"): (self._handle_search_files, f"🔍 Tìm kiếm bộ đề\n{"[red]="*22}"),
+            ("0" if is_num else "/exit"): (lambda: None, "Quay lại")
         }
         self.run_menu("📦 QUẢN LÝ HỆ THỐNG", opts, show_file_list=True, show_sidebar=True, clear=True)
 
@@ -154,6 +155,8 @@ class MenuManager:
                 ("5", "Hiển thị Lịch sử (SHOW_HISTORY)", str(_CONFIG.SHOW_HISTORY)),
                 ("6", "Sắp xếp hiển thị (FILE_DISPLAY_SORT_BY)", str(_CONFIG.FILE_DISPLAY_SORT_BY)),
                 ("7", "Sắp xếp câu hỏi (QUESTION_SORT_BY)", str(_CONFIG.QUESTION_SORT_BY)),
+                ("8", "Chế độ Menu (MENU_MODE)", str(_CONFIG.MENU_MODE).upper()),
+                ("9", "Độ dài tên file tối đa (MAX_FILENAME_LENGTH)", f"{_CONFIG.MAX_FILENAME_LENGTH}"),
                 ("0", "Quay lại", "")
             ]
             for k, label, val in opts_info:
@@ -198,6 +201,15 @@ class MenuManager:
                 _CONFIG.QUESTION_SORT_BY = modes[(idx + 1) % len(modes)]
                 self._update_config_persistence("QUESTION_SORT_BY", _CONFIG.QUESTION_SORT_BY)
                 self.card_mgr.clear_cache() # Xóa cache để nạp lại và sắp xếp theo chuẩn mới
+            elif ch == "8":
+                _CONFIG.MENU_MODE = "numeric" if _CONFIG.MENU_MODE == "command" else "command"
+                self._update_config_persistence("MENU_MODE", _CONFIG.MENU_MODE)
+                _handle_error("⚠️ Vui lòng khởi động lại để áp dụng thay đổi cho Menu chính!", delay=2)
+            elif ch == "9":
+                val = _safe_input(f"📏 Nhập độ dài mới (hiện tại: {_CONFIG.MAX_FILENAME_LENGTH}): ")
+                if val and val.isdigit():
+                    _CONFIG.MAX_FILENAME_LENGTH = int(val)
+                    self._update_config_persistence("MAX_FILENAME_LENGTH", _CONFIG.MAX_FILENAME_LENGTH)
             elif ch in ["0", "q", "exit"]:
                 break
 

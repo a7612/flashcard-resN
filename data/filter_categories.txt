@@ -1,3 +1,4 @@
+ai là
 bao nhiêu
 english - fill in the blanks
 english - translate
@@ -6,5 +7,6 @@ lệnh nào
 mã nào
 mục đích chính
 tên đầy đủ
+đâu là nhân vật
 đâu là đơn vị hành chính cấp xã
 được xem như là

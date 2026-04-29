@@ -1,4 +1,0 @@
-﻿id,answer,question,hint,desc
-46866811-e1f7-4f44-be75-6054ed387704,"IP, Subnet Mask, Default Gateway","Network: Giả sử một nhân viên báo rằng họ không thể truy cập vào trang web của công ty. Bạn kiểm tra thì thấy máy tính của họ vẫn cắm dây mạng (Lớp vật lý) và đèn cổng mạng trên Switch vẫn sáng (Lớp liên kết dữ liệu).\n Theo logic của mô hình OSI, bước tiếp theo nên kiểm tra xem máy tính đó đã nhận được cái gì ở Lớp mạng để có thể ""nói chuyện"" với thế giới bên ngoài?",,
-449f34b3-79b9-4ce6-a9e2-ca10790d8f7f,Lớp mạng,"Network: Trong mô hình mạng tiêu chuẩn (như mô hình OSI 7 lớp), theo quan điểm cá nhân thì lớp nào là lớp quan trọng nhất đóng vai trò ""địa chỉ nhà"" (IP Address) để định tuyến dữ liệu đi khắp toàn cầu?",- Lớp thứ ba trong quá trình mở gói,
-623d96e7-1795-4a53-88e8-4f7dfa7a6ffa,VLAN,Network: Kỹ thuật nào ở lớp liên kết dữ liệu nhằm hạn chế rủi ro lợi dụng subnet để tấn công?,- Các kỹ sư mạng thường chia một mạng lớn thành các mạng con nhỏ hơn.,
