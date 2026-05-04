@@ -1,0 +1,2 @@
+﻿id,answer,question,hint,desc
+ba2c8cbd-1637-423f-8265-30c2148cc12a,"Vì bất kỳ lệnh nào, kể cả lệnh gây hại, đều sẽ được thực thi mà không có cảnh bảo.",Tại sao việc đăng nhập trực tiếp bằng tài khoản 'root' thường được coi là nguy hiểm đối với người mới bắt đầu?,- Hãy nghĩ về quyền hạn tuyệt đối và sự thiếu hụt các 'tấm lưới an toàn' khi thực hiện các thay đổi hệ thống.,"- Hệ thống giả định root luôn biết mình đang làm gì, dẫn đến nguy cơ vô tình xóa các tệp hệ thống quan trọng."

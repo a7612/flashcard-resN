@@ -1,0 +1,2 @@
+﻿id,answer,question,hint,desc
+16791774-37a6-4cae-92ed-a096d395da44,[green]ls -a[/],"Trong hệ điều hành Linux, lệnh nào được sử dụng để hiển thị tất cả các tệp, bao gồm cả các tệp ẩn có dấu chấm ở đầu tên?",- Hãy nghĩ đến một tham số có nghĩa là 'tất cả' (all).,"- Tham số này viết tắt của 'all', cho phép liệt kê mọi nội dung trong thư mục bao gồm cả các thực thể bị ẩn."

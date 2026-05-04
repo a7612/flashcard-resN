@@ -1,0 +1,2 @@
+﻿id,answer,question,hint,desc
+292123d1-d462-40e2-8206-e9ab72562e41,Integrity,Thành phần nào trong mô hình 'CIA Triad' tập trung vào việc đảm bảo dữ liệu không bị thay đổi bởi những người không được phép?,- Hãy nghĩ về sự nhất quán và chính xác của dữ liệu.,- Tính toàn vẹn đảm bảo rằng thông tin là chính xác và không bị chỉnh sửa trái phép trong suốt vòng đời của nó.
