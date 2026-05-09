@@ -162,12 +162,21 @@ class FlashcardManager:
                 row = list(data[idx])
                 last_id = row[0]
                 if field_idx is None: # Sửa toàn bộ
+                    # Hiển thị toàn bộ nội dung cũ để copy
+                    console.print("\n[dim]📝 Nội dung cũ (Raw) để copy:[/]")
+                    console.print(f"  [blue]Q:[/] {row[2]}")
+                    console.print(f"  [green]A:[/] {row[1]}")
+                    if row[3]: console.print(f"  [yellow]H:[/] {row[3]}")
+                    if row[4]: console.print(f"  [cyan]D:[/] {row[4]}")
+                    console.print("")
+
                     q, a, d, r = inp.input_question_details(row[2], row[1], row[3], row[4], is_edit=True)
                     if q is None: return
                     row[2], row[1], row[3], row[4] = q, a or row[1], d or row[3], r or row[4]
                 else:
-                    # Logic sửa nhanh từng trường có thể giữ lại hoặc chuyển vào inp
-                    new_v = _safe_input(f"✏️ Giá trị mới ({row[field_idx]}): ")
+                    # Hiển thị giá trị của trường đang chọn ở dạng thô
+                    console.print(f"\n[dim]📝 Nội dung cũ (Raw):[/] {row[field_idx]}")
+                    new_v = _safe_input("✏️ Nhập nội dung mới (Enter để giữ nguyên): ")
                     if new_v is None: break
                     if new_v: row[field_idx] = new_v
                     

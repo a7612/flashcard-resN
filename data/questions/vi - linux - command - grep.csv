@@ -1,2 +1,0 @@
-﻿id,answer,question,hint,desc
-288e7753-51a0-4952-8bef-cfdd73746768,Tìm kiếm văn bản hoặc các mẫu văn bản trong tệp tin,Lệnh [green]grep[/] trong Linux chủ yếu được sử dụng cho mục đích gì?,- Nó hoạt động giống như chức năng 'Find' trong các trình soạn thảo văn bản.,- [green]grep[/] cho phép lọc dữ liệu hiệu quả bằng cách quét qua nội dung văn bản để tìm các chuỗi khớp với yêu cầu

@@ -1,2 +1,0 @@
-﻿id,answer,question,hint,desc
-b22086da-8044-43f9-ba68-26f4635c2889,[green]cat [blue]..[/],Lệnh nào cho phép bạn chuyển hướng một thư mục quay lại một cấp trong hệ thống tệp tin Linux?,- Hãy xem xét ký hiệu đại diện cho thư mục cha trong đường dẫn tương đối.,"- Hai dấu chấm là đại diện cho thư mục cha, cho phép người dùng di chuyển ngược lên trên cấu trúc thư mục."

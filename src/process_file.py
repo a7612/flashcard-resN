@@ -138,7 +138,7 @@ class FileManager:
                 status, color = self._get_status_info(c)
                 
                 mtime_dt = datetime.datetime.fromtimestamp(mtime_ts, tz=VN_TZ)
-                diff = _get_now() - mtime_dt
+                diff = _get_now() - mtime_dt.replace(hour=0, minute=0, second=0, microsecond=0)
                 
                 # Xác định màu sắc và nội dung dựa trên độ trễ
                 if diff.days < 3:
@@ -224,6 +224,9 @@ class FileManager:
 
     def rename_file(self, path):
         old_name = os.path.basename(path)
+        # Hiển thị tên cũ ở dạng thô để dễ dàng copy
+        console.print(f"\n[dim]📄 Tên cũ (Raw):[/] {old_name}")
+        
         new = inp.input_rename_deck()
         if new is None: return # Thoát nếu nhập /exit
         
