@@ -43,7 +43,7 @@ FILE_SORT_BY = "name_asc"
 
 # --- Sắp xếp hiển thị trên bảng "KHO DỮ LIỆU HỆ THỐNG" ---
 # 'count_desc', 'count_asc', 'name_asc', 'name_desc', 'mtime_desc', 'mtime_asc'
-FILE_DISPLAY_SORT_BY = 'name_asc' 
+FILE_DISPLAY_SORT_BY = 'count_asc' 
 
 # --- Sắp xếp nội dung câu hỏi trong phần Biên tập ---
 # 'id_asc', 'id_desc', 'answer_asc', 'answer_desc', 'question_asc', 'question_desc'
