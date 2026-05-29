@@ -48,4 +48,4 @@ FILE_DISPLAY_SORT_BY = 'name_asc'
 # --- Sắp xếp nội dung câu hỏi trong phần Biên tập ---
 # 'id_asc', 'id_desc', 'answer_asc', 'answer_desc', 'question_asc', 'question_desc'
 # 'hint_asc', 'hint_desc', 'desc_asc', 'desc_desc'
-QUESTION_SORT_BY = 'answer_asc' 
+QUESTION_SORT_BY = 'question_asc' 
