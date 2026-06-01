@@ -37,6 +37,17 @@ COLOR_INFO    = "cyan"
 # 2: Theo Nội dung câu hỏi (row[2])
 DEDUPLICATE_COLUMN_INDEX = 2 
 
+# --- Giới hạn tần suất Keyword ---
+MAX_SAME_KEYWORD_PER_QUIZ = 5 # Số câu hỏi tối đa có cùng keyword trong một lượt chơi
+
+# --- Cấu hình nhận diện câu hỏi nhập liệu (Fill-in-the-blank) ---
+KEYWORD_BOOL = ["đúng hay sai"] # Keywords cho dạng câu hỏi [Đúng/Sai]
+KEYWORD_Q_INPUT = ["stand for", "tên đầy đủ", "viết tắt của"] # Keywords cho dạng nhập liệu trực tiếp
+
+# --- Cấu hình So khớp mờ (Fuzzy Matching) ---
+FUZZY_MATCHING_ENABLED = True # Bật/Tắt tính năng chấp nhận đáp án gần đúng
+FUZZY_MATCHING_THRESHOLD = 0.9 # Tỉ lệ tương đồng (0.9 tương đương sai lệch ~1-2 ký tự trong chuỗi dài)
+
 # --- Sắp xếp File nội bộ (Dùng cho logic nạp dữ liệu) ---
 # 'name_asc', 'name_desc'
 FILE_SORT_BY = "name_asc"

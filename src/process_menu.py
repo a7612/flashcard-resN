@@ -38,6 +38,7 @@ class MenuManager:
     def run_menu(self, title, options, show_file_list=False, show_sidebar=True, clear=True, show_questions_path=None):
         while True:
             if clear: _clear_screen()
+            
             header = f"[bold white]🚀 {title} 🚀[/]\n[{_CONFIG.COLOR_INFO}]User: {getpass.getuser()} | {_get_now().strftime('%d/%m/%Y %H:%M')}[/]"
             console.print(Panel(Align.center(header), box=box.DOUBLE, border_style=_CONFIG.COLOR_HEADER))
             opt_table = Table(show_header=False, box=box.ROUNDED, border_style=_CONFIG.COLOR_MENU)

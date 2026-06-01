@@ -1,4 +1,4 @@
-import random, string, re, csv, os, getpass
+import random, string, re, csv, os, getpass, difflib
 from rich.table import Table
 from rich.text import Text
 from rich import box
@@ -10,28 +10,47 @@ import src.process_input as inp
 class QuizGame:
     def __init__(self): pass
 
-    def _clean_text(self, text):
-        """Loại bỏ Rich Markup [style]...[/style] để so sánh đáp án."""
-        clean = re.sub(r'\[/?[a-zA-Z #0-9,._-]+\]', '', str(text))
-        return clean.strip().lower().rstrip('.')
-
-    def _get_options(self, qid, q, a, data, all_ans, n_opts):
-        # 1. Nhận diện câu hỏi Đúng/Sai đơn giản
-        if "đúng hay sai" in q.lower(): return ["Đúng", "Sai"]
-        
-        # Thiết lập mục tiêu
-        n_target = n_opts if (n_opts and n_opts > 1) else 4
-        a_clean = a.strip().lower()
-        pool, match_k, f_path = [], None, os.path.join("data", "filter_categories.txt")
-
-        # 2. Tìm keyword (Đảm bảo 100% lowercase check)
+    def _get_kws(self):
+        """Đọc và cache danh sách từ khóa từ filter_categories.txt."""
+        if hasattr(self, '_cached_kws'): return self._cached_kws
+        f_path = os.path.join("data", "filter_categories.txt")
+        self._cached_kws = []
         if os.path.exists(f_path):
             try:
                 with open(f_path, "r", encoding="utf-8") as f:
-                    # Đọc và lowercase toàn bộ keyword từ file
-                    kws = [l.strip().lower() for l in f if l.strip() and not l.startswith("#")]
-                match_k = next((k for k in kws if k in q.lower()), None)
+                    self._cached_kws = [l.strip().lower() for l in f if l.strip() and not l.startswith("#")]
             except: pass
+        return self._cached_kws
+
+    def _clean_text(self, text):
+        """Loại bỏ Rich Markup [style]...[/style] để so sánh đáp án."""
+        # Thay đổi dấu + thành * để nhận diện và loại bỏ cả thẻ đóng [/] của Rich
+        clean = re.sub(r'\[/?[a-zA-Z #0-9,._-]*\]', '', str(text))
+        return clean.strip().lower().rstrip('.')
+
+    def _check_correctness(self, user_input, correct_answer):
+        """So sánh đáp án có hỗ trợ Fuzzy Matching."""
+        u = self._clean_text(user_input)
+        c = self._clean_text(correct_answer)
+        if u == c: return True, 1.0
+        
+        ratio = 0.0
+        if getattr(_CONFIG, 'FUZZY_MATCHING_ENABLED', False):
+            ratio = difflib.SequenceMatcher(None, u, c).ratio()
+            return ratio >= getattr(_CONFIG, 'FUZZY_MATCHING_THRESHOLD', 0.9), ratio
+        return False, ratio
+
+    def _get_options(self, qid, q, a, data, all_ans, n_opts):
+        tf_kws = getattr(_CONFIG, 'KEYWORD_BOOL', [])
+        if any(kw.lower() in q.lower() for kw in tf_kws): return ["Đúng", "Sai"]
+        
+        # Thiết lập mục tiêu
+        n_target, a_clean = n_opts if (n_opts and n_opts > 1) else 4, a.strip().lower()
+        pool, match_k = [], None
+
+        # 2. Tìm keyword
+        kws = self._get_kws()
+        match_k = next((k for k in kws if k in q.lower()), None)
 
         # 3. Gom pool distractors: Ưu tiên lọc theo keyword, không được thì lấy ngẫu nhiên
         if match_k:
@@ -43,11 +62,21 @@ class QuizGame:
 
         # 4. Lọc bỏ các giá trị Boolean và thực hiện "có nhiêu trả nhiêu" trong giới hạn n_target
         pool = [o for o in pool if o not in ["Đúng", "Sai"]]
-        opts = random.sample(pool, min(len(pool), n_target - 1)) + [a]
+
+        # 5. Thuật toán lọc theo độ dài (Length Similarity)
+        # Sắp xếp pool theo trị tuyệt đối độ chênh lệch chiều dài so với đáp án đúng 'a'
+        target_len = len(str(a))
+        pool.sort(key=lambda x: abs(len(str(x)) - target_len))
+
+        # Lấy một nhóm các câu có độ dài gần nhất (ví dụ top 20 câu hoặc gấp 3 số lượng cần lấy)
+        # để vẫn đảm bảo tính ngẫu nhiên khi sample, tránh việc 10 lần chơi đều ra 3 phương án y hệt nhau.
+        candidate_pool = pool[:max(20, (n_target - 1) * 3)]
+        
+        opts = random.sample(candidate_pool, min(len(candidate_pool), n_target - 1)) + [a]
         random.shuffle(opts)
         return [_replace_colors(o) for o in dict.fromkeys(opts)]
 
-    def _feedback(self, ok, chosen, q, a, d, r, qid):
+    def _feedback(self, ok, chosen, q, a, d, r, ratio, qid):
         log_action(f"CHOSEN:{qid}", f"{chosen} - {q} {'Đúng' if ok else 'Sai'}")
         if ok: 
             p = Text.from_markup("\n[bold white on green] ✨ CHÍNH XÁC! [/] ")
@@ -56,6 +85,8 @@ class QuizGame:
         else:
             p = Text.from_markup("\n[bold white on red] 🌪️ TIẾC QUÁ... [/] Đáp án đúng: ")
             p.append(Text.from_markup(a, style="bold yellow"))
+            if not ok and getattr(_CONFIG, 'FUZZY_MATCHING_ENABLED', False) and ratio > 0:
+                p.append(Text.from_markup(f" [dim](Gần đúng: {ratio*100:.1f}%)[/]"))
             console.print(p)
         if r: console.print(f"[cyan]  📖 Mô tả thêm: \n[/]{r}")
         console.print("") 
@@ -123,7 +154,32 @@ class QuizGame:
         try:
             # Clean duplicates
             data = self._deduplicate_data(data)
-            pool = random.sample(data, min(max_qs, len(data))) if max_qs else data[:]
+            
+            # Thuật toán giới hạn tần suất keyword: Ưu tiên đa dạng hóa bộ đề
+            random.shuffle(data)
+            kws = self._get_kws()
+            limit = getattr(_CONFIG, 'MAX_SAME_KEYWORD_PER_QUIZ', 5)
+            
+            pool, overflow, kw_counts = [], [], {}
+            for row in data:
+                match_k = next((k for k in kws if k in str(row[2]).lower()), None)
+                if match_k:
+                    count = kw_counts.get(match_k, 0)
+                    if count < limit:
+                        pool.append(row)
+                        kw_counts[match_k] = count + 1
+                    else:
+                        overflow.append(row)
+                else:
+                    pool.append(row)
+            
+            # Nếu chưa đủ số lượng yêu cầu, lấy thêm từ phần dư (overflow)
+            if max_qs:
+                if len(pool) < max_qs:
+                    pool.extend(overflow[:max_qs - len(pool)])
+                pool = pool[:max_qs]
+            
+            random.shuffle(pool)
             results, score = [], 0
 
             try:
@@ -168,21 +224,38 @@ class QuizGame:
         # Sử dụng Text.from_markup để style bold white bao phủ toàn bộ question kể cả khi có tag reset
         console.print("\n", Text.from_markup(q_d, style="bold white"), "\n")
         
-        opts = self._get_options(qid, q, a, data, data, n_opts) # Options đã được shuffle bên trong _get_options
-        mapping = {k: v for k, v in zip(string.ascii_uppercase[:len(opts)], opts)}
-        for k, v in mapping.items():
-            # Cô lập phần (A), (B) để không bị ảnh hưởng bởi reset màu trong v
-            console.print(Text.from_markup(f"  [bold cyan]({k})[/] ").append(Text.from_markup(v)))
+        # Kiểm tra chế độ nhập liệu trực tiếp (Fill-in-the-blank)
+        is_input_mode = any(kw.lower() in q.lower() for kw in getattr(_CONFIG, 'KEYWORD_Q_INPUT', []))
 
-        while True:
-            u = inp.input_quiz_choice(mapping)
-            if u == "EXIT_SIGNAL": return False, "EXIT_SIGNAL", None
-            if u == "HINT_SIGNAL":
-                console.print(f"[yellow]💡 Gợi ý: {d_d}[/]")
-                continue
-            
-            chosen = mapping[u]
-            return self._clean_text(chosen) == self._clean_text(a_d), chosen, (q_d, a_d, d_d, r_d)
+        if is_input_mode:
+            while True:
+                prompt = "👉 Nhập đáp án (? để nhận gợi ý): " if bool(d) else "👉 Nhập đáp án: "
+                u = _safe_input(f"\n{prompt}")
+                if u is None: return False, "EXIT_SIGNAL", None
+                if u == "?":
+                    console.print(f"[yellow]💡 Gợi ý: {d_d}[/]")
+                    continue
+                # So sánh đáp án nhập vào với đáp án chuẩn (đã làm sạch)
+                ok, ratio = self._check_correctness(u, a)
+                return ok, u, (q_d, a_d, d_d, r_d, ratio)
+        else:
+            # Chế độ trắc nghiệm (Multiple Choice) truyền thống
+            opts = self._get_options(qid, q, a, data, data, n_opts)
+            mapping = {k: v for k, v in zip(string.ascii_uppercase[:len(opts)], opts)}
+            for k, v in mapping.items():
+                # Cô lập phần (A), (B) để không bị ảnh hưởng bởi reset màu trong v
+                console.print(Text.from_markup(f"  [bold cyan]({k})[/] ").append(Text.from_markup(v)))
+
+            while True:
+                u = inp.input_quiz_choice(mapping, has_hint=bool(d))
+                if u == "EXIT_SIGNAL": return False, "EXIT_SIGNAL", None
+                if u == "HINT_SIGNAL":
+                    console.print(f"[yellow]💡 Gợi ý: {d_d}[/]")
+                    continue
+                
+                chosen = mapping[u]
+                ok, ratio = self._check_correctness(chosen, a)
+                return ok, chosen, (q_d, a_d, d_d, r_d, ratio)
 
     def _wait_next(self, qid=None):
         val = inp.input_difficulty_rating()

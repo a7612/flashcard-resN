@@ -39,11 +39,12 @@ def input_selection(prompt, max_val=None, allow_all=False):
         return False, x
     return _safe_input(prompt, validator)
 
-def input_quiz_choice(mapping):
+def input_quiz_choice(mapping, has_hint=False):
     """Nhập đáp án A, B, C trong khi chơi Quiz."""
     while True:
         try:
-            u = console.input(f"\n👉 Đáp án: ").strip().upper()
+            prompt = "👉 Đáp án (? để nhận gợi ý): " if has_hint else "👉 Đáp án: "
+            u = console.input(f"\n{prompt}").strip().upper()
             if u in ['/EXIT', 'EXIT']: return "EXIT_SIGNAL"
             if u == '?': return "HINT_SIGNAL"
             if u in mapping: return u
