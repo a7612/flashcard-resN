@@ -38,25 +38,66 @@ class QuizGame:
         self._cached_bank = {k: list(v) for k, v in bank.items()}
         return self._cached_bank
 
-    def _generate_fake_phrase(self, original_a, bank):
+    def _get_history_word_bank(self):
+        """Quét lịch sử các lần làm sai để lấy từ vựng ưu tiên làm phương án nhiễu."""
+        if hasattr(self, '_cached_history_bank'): return self._cached_history_bank
+        bank = {}
+        export_dir = _CONFIG.EXPORT_DIR
+        if not os.path.exists(export_dir): return {}
+
+        try:
+            h_files = [f for f in os.listdir(export_dir) if f.startswith("quiz_results_")]
+            for f_name in h_files:
+                path = os.path.join(export_dir, f_name)
+                with open(path, encoding="utf-8-sig") as f:
+                    reader = list(csv.reader(f))
+                    # Dữ liệu bắt đầu từ dòng index 7 (sau metadata và header)
+                    if len(reader) < 8: continue
+                    for row in reader[7:]:
+                        if len(row) >= 4 and row[3].strip().lower() == "false":
+                            text = self._clean_text(row[2]) # Cột 'correct'
+                            words = re.findall(r'\b[a-zA-Z]{2,}\b', text)
+                            for w in words:
+                                first = w[0].upper()
+                                if first not in bank: bank[first] = set()
+                                bank[first].add(w.capitalize())
+        except: pass
+        self._cached_history_bank = {k: list(v) for k, v in bank.items()}
+        return self._cached_history_bank
+
+    def _generate_fake_phrase(self, original_a, bank, h_bank=None):
         """Sinh cụm từ giả thông minh hơn bằng cách khớp độ dài từ gốc."""
         # Làm sạch và tách các từ gốc
         clean_a = re.sub(r'\(.*?\)', '', self._clean_text(original_a)).strip()
-        target_words = [w for w in re.split(r'[\s\-_]+', clean_a) if w]
-        if not target_words: return None
+        words = [w for w in re.split(r'[\s\-_]+', clean_a) if w]
+        if not words: return None
+        
+        # Nếu answer chỉ là 1 từ duy nhất và dài hơn 1 ký tự (VD: 'IMAP')
+        # ta coi đó là acronym và sinh phrase dựa trên từng chữ cái của nó.
+        if len(words) == 1 and len(words[0]) > 1:
+            processing_targets = list(words[0].upper())
+            is_acronym_mode = True
+        else:
+            processing_targets = words
+            is_acronym_mode = False
         
         fake_phrase = []
         used_in_phrase = set()
         
-        for target in target_words:
+        for target in processing_targets:
             first = target[0].upper()
-            candidates = bank.get(first, [])
+            # Ưu tiên lấy từ ngân hàng lịch sử sai (h_bank), nếu không có mới lấy từ bank hiện tại
+            candidates = h_bank.get(first, []) if h_bank and h_bank.get(first) else bank.get(first, [])
             if not candidates:
                 fake_phrase.append(first)
                 continue
             
-            # Thuật toán thông minh: Ưu tiên từ có độ dài chênh lệch không quá 3 ký tự
-            smart_candidates = [c for c in candidates if abs(len(c) - len(target)) <= 3 and c not in used_in_phrase]
+            if is_acronym_mode:
+                # Nếu sinh từ chữ cái đơn lẻ, ưu tiên từ có độ dài trung bình (4-9 ký tự) để phrase cân đối
+                smart_candidates = [c for c in candidates if 4 <= len(c) <= 9 and c not in used_in_phrase]
+            else:
+                # Nếu sinh từ từ gốc, ưu tiên độ dài cực sát (chênh lệch <= 2 ký tự)
+                smart_candidates = [c for c in candidates if abs(len(c) - len(target)) <= 2 and c not in used_in_phrase]
             
             # Fallback nếu không tìm được từ tương đương độ dài
             final_pool = smart_candidates if smart_candidates else [c for c in candidates if c not in used_in_phrase]
@@ -138,23 +179,29 @@ class QuizGame:
         target_initials = self._get_initials(a)
 
         # 3. Gom pool distractors
-        # Ưu tiên 1: Nếu là câu hỏi acronym (stand for, viết tắt), sinh phương án thông minh
+        # Ưu tiên 1: Nếu là câu hỏi acronym (stand for, viết tắt), sinh phương án NGHIÊM NGẶT theo chữ cái đầu
         if is_acronym_q and len(target_initials) > 1:
             # Tìm các đáp án THỰC TẾ có cùng initials trong data trước
             pool = list(set(str(x[1]).strip() for x in all_ans 
                             if self._get_initials(str(x[1])) == target_initials and str(x[1]).strip().lower() != a_clean))
             
-            # Nếu không đủ, tiến hành "sinh" phương án giả từ ngân hàng từ vựng
-            if len(pool) < (n_target - 1):
-                bank = self._get_word_bank(all_ans)
-                for _ in range(50): # Tăng số lần thử để tìm được cụm từ chất lượng
-                    fake = self._generate_fake_phrase(a, bank)
-                    if fake and fake.lower() != a_clean and fake not in pool:
+            # Luôn cố gắng sinh thêm phương án giả để đạt độ đa dạng, sử dụng bank từ vựng và lịch sử
+            bank = self._get_word_bank(all_ans)
+            h_bank = self._get_history_word_bank()
+            
+            for _ in range(100): # Tăng số lần thử
+                fake = self._generate_fake_phrase(a, bank, h_bank)
+                if fake and fake.lower() != a_clean and fake not in pool:
+                    # Kiểm tra lại một lần nữa để chắc chắn initials khớp hoàn toàn
+                    if self._get_initials(fake) == target_initials:
                         pool.append(fake)
-                    if len(pool) >= 20: break # Lấy tối đa 20 ứng viên
+                if len(pool) >= 20: break
+            
+            # QUAN TRỌNG: Với câu hỏi viết tắt, nếu không tìm/sinh đủ initials, 
+            # chúng ta CHỈ lấy những gì đã có, không fallback sang các đáp án ngẫu nhiên khác.
         
-        # Ưu tiên 2: Nếu chưa đủ pool hoặc không phải acronym, lọc theo keyword bình thường
-        if len(pool) < (n_target - 1):
+        # Ưu tiên 2: Nếu KHÔNG PHẢI acronym, hoặc pool vẫn trống (không tìm thấy initials nào)
+        if not pool:
             kws = self._get_kws()
             match_k = next((k for k in kws if k in q.lower()), None)
             
@@ -162,9 +209,9 @@ class QuizGame:
                 keyword_matches = [str(x[1]).strip() for x in data 
                                   if match_k in str(x[2]).lower() and str(x[1]).strip().lower() != a_clean]
                 pool = list(set(pool + keyword_matches))
-        
-        # Ưu tiên 3: Fallback lấy ngẫu nhiên nếu vẫn thiếu
-        if len(pool) < (n_target - 1):
+
+        # Ưu tiên 3: Fallback lấy ngẫu nhiên cho các dạng câu hỏi thông thường
+        if not is_acronym_q and len(pool) < (n_target - 1):
             all_remaining = [str(x[1]).strip() for x in all_ans if str(x[1]).strip().lower() != a_clean]
             pool = list(set(pool + all_remaining))
 
@@ -231,7 +278,7 @@ class QuizGame:
             p = Text.from_markup("\n[bold white on red] 🌪️ TIẾC QUÁ... [/] Đáp án đúng: ")
             p.append(Text.from_markup(a, style="bold yellow"))
             if not ok and getattr(_CONFIG, 'FUZZY_MATCHING_ENABLED', False) and ratio > 0:
-                p.append(Text.from_markup(f" [bold cyan](Gần đúng: {ratio*100:.1f}%)[/]"))
+                p.append(Text.from_markup(f" [bold cyan]({ratio*100:.1f}%)[/]"))
             console.print(p)
             
             # Hiển thị so khớp chi tiết khi sai (không áp dụng cho Đúng/Sai đơn giản)
