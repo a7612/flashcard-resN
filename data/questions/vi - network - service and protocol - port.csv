@@ -1,0 +1,13 @@
+﻿id,answer,question,hint,desc
+b300a6bc-fb4c-4b3b-9b06-a86a927643b6,20,Network: Dịch vụ ftp (data) sử dụng cổng số bao nhiêu?,,
+f682518c-766c-4c50-bd60-7c41627422d3,21,Network: Dịch vụ ftp (control) sử dụng cổng số bao nhiêu?,,
+ccd1ecf9-8bda-4d7d-a174-d4127451aeb4,22,Network: Dịch vụ ssh sử dụng cổng số bao nhiêu?,,
+629f41e1-33ea-4e81-a8a7-9b784fa89963,23,Network: Dịch vụ telnet sử dụng cổng số bao nhiêu?,,
+6e443663-5fae-409b-8f6d-46eec6e60741,25,Network: Dịch vụ smtp sử dụng cổng số bao nhiêu?,,
+1e1c2f87-0093-4b13-9121-2ff1741b9a7a,443,Network: Dịch vụ https sử dụng cổng số bao nhiêu?,,
+06429c51-abd9-4aaa-a329-bc0c2db75ab1,53,Network: Dịch vụ dns sử dụng cổng số bao nhiêu?,,
+75566968-3db2-436a-886f-beb59982a261,67,Network: Dịch vụ bootps (server) sử dụng cổng số bao nhiêu?,- DHCP Server,
+9ddf6e2f-da28-4703-8a28-7f9c4dd9e154,68,Network: Dịch vụ bootpc (client) sử dụng cổng số bao nhiêu?,- DHCP Client,
+4b214a89-20ef-4032-9d7a-ba88b7739a61,69,Network: Dịch vụ tftp sử dụng cổng số bao nhiêu?,,
+9efd690b-1f4e-4f5c-90e0-e48796f1fa66,80,Network: Dịch vụ http sử dụng cổng số bao nhiêu?,,
+905f5108-f8ee-47bd-a2ed-0603bcd2e63e,80,Network: Dịch vụ www sử dụng cổng số bao nhiêu?,,

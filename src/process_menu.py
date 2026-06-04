@@ -6,7 +6,8 @@ from src.utils import (
     _check_all_integrity_util, _clear_history_util, _empty_trash_util, _safe_input,
     _handle_manage_questions_for_path_util, _handle_file_deletion_util,
     _clear_logs_util,
-    _manage_filter_categories_util
+    _manage_filter_categories_util,
+    _show_mistake_stats_util
 )
 from src.process_file import FileManager
 from src.process_flashcard import FlashcardManager
@@ -32,8 +33,8 @@ class MenuManager:
     def get_history_table(self):
         return _get_history_table_util()
 
-    def _choose_file_path(self, allow_all=False, show=True):
-        return _choose_file_path_util(self.file_mgr, allow_all, show=show)
+    def _choose_file_path(self, allow_all=False, show=True, context_name=""):
+        return _choose_file_path_util(self.file_mgr, allow_all, show=show, context_name=context_name)
 
     def run_menu(self, title, options, show_file_list=False, show_sidebar=True, clear=True, show_questions_path=None):
         while True:
@@ -78,6 +79,9 @@ class MenuManager:
     def play_action(self, all_files=False):
         _play_action_util(self.file_mgr, self.card_mgr, self, all_files)
 
+    def show_mistake_stats(self):
+        _show_mistake_stats_util()
+
     def check_all_integrity(self):
         log_action("SYSTEM_CHECK", "Started comprehensive integrity scan")
         _check_all_integrity_util(self.file_mgr, self.card_mgr)
@@ -109,6 +113,7 @@ class MenuManager:
             ("5" if is_num else "/delete"): (lambda: (self._handle_file_deletion(show_list=False), self.card_mgr.clear_cache()), f"⚠️ Xoá bộ đề"),
             ("6" if is_num else "/check"): (self.check_all_integrity, "🔍 Kiểm tra lỗi dữ liệu"),            
             ("7" if is_num else "/search"): (self._handle_search_files, f"🔍 Tìm kiếm bộ đề"),
+            ("8" if is_num else "/disable"): (self._handle_toggle_disable_flow, "🚫 Vô hiệu hóa/Mở lại"),
             ("0" if is_num else "/exit"): (lambda: None, "Quay lại")
         }
         self.run_menu("📦 QUẢN LÝ HỆ THỐNG", opts, show_file_list=True, show_sidebar=True, clear=True)
@@ -117,6 +122,12 @@ class MenuManager:
         """Xử lý nhập từ khóa và gán vào FileManager."""
         kw = inp.input_search_file()
         self.file_mgr.search_keyword = kw if kw else None
+
+    def _handle_toggle_disable_flow(self):
+        """Xử lý bật/tắt trạng thái vô hiệu hóa bộ đề."""
+        path = self._choose_file_path(show=False, context_name="Vô hiệu hóa/Mở lại")
+        if path:
+            self.file_mgr.toggle_disable(os.path.basename(path))
 
     def clear_history(self):
         _clear_history_util()
@@ -135,7 +146,7 @@ class MenuManager:
         self.file_mgr.create_file()
 
     def _handle_rename_flow(self):
-        path = self._choose_file_path(show=False)
+        path = self._choose_file_path(show=False, context_name="Đổi tên bộ đề")
         if path:
             self.file_mgr.rename_file(path)
             self.card_mgr.clear_cache(path) # Xoá cache đường dẫn cũ
@@ -158,6 +169,7 @@ class MenuManager:
                 ("7", "Sắp xếp câu hỏi (QUESTION_SORT_BY)", str(_CONFIG.QUESTION_SORT_BY)),
                 ("8", "Chế độ Menu (MENU_MODE)", str(_CONFIG.MENU_MODE).upper()),
                 ("9", "Độ dài tên file tối đa (MAX_FILENAME_LENGTH)", f"{_CONFIG.MAX_FILENAME_LENGTH}"),
+                ("10", "Sắp xếp lỗi sai (MISTAKE_SORT_BY)", str(_CONFIG.MISTAKE_SORT_BY)),
                 ("0", "Quay lại", "")
             ]
             for k, label, val in opts_info:
@@ -211,6 +223,11 @@ class MenuManager:
                 if val and val.isdigit():
                     _CONFIG.MAX_FILENAME_LENGTH = int(val)
                     self._update_config_persistence("MAX_FILENAME_LENGTH", _CONFIG.MAX_FILENAME_LENGTH)
+            elif ch == "10":
+                modes = ["wrong_desc", "correct_asc", "diff_asc"]
+                idx = modes.index(_CONFIG.MISTAKE_SORT_BY) if _CONFIG.MISTAKE_SORT_BY in modes else 0
+                _CONFIG.MISTAKE_SORT_BY = modes[(idx + 1) % len(modes)]
+                self._update_config_persistence("MISTAKE_SORT_BY", _CONFIG.MISTAKE_SORT_BY)
             elif ch in ["0", "q", "exit"]:
                 break
 

@@ -23,17 +23,44 @@ def _replace_colors(text):
 # --- TIỆN ÍCH LOGIC MENU ---
 
 def _show_stats_util(file_mgr):
+    def f_size(b):
+        if b >= 1048576: return f"{b/1048576:.1f} MB"
+        return f"{b/1024:.1f} KB" if b >= 1024 else f"{b} B"
+
     try:
         files = file_mgr.get_files()
-        total_q, total_bytes = 0, 0
+        total_q, q_size, clean_size = 0, 0, 0
         for f in files:
-            total_q += file_mgr.count_questions(f)
+            count = file_mgr.count_questions(f)
+            total_q += count
             full_path = os.path.join(file_mgr.qdir, f)
-            if os.path.exists(full_path): total_bytes += os.path.getsize(full_path)
-    except: total_q, total_bytes, files = 0, 0, []
-    size_str = f"{total_bytes/1024:.1f} KB" if total_bytes > 1024 else f"{total_bytes} B"
+            if os.path.exists(full_path): q_size += os.path.getsize(full_path)
+
+        log_fs = [f for f in os.listdir(_CONFIG.LOG_DIR) if os.path.isfile(os.path.join(_CONFIG.LOG_DIR, f))]
+        log_count = len(log_fs)
+        for f in log_fs: clean_size += os.path.getsize(os.path.join(_CONFIG.LOG_DIR, f))
+
+        hist_fs = [f for f in os.listdir(_CONFIG.EXPORT_DIR) if f.startswith("quiz_results_")]
+        hist_count = len(hist_fs)
+        for f in hist_fs: clean_size += os.path.getsize(os.path.join(_CONFIG.EXPORT_DIR, f))
+
+        trash_fs = [f for f in os.listdir(_CONFIG.TRASH_DIR) if os.path.isfile(os.path.join(_CONFIG.TRASH_DIR, f))]
+        trash_count = len(trash_fs)
+        for f in trash_fs: clean_size += os.path.getsize(os.path.join(_CONFIG.TRASH_DIR, f))
+    except: 
+        total_q, q_size, clean_size, files = 0, 0, 0, []
+        log_count, hist_count, trash_count = 0, 0, 0
+
     table = Table(box=box.ROUNDED, show_header=False, min_width=28, border_style=_CONFIG.COLOR_STATS) 
-    table.add_row("📂 Bộ đề", str(len(files))); table.add_row("❓ Tổng câu", f"[bold green]{total_q}[/]"); table.add_row("💾 Lưu trữ", f"[bold magenta]{size_str}[/]")
+    table.add_row("📂 Bộ đề", str(len(files)))
+    table.add_row("❓ Tổng câu", f"[bold green]{total_q}[/]")
+    table.add_row("📝 Nhật ký", str(log_count))
+    table.add_row("📜 Lịch sử", str(hist_count))
+    table.add_row("🗑️ Thùng rác", str(trash_count))
+    table.add_row("💾 Lưu trữ bộ đề", f"[bold cyan]{f_size(q_size)}[/]")
+    table.add_row("🧹 Lưu trữ nên xóa", f"[bold yellow]{f_size(clean_size)}[/]")
+    table.add_row("📊 Lưu trữ thực tế", f"[bold magenta]{f_size(q_size + clean_size)}[/]")
+
     return Panel(table, title=f"[bold {_CONFIG.COLOR_STATS}]📊 THỐNG KÊ[/]", border_style=_CONFIG.COLOR_STATS, expand=False)
 
 def _get_history_table_util():
@@ -55,8 +82,11 @@ def _get_history_table_util():
         table.caption = f"[bold white]🎯 Độ chính xác TB: [{color}]{avg:.1f}%[/{color}][/]"
     return Panel(table, title=f"[bold {_CONFIG.COLOR_HISTORY}]📜 LỊCH SỬ[/]", border_style=_CONFIG.COLOR_HISTORY, expand=False)
 
-def _choose_file_path_util(file_mgr, allow_all=False, show=True):
-    files = file_mgr.list_files(show=show)
+def _choose_file_path_util(file_mgr, allow_all=False, show=True, exclude_disabled=False, context_name=""):
+    if context_name:
+        console.print(f"\n[bold yellow]📍 ĐANG THỰC HIỆN:[/] [bold cyan]{context_name.upper()}[/]")
+
+    files = file_mgr.list_files(show=show, exclude_disabled=exclude_disabled)
     if not files:
         console.print("[yellow]⚠️ Thư mục hiện đang trống.[/]"); time.sleep(1); return None
     prompt = f"👉 Nhập ID bộ đề {'hoặc /all ' if allow_all else ''}(hoặc /exit): "
@@ -69,10 +99,13 @@ def _play_action_util(file_mgr, card_mgr, menu_mgr, all_files=False):
     game = QuizGame()
     try:
         data = []
+        disabled = file_mgr._get_disabled_list()
         if all_files:
-            for f in file_mgr.get_files(): data.extend(card_mgr.load_data(os.path.join(file_mgr.qdir, f)))
+            for f in file_mgr.get_files():
+                if f not in disabled:
+                    data.extend(card_mgr.load_data(os.path.join(file_mgr.qdir, f)))
         else:
-            path = _choose_file_path_util(file_mgr)
+            path = _choose_file_path_util(file_mgr, exclude_disabled=True, context_name="Luyện tập")
             if path: data = card_mgr.load_data(path)
         if data: game.run(data, *game.get_difficulty())
     except Exception as e: _handle_error(f"❌ Lỗi khi khởi tạo trò chơi: {e}")
@@ -108,7 +141,7 @@ def _empty_trash_util():
         log_action("EMPTY_TRASH", f"Cleaned {len(files)} files"); time.sleep(1.5)
 
 def _handle_manage_questions_for_path_util(file_mgr, card_mgr, menu_mgr):
-    path = _choose_file_path_util(file_mgr, show=False)
+    path = _choose_file_path_util(file_mgr, show=False, context_name="Biên tập nội dung")
     if path:
         card_mgr.show_questions(path)
         menu_mgr._run_question_crud_menu(path)
@@ -176,7 +209,75 @@ def _manage_filter_categories_util(file_mgr, card_mgr):
         with open(f_path, "w", encoding="utf-8") as f:
             f.write("\n".join(kws))
 
+def _show_mistake_stats_util():
+    """Thống kê các câu hỏi thường xuyên bị trả lời sai từ lịch sử."""
+    _clear_screen()
+    console.print(Panel(Align.center("[bold red]❌ THỐNG KÊ LỖI SAI PHỔ BIẾN[/]"), border_style="red"))
+    
+    mistakes = {} # {question_text: [wrong_count, correct_count, correct_answer]}
+    export_dir = _CONFIG.EXPORT_DIR
+    if not os.path.exists(export_dir):
+        console.print("[yellow]⚠️ Chưa có dữ liệu lịch sử để phân tích.[/]")
+        console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
+        return
+
+    h_files = [f for f in os.listdir(export_dir) if f.startswith("quiz_results_")]
+    if not h_files:
+        console.print("[yellow]⚠️ Chưa có kết quả lượt chơi nào được lưu lại.[/]")
+        console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
+        return
+
+    with console.status("[bold red]Đang tổng hợp dữ liệu lỗi...[/]"):
+        for f_name in h_files:
+            try:
+                with open(os.path.join(export_dir, f_name), encoding="utf-8-sig") as f:
+                    reader = list(csv.reader(f))
+                    # Dữ liệu kết quả bắt đầu từ dòng index 7
+                    if len(reader) < 8: continue
+                    for row in reader[7:]:
+                        if len(row) >= 4:
+                            q_text, ans_text, is_ok = row[1], row[2], row[3].strip().lower() == "true"
+                            if q_text not in mistakes:
+                                mistakes[q_text] = [0, 0, ans_text]
+                            if is_ok:
+                                mistakes[q_text][1] += 1
+                            else:
+                                mistakes[q_text][0] += 1
+            except: pass
+
+    # Chỉ hiển thị những câu đã từng sai ít nhất 1 lần
+    stats = {q: v for q, v in mistakes.items() if v[0] > 0}
+
+    if not stats:
+        console.print("\n[bold green]✨ Tuyệt vời! Bạn chưa làm sai câu nào trong các lượt chơi gần đây.[/]")
+    else:
+        # Sắp xếp dựa trên cấu hình MISTAKE_SORT_BY
+        sort_mode = getattr(_CONFIG, 'MISTAKE_SORT_BY', 'wrong_desc')
+        if sort_mode == "correct_asc":
+            sorted_mistakes = sorted(stats.items(), key=lambda x: (x[1][1], -x[1][0]))
+        elif sort_mode == "diff_asc":
+            sorted_mistakes = sorted(stats.items(), key=lambda x: (x[1][1] - x[1][0], -x[1][0]))
+        else: # Mặc định: wrong_desc
+            sorted_mistakes = sorted(stats.items(), key=lambda x: x[1][0], reverse=True)
+
+        table = Table(box=box.ROUNDED, expand=True, show_lines=True)
+        table.add_column("Số lần sai", justify="center", style="bold red")
+        table.add_column("Số lần đúng", justify="center", style="bold green")
+        table.add_column("Hiệu số", justify="center")
+        table.add_column("Nội dung câu hỏi", style="white")
+        table.add_column("Đáp án đúng", style="green")
+
+        for q, (w, c, ans) in sorted_mistakes:
+            diff = c - w
+            diff_style = "bold green" if diff > 0 else "bold red" if diff < 0 else "white"
+            diff_str = f"[{diff_style}]{'+' if diff > 0 else ''}{diff}[/]"
+            table.add_row(str(w), str(c), diff_str, _replace_colors(q), _replace_colors(ans))
+        console.print(table)
+        console.print(f"\n[dim]💡 Hệ thống hiển thị toàn bộ danh sách các câu hỏi bạn đã từng trả lời sai.[/]")
+
+    console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
+
 def _handle_file_deletion_util(file_mgr, show_list=True):
-    p = _choose_file_path_util(file_mgr, allow_all=True, show=show_list)
+    p = _choose_file_path_util(file_mgr, allow_all=True, show=show_list, context_name="Xoá bộ đề")
     if p == "/all": file_mgr.delete_all_files()
     elif p: file_mgr.delete_file(p)

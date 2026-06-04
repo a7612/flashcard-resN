@@ -172,7 +172,7 @@ class FlashcardManager:
 
                     q, a, d, r = inp.input_question_details(row[2], row[1], row[3], row[4], is_edit=True)
                     if q is None: return
-                    row[2], row[1], row[3], row[4] = q, a or row[1], d or row[3], r or row[4]
+                    row[2], row[1], row[3], row[4] = q or row[2], a or row[1], d or row[3], r or row[4]
                 else:
                     # Hiển thị giá trị của trường đang chọn ở dạng thô
                     console.print(f"\n[dim]📝 Nội dung cũ (Raw):[/] {row[field_idx]}")

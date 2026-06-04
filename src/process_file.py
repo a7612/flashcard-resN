@@ -87,6 +87,31 @@ class FileManager:
             # Đừng dùng _handle_error ở đây để tránh làm gián đoạn luồng hiển thị danh sách
             return 0
 
+    def _get_disabled_list(self):
+        """Lấy danh sách các bộ đề bị vô hiệu hóa từ data/disable_flashcard.csv."""
+        path = os.path.join("data", "disable_flashcard.csv")
+        if not os.path.exists(path): return []
+        try:
+            with open(path, "r", encoding="utf-8-sig") as f:
+                reader = csv.DictReader(f)
+                return [row["Tên bộ đề"] for row in reader if row.get("Tên bộ đề")]
+        except: return []
+
+    def toggle_disable(self, fname):
+        """Bật/Tắt trạng thái vô hiệu hóa của một bộ đề."""
+        path = os.path.join("data", "disable_flashcard.csv")
+        disabled = self._get_disabled_list()
+        if fname in disabled:
+            disabled.remove(fname)
+        else:
+            disabled.append(fname)
+        
+        with open(path, "w", encoding="utf-8-sig", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["Tên bộ đề"])
+            writer.writeheader()
+            for name in disabled:
+                writer.writerow({"Tên bộ đề": name})
+
     def _get_status_info(self, count):
         """Trả về (văn bản trạng thái, màu sắc) dựa trên số lượng câu hỏi."""
         for limit, label, color in self.thresholds:
@@ -94,7 +119,7 @@ class FileManager:
                 return label, color
         return self.thresholds[-1][1], self.thresholds[-1][2]
 
-    def list_files(self, show=True, return_table=False):
+    def list_files(self, show=True, return_table=False, exclude_disabled=False):
         files = self.get_files()
         # Thu thập metadata để hỗ trợ nhiều kiểu sắp xếp: (filename, count, mtime)
         files_meta = []
@@ -116,6 +141,11 @@ class FileManager:
         else: # Mặc định: count_desc
             files_meta.sort(key=lambda x: (-x[1], x[0].lower()))
 
+        # Lọc bỏ các bộ đề bị vô hiệu hóa nếu yêu cầu
+        disabled_list = self._get_disabled_list()
+        if exclude_disabled:
+            files_meta = [m for m in files_meta if m[0] not in disabled_list]
+
         # Logic Tìm kiếm & Lọc
         if self.search_keyword:
             filtered = [m for m in files_meta if self.search_keyword.lower() in m[0].lower()]
@@ -135,7 +165,11 @@ class FileManager:
             table.add_column("Cập nhật", justify="left")
             
             for i, (f, c, mtime_ts) in enumerate(files_meta, 1):
-                status, color = self._get_status_info(c)
+                if f in disabled_list:
+                    status = "[red]Vô hiệu hóa[/]"
+                    color = "red"
+                else:
+                    status, color = self._get_status_info(c)
                 
                 mtime_dt = datetime.datetime.fromtimestamp(mtime_ts, tz=VN_TZ)
                 diff = _get_now() - mtime_dt.replace(hour=0, minute=0, second=0, microsecond=0)
