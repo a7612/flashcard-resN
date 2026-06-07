@@ -97,7 +97,9 @@ class MenuManager:
             "2": (lambda: (m.delete_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "🗑️ Xoá câu"),
             "3": (lambda: m.edit_question(path), "🛠️ Sửa tổng lực"),
             "4": (lambda: m.edit_question(path, 2), "🔍 Sửa câu hỏi"),
-            "5": (lambda: m.edit_question(path, 1), "💡 Sửa đáp án"),
+            "5": (lambda: m.edit_question(path, 1), "✅ Sửa đáp án"),
+            "6": (lambda: m.edit_question(path, 3), "💡 Sửa gợi ý"),
+            "7": (lambda: m.edit_question(path, 4), "📖 Sửa mô tả"),
             "0": (lambda: None, "Quay lại")
         }
         self.run_menu(f"⚙️ BIÊN TẬP: {os.path.basename(path)}", opts, show_file_list=False, show_sidebar=False, clear=False)

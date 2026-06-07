@@ -227,22 +227,63 @@ def _show_mistake_stats_util():
         console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
         return
 
+    # 1. Tải dữ liệu độ khó trung bình từ difficult.csv
+    avg_difficulty = {} # {qid: avg_score}
+    diff_path = os.path.join("data", "difficult.csv")
+    if os.path.exists(diff_path):
+        try:
+            diff_raw = {} # {qid: [scores]}
+            with open(diff_path, "r", encoding="utf-8-sig") as f:
+                reader = csv.DictReader(f, delimiter=';')
+                for row in reader:
+                    qid, score = row.get("id"), row.get("độ khó")
+                    if qid and score:
+                        if qid not in diff_raw: diff_raw[qid] = []
+                        diff_raw[qid].append(int(score))
+            avg_difficulty = {k: sum(v)/len(v) for k, v in diff_raw.items()}
+        except: pass
+
+    # 2. Ánh xạ Nội dung (đã style) -> ID để tra cứu độ khó
+    text_to_id = {}
+    q_dir = _CONFIG.QUESTIONS_DIR
+    if os.path.exists(q_dir):
+        for f_name in os.listdir(q_dir):
+            if f_name.endswith(".csv"):
+                try:
+                    with open(os.path.join(q_dir, f_name), encoding="utf-8-sig") as f:
+                        # Tự động nhận diện delimiter
+                        head = f.read(1024); f.seek(0)
+                        delim = ';' if ';' in head and ',' not in head else ','
+                        reader = csv.reader(f, delimiter=delim)
+                        next(reader, None) # Bỏ qua header
+                        for row in reader:
+                            if len(row) >= 3:
+                                # Engine lưu log question đã qua xử lý màu, nên ta map theo key đó
+                                text_to_id[_replace_colors(row[2])] = row[0]
+                except: pass
+
     with console.status("[bold red]Đang tổng hợp dữ liệu lỗi...[/]"):
         for f_name in h_files:
             try:
                 with open(os.path.join(export_dir, f_name), encoding="utf-8-sig") as f:
                     reader = list(csv.reader(f))
                     # Dữ liệu kết quả bắt đầu từ dòng index 7
-                    if len(reader) < 8: continue
+                    if len(reader) < 8 or len(reader[0]) < 2: continue
+                    file_ts = reader[0][1]
                     for row in reader[7:]:
                         if len(row) >= 4:
                             q_text, ans_text, is_ok = row[1], row[2], row[3].strip().lower() == "true"
                             if q_text not in mistakes:
-                                mistakes[q_text] = [0, 0, ans_text]
+                                mistakes[q_text] = [0, 0, ans_text, None, None] # [w, c, ans, last_w, last_c]
+                            
                             if is_ok:
                                 mistakes[q_text][1] += 1
+                                if not mistakes[q_text][4] or file_ts > mistakes[q_text][4]:
+                                    mistakes[q_text][4] = file_ts
                             else:
                                 mistakes[q_text][0] += 1
+                                if not mistakes[q_text][3] or file_ts > mistakes[q_text][3]:
+                                    mistakes[q_text][3] = file_ts
             except: pass
 
     # Chỉ hiển thị những câu đã từng sai ít nhất 1 lần
@@ -262,16 +303,32 @@ def _show_mistake_stats_util():
 
         table = Table(box=box.ROUNDED, expand=True, show_lines=True)
         table.add_column("Số lần sai", justify="center", style="bold red")
+        table.add_column("Ngày sai gần nhất", justify="center", style="red")
         table.add_column("Số lần đúng", justify="center", style="bold green")
+        table.add_column("Ngày đúng gần nhất", justify="center", style="green")
         table.add_column("Hiệu số", justify="center")
+        table.add_column("Độ khó", justify="center")
         table.add_column("Nội dung câu hỏi", style="white")
         table.add_column("Đáp án đúng", style="green")
 
-        for q, (w, c, ans) in sorted_mistakes:
+        for q, (w, c, ans, lw, lc) in sorted_mistakes:
             diff = c - w
             diff_style = "bold green" if diff > 0 else "bold red" if diff < 0 else "white"
             diff_str = f"[{diff_style}]{'+' if diff > 0 else ''}{diff}[/]"
-            table.add_row(str(w), str(c), diff_str, _replace_colors(q), _replace_colors(ans))
+
+            def fmt_ts(ts):
+                if not ts: return "[dim]-[/]"
+                try:
+                    dt = datetime.datetime.fromisoformat(ts)
+                    return dt.strftime("%d/%m/%y")
+                except: return "[dim]-[/]"
+
+            # Lấy thông tin độ khó trung bình
+            qid = text_to_id.get(q)
+            score = avg_difficulty.get(qid)
+            score_str = f"[bold yellow]{score:.1f} ⭐[/]" if score else "[dim]-[/]"
+            
+            table.add_row(str(w), fmt_ts(lw), str(c), fmt_ts(lc), diff_str, score_str, _replace_colors(q), _replace_colors(ans))
         console.print(table)
         console.print(f"\n[dim]💡 Hệ thống hiển thị toàn bộ danh sách các câu hỏi bạn đã từng trả lời sai.[/]")
 
