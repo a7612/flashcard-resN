@@ -10,22 +10,41 @@ _today = _get_now().strftime("%Y-%m-%d")
 _temp_log_path = os.path.join(_CONFIG.LOG_DIR, f"log-{_today}-temp.log")
 _final_log_path = os.path.join(_CONFIG.LOG_DIR, f"log-{_today}.log")
 
-def _finalize_logs():
-    """Chuyển nội dung từ file temp sang file log chính thức khi thoát."""
+def _merge_log_file(temp_path):
+    """Gộp nội dung từ file temp vào file log chính tương ứng."""
     try:
-        # Đóng tất cả handlers để giải phóng file
-        for handler in logger.handlers[:]:
-            handler.close()
-            logger.removeHandler(handler)
-            
-        if os.path.exists(_temp_log_path):
-            with open(_temp_log_path, "r", encoding="utf-8") as src:
+        if os.path.exists(temp_path):
+            final_path = temp_path.replace("-temp.log", ".log")
+            with open(temp_path, "r", encoding="utf-8") as src:
                 content = src.read()
             if content:
-                with open(_final_log_path, "a", encoding="utf-8") as dst:
+                with open(final_path, "a", encoding="utf-8") as dst:
                     dst.write(content)
-            os.remove(_temp_log_path)
+            os.remove(temp_path)
+            return True
     except: pass
+    return False
+
+def _recover_orphaned_logs():
+    """Quét và phục hồi các file log tạm bị bỏ rơi từ các phiên trước."""
+    try:
+        if not os.path.exists(_CONFIG.LOG_DIR): return
+        for f in os.listdir(_CONFIG.LOG_DIR):
+            fpath = os.path.join(_CONFIG.LOG_DIR, f)
+            # Chỉ gộp các file temp không phải của phiên hiện tại
+            if f.endswith("-temp.log") and fpath != os.path.abspath(_temp_log_path):
+                _merge_log_file(fpath)
+    except: pass
+
+def _finalize_logs():
+    """Dọn dẹp handler và gộp log phiên hiện tại khi thoát."""
+    for handler in logger.handlers[:]:
+        handler.close()
+        logger.removeHandler(handler)
+    _merge_log_file(_temp_log_path)
+
+# Khôi phục log cũ ngay khi import module
+_recover_orphaned_logs()
 
 if not logger.handlers:
     h = logging.FileHandler(_temp_log_path, encoding="utf-8")
@@ -55,7 +74,7 @@ def log_difficulty(qid, rating):
 class LogManager:
     @staticmethod
     def clear_logs():
-        """Xoá toàn bộ file nhật ký cũ (trừ file temp đang dùng)."""
+        """Xoá toàn bộ file nhật ký (bao gồm cả các file tạm)."""
         try:
             log_dir = _CONFIG.LOG_DIR
             files = [f for f in os.listdir(log_dir) if os.path.isfile(os.path.join(log_dir, f))]
@@ -63,11 +82,10 @@ class LogManager:
                 console.print("[yellow]⚠️ Không có nhật ký để xoá.[/]")
                 return
 
-            confirm = inp.input_confirm_generic(f"\n[bold red]⚠️ Bạn có chắc muốn dọn sạch nhật ký cũ? (y/n): [/]")
+            confirm = inp.input_confirm_generic(f"\n[bold red]⚠️ Bạn có chắc muốn dọn sạch toàn bộ nhật ký? (y/n): [/]")
             if confirm == 'y':
                 count = 0
                 for f in files:
-                    if f.endswith("-temp.log"): continue
                     fpath = os.path.join(log_dir, f)
                     try:
                         os.rename(fpath, fpath) # Kiểm tra file có bận không

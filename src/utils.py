@@ -54,8 +54,7 @@ def _show_stats_util(file_mgr):
     table = Table(box=box.ROUNDED, show_header=False, min_width=28, border_style=_CONFIG.COLOR_STATS) 
     table.add_row("📂 Bộ đề", str(len(files)))
     table.add_row("❓ Tổng câu", f"[bold green]{total_q}[/]")
-    table.add_row("📝 Nhật ký", str(log_count))
-    table.add_row("📜 Lịch sử", str(hist_count))
+    table.add_row("📁 File tạm", str(log_count + hist_count))
     table.add_row("🗑️ Thùng rác", str(trash_count))
     table.add_row("💾 Lưu trữ bộ đề", f"[bold cyan]{f_size(q_size)}[/]")
     table.add_row("🧹 Lưu trữ nên xóa", f"[bold yellow]{f_size(clean_size)}[/]")
@@ -82,11 +81,11 @@ def _get_history_table_util():
         table.caption = f"[bold white]🎯 Độ chính xác TB: [{color}]{avg:.1f}%[/{color}][/]"
     return Panel(table, title=f"[bold {_CONFIG.COLOR_HISTORY}]📜 LỊCH SỬ[/]", border_style=_CONFIG.COLOR_HISTORY, expand=False)
 
-def _choose_file_path_util(file_mgr, allow_all=False, show=True, exclude_disabled=False, context_name=""):
+def _choose_file_path_util(file_mgr, allow_all=False, show=True, exclude_disabled=False, context_name="", hide_empty=False):
     if context_name:
         console.print(f"\n[bold yellow]📍 ĐANG THỰC HIỆN:[/] [bold cyan]{context_name.upper()}[/]")
 
-    files = file_mgr.list_files(show=show, exclude_disabled=exclude_disabled)
+    files = file_mgr.list_files(show=show, exclude_disabled=exclude_disabled, hide_empty=hide_empty)
     if not files:
         console.print("[yellow]⚠️ Thư mục hiện đang trống.[/]"); time.sleep(1); return None
     prompt = f"👉 Nhập ID bộ đề {'hoặc /all ' if allow_all else ''}(hoặc /exit): "
@@ -98,16 +97,19 @@ def _play_action_util(file_mgr, card_mgr, menu_mgr, all_files=False):
     from src.engine import QuizGame
     game = QuizGame()
     try:
-        data = []
         disabled = file_mgr._get_disabled_list()
         if all_files:
+            data = []
             for f in file_mgr.get_files():
-                if f not in disabled:
+                if f not in disabled and file_mgr.count_questions(f) > 0:
                     data.extend(card_mgr.load_data(os.path.join(file_mgr.qdir, f)))
+            if data: game.run(data, *game.get_difficulty())
         else:
-            path = _choose_file_path_util(file_mgr, exclude_disabled=True, context_name="Luyện tập")
-            if path: data = card_mgr.load_data(path)
-        if data: game.run(data, *game.get_difficulty())
+            _clear_screen()
+            path = _choose_file_path_util(file_mgr, exclude_disabled=True, context_name="Luyện tập", hide_empty=True)
+            if path:
+                data = card_mgr.load_data(path)
+                if data: game.run(data, n_opts=1) # Chế độ KISS: 1 đáp án, không hỏi mức độ
     except Exception as e: _handle_error(f"❌ Lỗi khi khởi tạo trò chơi: {e}")
 
 def _check_all_integrity_util(file_mgr, card_mgr):

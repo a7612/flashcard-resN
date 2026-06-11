@@ -15,7 +15,7 @@ class FileManager:
         self.thresholds = [
             (1, "[red]🌑 Trống[/]", "red"),
             (16, "[yellow]🚧 Cần bổ sung[/]", "yellow"),
-            (22, "[cyan]📂 Đang biên soạn[/]", "cyan"),
+            (32, "[cyan]📂 Đang biên soạn[/]", "cyan"),
             (float('inf'), "[bold green]💎 Đủ chỉ tiêu[/]", "bold green")
         ]
         self.search_keyword = None
@@ -119,12 +119,14 @@ class FileManager:
                 return label, color
         return self.thresholds[-1][1], self.thresholds[-1][2]
 
-    def list_files(self, show=True, return_table=False, exclude_disabled=False):
+    def list_files(self, show=True, return_table=False, exclude_disabled=False, hide_empty=False):
         files = self.get_files()
         # Thu thập metadata để hỗ trợ nhiều kiểu sắp xếp: (filename, count, mtime)
         files_meta = []
         for f in files:
-            files_meta.append((f, self.count_questions(f), os.path.getmtime(self._get_full_path(f))))
+            count = self.count_questions(f)
+            if hide_empty and count <= 0: continue
+            files_meta.append((f, count, os.path.getmtime(self._get_full_path(f))))
 
         # Logic sắp xếp dựa trên cấu hình
         mode = getattr(_CONFIG, 'FILE_DISPLAY_SORT_BY', 'count_desc')

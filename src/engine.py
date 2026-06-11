@@ -171,7 +171,7 @@ class QuizGame:
         if any(kw.lower() in q.lower() for kw in tf_kws): return ["Đúng", "Sai"]
         
         # Thiết lập mục tiêu
-        n_target, a_clean = n_opts if (n_opts and n_opts > 1) else 4, a.strip().lower()
+        n_target, a_clean = n_opts if (n_opts is not None and n_opts >= 1) else 4, a.strip().lower()
         pool, match_k = [], None
 
         # 2. Kiểm tra xem có phải dạng câu hỏi viết tắt/giải nghĩa (acronym) không
