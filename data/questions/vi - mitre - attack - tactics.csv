@@ -1,9 +1,12 @@
 ﻿id,answer,question,hint,desc
 341fa45c-e136-4e9e-b13d-de2a52428144,Collection,Mitre Att&ck: Kẻ tấn công cố gắng thu thập dữ liệu mà chúng chú ý. Đây là chiến thuật nào?,,
+11a5f4f3-66e8-4517-b2e6-935b427f6d3e,Command and Control,Mitre Att&ck: Kẻ tấn công cố gắng giao tiếp với hệ thống bị bại lộ để kiểm soát. Đây là chiến thuật nào?,,
 cb554e32-94c5-4f35-ab17-66fba8d7d2bb,Credential Access,Mitre Att&ck: Kẻ tấn công cố gắng trộm tài khoản và mật khẩu. Đây là chiến thuật nào?,,
 8b6829e0-8f23-4b0f-a06b-d2ef4b5426ed,Defense Impairment,"Mitre Att&ck: Kẻ tấn công cố gắng phá hủy cơ chế bảo mật, ống nối (pipelines) và công cụ phòng thủ không thể nhận biết hoặc không thể tin tưởng hiện trạng đang diễn ra. Đây là chiến thuật nào?",,
 693119a5-0248-481f-be37-9b3749647822,Discovery,Mitre Att&ck: Kẻ tấn công cố gắng tìm hiểu môi trường mục tiêu. Đây là chiến thuật nào?,,
 c4f11402-8e33-442c-b35a-45062ec79ed9,Execution,Mitre Att&ck: Kẻ tấn công cố gắng chạy mã độc. Đây là chiến thuật nào?,,
+755d6efa-d488-4310-a252-35b0549be857,Exfiltration,Mitre Att&ck: Kẻ tấn công cố gắng ăn cắp dữ liệu. Đây là chiến thuật nào?,,
+7844f43d-c2cd-48e7-ac34-410c14617711,Impact,"Mitre Att&ck: Kẻ tấn công cố gắng thao túng, gián đoạn hoặc phá hủy hệ thống và dữ liệu của mục tiêu. Đây là chiến thuật nào?",,
 01bc0bdc-14fb-4b89-b0cb-90e7afead0ce,Initial Access,Mitre Att&ck: Kẻ tấn công cố gắng truy cập mạng cụ thể. Đây là chiến thuật nào?,,
 cc0f0a4a-0393-4fdf-92f3-a41746c8585a,Lateral Movement,Mitre Att&ck: Kẻ tấn công cố gắng di chuyển qua lại giữa môi trường mục tiêu. Đây là chiến thuật nào?,,
 cbd8dcad-073c-4983-8115-65a28a9eb0f8,Persistence,Mitre Att&ck: Kẻ tấn công cố gắng duy trì vị trí của chúng. Đây là chiến thuật nào?,,
