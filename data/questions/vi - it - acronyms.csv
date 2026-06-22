@@ -1,28 +1,93 @@
 ﻿id,answer,question,hint,desc
+e945352a-9e5b-4e59-ac7b-f2290ebac117,Address Resolution Protocol,IT - Acronyms: ARP là viết tắt của từ nào sau đây?,,- Address Resolution Protocol: Giao thức xác định địa chỉ
 b54b0f0d-2d39-4e36-9dc6-4aaf6c5aea08,Advanced Research Projects Agency Network,IT - Acronyms: ARPANET là viết tắt của từ nào sau đây?,,- Advanced Research Projects Agency Network: Mạng lưới cơ quan với các đề án nghiên cứu tân tiến
 b69576cf-b45a-4584-a495-ba20d97be288,Application Programming Interface,IT - Acronyms: API là viết tắt của từ nào sau đây?,,- Application Programming Interface: Giao diện lập trình ứng dụng
 1e5a70be-f063-4bbd-88fa-8029ccfb4f65,Arithmetic Logic Unit,IT - Acronyms: ALU là viết tắt của từ nào sau đây?,,- Arithmetic Logic Unit: Bộ phận số học logic
+9694b57d-d5e5-4341-8029-099f890ba26d,Authentication Authorization Accounting,IT - Acronyms: AAA là viết tắt của từ nào sau đây?,,- Authentication Authorization Accounting: Xác thực Cấp quyền Ghi nhận
+7b5498f5-db63-4764-b65e-36c0b0eac8d9,Border Gateway Protocol,IT - Acronyms: BGP là viết tắt của từ nào sau đây?,,- Border Gateway Protocol: Giao thức cổng biên (mạng)
+029708bf-9188-4644-adeb-65f01dae2796,Canonical Name,IT - Acronyms: CNAME là viết tắt của từ nào sau đây?,,- Canonical Name: Tên chuẩn
 04b496ba-7f28-47e2-b4c2-47b6a8fc253e,Central Processing Unit,IT - Acronyms: CPU là viết tắt của từ nào sau đây?,,- Central Processing Unit: Bộ xử lý trung tâm
+f9d86e85-4841-4784-8bdc-6b9db8b9e647,Certificate Authority,IT - Acronyms: CA là viết tắt của từ nào sau đây?,,- Cơ quan cấp chứng chỉ
+11a8e419-9cb5-43aa-bc6d-6b2428d226e4,Classless Inter-Domain Routing,IT - Acronyms: CIDR là viết tắt của từ nào sau đây?,,- Classless Inter-Domain Routing: Định tuyến liên miền không phân lớp
 7e8eb1b4-5e9e-40a2-b07e-a8b874574bb0,Command Line Interface,IT - Acronyms: CLI là viết tắt của từ nào sau đây?,,- Command Line Interface: Giao diện dòng lệnh
+59ec466f-5b00-4e50-9540-1898a88e9b15,Confidentiality Integrity Availability,IT - Acronyms: CIA là viết tắt của từ nào sau đây?,,- Confidentiality Integrity Availability: Tính bảo mật tính toàn vẹn tính sẵn sàng
+e190368f-507f-49cf-b319-7e3f215530a3,Creating Reading Updating Deleting,IT - Acronyms: CRUD là viết tắt của từ nào sau đây?,,- Creating Reading Updating Deleting: Tạo Đọc Cập Nhật Xóa
+2e67ac0f-6e65-4634-8548-b8b30e9ffaa6,Demilitarized Zone,IT - Acronyms: DMZ là viết tắt của từ nào sau đây?,,- Demilitarized Zone: Vùng phi quản lý mạng
+5a91c2f2-eeec-4a77-bbdf-2a43d8700ea1,Domain Name System,IT - Acronyms: DNS là viết tắt của từ nào sau đây?,,- Domain Name System: Hệ thống tên miền
+6dd9920d-302b-4ad5-abb6-08b9760a49d7,Dynamic Host Configuration Protocol,IT - Acronyms: DHCP là viết tắt của từ nào sau đây?,,- Dynamic Host Configuration Protocol: Giao thức cấu hình máy chủ động
+992f5f6e-4bc6-4c00-be9d-d9c7bee016c7,Electrically Erasable Programmable Read-Only Memory,IT - Acronyms: EEPROM là viết tắt của từ nào sau đây?,,- Electrically Erasable Programmable Read-Only Memory: Bộ nhớ chỉ đọc có thể lập trình và xóa bằng điện
+8fad1d96-3cd3-4635-b246-233b0c6aef6b,Erasable Programmable Read-Only Memory,IT - Acronyms: EPROM là viết tắt của từ nào sau đây?,,- Erasable Programmable Read-Only Memory: Bộ nhớ chỉ đọc có thể lập trình và xóa
+3402964f-c7ac-4e98-a0a0-9ed200da6374,File Transfer Protocol,IT - Acronyms: FTP là viết tắt của từ nào sau đây?,,- File Transfer Protocol: Giao thức truyền tải tệp
+971d31ad-0082-46e4-bd5f-d83424f6a283,General Data Protection Regulation,IT - Acronyms: GDRP là viết tắt của từ nào sau đây?,,- General Data Protection Regulation: Quy định chung về bảo vệ dữ liệu
 24f688e9-ece6-4653-882f-728fa64459a9,General Packet Radio Service,IT - Acronyms: GPRS là viết tắt của từ nào sau đây?,,- General Packet Radio Service: Dịch vụ vô tuyến gói tổng hợp
 af396d1f-de38-44ea-b9cf-c2f9576c639c,Graphical User Interface,IT - Acronyms: GUI là viết tắt của từ nào sau đây?,,- Graphical User Interface: Giao diện đồ họa người dùng
 35b4ad11-80d1-4904-a538-0b6ac7235ffc,Hard Disk Drive,IT - Acronyms: HDD là viết tắt của từ nào sau đây?,,- Hard Disk Drive: Ổ đĩa cứng
+abe97f3f-cd1f-4478-9809-0d78b6df8fdc,Health Insurance Portability and Accountability Act,IT - Acronyms: HIPAA là viết tắt của từ nào sau đây?,,- Health Insurance Portability and Accountability Act: Đạo luật về tính di động và trách nhiệm giải trình của bảo hiểm y tế
+8b061ff7-2f5d-4aaa-bf65-3bae1677d65e,Hypertext Transfer Protocol,IT - Acronyms: HTTP là viết tắt của từ nào sau đây?,,- Hypertext Transfer Protocol: Giao thức truyền tải siêu văn bản
+6163fcfa-e7e1-4e32-a883-340c89f612ef,Hypertext Transfer Protocol Secure,IT - Acronyms: HTTPs là viết tắt của từ nào sau đây?,,- Hypertext Transfer Protocol Secure: Giao thức bảo mật truyền tải siêu văn bản
+3e1c4cf9-73ab-446a-b1e7-902f9ccad62f,Identification,IT - Acronyms: ID là viết tắt của từ nào sau đây?,,- Identification: Xác định danh tính
 e489d08f-13d0-4f12-bc96-6dceac75c572,Information Technology,IT - Acronyms: IT là viết tắt của từ nào sau đây?,,- Information Technology: Công nghệ thông tin
 51818c19-7dbb-4053-8819-808334a38083,Integrated Circuit,IT - Acronyms: IC là viết tắt của từ nào sau đây?,,- Integrated Circuit: Mạch tích hợp
 5b015eeb-e7f3-4b25-8ee3-cd28bad67ae8,Integrated Development Environment,IT - Acronyms: IDE là viết tắt của từ nào sau đây?,,- Integrated Development Environment: Môi trường phát triển tích hợp
+efc17c8b-d663-454e-aee2-0a23bb48e930,Internet Control Message Protocol,IT - Acronyms: ICMP là viết tắt của từ nào sau đây?,,- Internet Control Message Protocol: Giao thức kiểm soát thông điệp Internet
 34f15f2c-ae45-49a9-96e5-e1b00ae3bb9d,Internet Protocol,IT - Acronyms: IP là viết tắt của từ nào sau đây?,,- Internet Protocol: Giao thức mạng
+a623d4a0-3fbe-4686-8691-9aa831afb3a7,Internet Protocol Address Management,IT - Acronyms: IPAM là viết tắt của từ nào sau đây?,,- Internet Protocol Address Management: Quản lý địa chỉ giao thức Internet
+5dcb0b22-e739-49a9-8235-c955756c2bb1,Internet Protocol Version 4,IT - Acronyms: IPv4 là viết tắt của từ nào sau đây?,,- Internet Protocol Version 4: Giao thức mạng phiên bản 4
+687a9580-51b0-4115-9c76-966d7e036b6f,Internet Protocol Version 6,IT - Acronyms: IPv6 là viết tắt của từ nào sau đây?,,- Internet Protocol Version 6: Giao thức mạng phiên bản 6
+7348bc4b-9cdf-4210-80d3-64d67ba86502,Intrusion Detection System,IT - Acronyms: IDS là viết tắt của từ nào sau đây?,,- Intrusion Detection System: Hệ thống phát hiện xâm nhập
+6faf6e43-0526-43d1-b337-bae152c0834b,Intrusion Prevention System,IT - Acronyms: IPS là viết tắt của từ nào sau đây?,,- Intrusion Prevention System: Hệ thống ngăn chặn xâm nhập
+ad8c72df-7afc-4bc0-aba8-d9265c212b79,Large Language Model,IT - Acronyms: LLM là viết tắt của từ nào sau đây?,,- Large Language Model: Mô hình ngôn ngữ lớn
+def7350d-bd2b-4a95-966d-4573f7525a27,Lightweight Directory Access Protocol,IT - Acronyms: LDAP là viết tắt của từ nào sau đây?,,- Lightweight Directory Access Protocol: Giao thức truy cập đường dẫn nhẹ
 d0936b9f-eff5-46b2-8308-3ae7632943fa,Local Area Network,IT - Acronyms: LAN là viết tắt của từ nào sau đây?,,- Local Area Network: Mạng cục bộ
+59b55a84-0a0a-44fd-a53b-5f02db74abd2,Mail Exchange,IT - Acronyms: MX là viết tắt của từ nào sau đây?,,- Mail Exchange: Hệ thống trao đổi thư điện tử
+c538362c-27f3-417c-abba-b871c774e9d7,Masked Read-Only Memory,IT - Acronyms: MROM là viết tắt của từ nào sau đây?,,- Masked Read-Only Memory: Bộ nhớ chỉ đọc có mặt nạ
+6fea63a8-8235-4e02-9268-4dae762a7710,Media Access Control,IT - Acronyms: MAC là viết tắt của từ nào sau đây?,,- Media Access Control: Địa chỉ kiểm soát truy cập phương tiện truyền thông (Địa chỉ vật lý)
+e10a853f-196d-4447-852a-565827e33252,Message Transfer Agent,IT - Acronyms: MTA là viết tắt của từ nào sau đây?,,- Message Transfer Agent: Trình trung gian chuyển tiếp thông điệp
 2a982a7e-d528-436b-ac9a-d6cb7ca3b665,Metropolitan Area Network,IT - Acronyms: MAN là viết tắt của từ nào sau đây?,,- Metropolitan Area Network: Mạng đô thị
+52c1c88d-6f95-4412-98de-520c67ce1ae8,Multi-Factor Authentication,IT - Acronyms: MFA là viết tắt của từ nào sau đây?,,- Multi-Factor Authentication: Xác thực đa yếu tố
+fd37bcc8-95e1-4a12-95cd-5949eea87aa0,Natural Language Generation,IT - Acronyms: NLG là viết tắt của từ nào sau đây?,,- Natural Language Generation: Tạo ngôn ngữ tự nhiên
+39613c34-de6d-471f-84e5-350e309eebfd,Natural Language Processing,IT - Acronyms: NLP là viết tắt của từ nào sau đây?,,- Natural Language Processing: Xử lý ngôn ngữ tự nhiên
+829ac862-1bac-4b1e-87eb-798cac8fdb85,Natural Language Understanding,IT - Acronyms: NLU là viết tắt của từ nào sau đây?,,- Natural Language Understanding: Hiểu ngôn ngữ tự nhiên
+a0128674-d0e3-4cf9-b3e6-09d76913862d,Near Field Communication,IT - Acronyms: NFC là viết tắt của từ nào sau đây?,,- Near Field Communication: Giao tiếp trường gần
+ef3f0b95-af34-4c7d-98f7-dc6a205e59f5,Network Address Translation,IT - Acronyms: NAT là viết tắt của từ nào sau đây?,,- Network Address Translation: Chuyển đổi địa chỉ mạng
+02d22c9d-a6b5-4406-b4bb-475d8d1685f0,Network Attached Storage,IT - Acronyms: NAS là viết tắt của từ nào sau đây?,,- Network Attached Storage: Thiết bị lưu trữ kết nối mạng
+5f7d585e-d9ba-4a59-b352-1271f28e3638,Network Mapper,IT - Acronyms: NMAP là viết tắt của từ nào sau đây?,,- Network Mapper: Trình lập bản đồ mạng
+b9891e2e-d1e2-418b-a9de-55179d4ee029,Network Time Protocol,IT - Acronyms: NTP là viết tắt của từ nào sau đây?,,- Network Time Protocol: Giao thức thời gian mạng
+a426dcc9-3c58-4049-98da-6d48960e28b8,Open Shortest Path First,IT - Acronyms: OSPF là viết tắt của từ nào sau đây?,,- Open Shortest Path First: Giao thức mở rộng thuật toán đường đi ngắn nhất trước
+94ab2b4e-168c-43b9-9b34-5d848fae67e8,Open Systems Interconnection,IT - Acronyms: OSI là viết tắt của từ nào sau đây?,,- Open Systems Interconnection: Kết nối hệ thống mở
+2237f980-851b-4365-9cb2-723c08efe6a9,Open-Source Intelligence,IT - Acronyms: OSINT là viết tắt của từ nào sau đây?,,- Open-Source Intelligence: Tình báo nguồn mở
 3309bc94-31b0-4ab0-922d-4f44dd7ab70e,Operating System,IT - Acronyms: OS là viết tắt của từ nào sau đây?,,- Operating System: Hệ điều hành
+1367b1e0-4958-4d9f-9838-114e8b9545a0,Payment Card Industry Data Security Standard,IT - Acronyms: PCI DSS là viết tắt của từ nào sau đây?,,- Payment Card Industry Data Security Standard: Tiêu chuẩn bảo mật dữ liệu ngành thẻ thanh toán
 1a8b8395-34e2-4f02-b1f8-fd48593cbed0,Personal Computer,IT - Acronyms: PC là viết tắt của từ nào sau đây?,,- Personal Computer: Máy tính cá nhân
 316aaddc-99ce-4e1f-b024-9a6d3965afa7,Personal Digital Assistant,IT - Acronyms: PDA là viết tắt của từ nào sau đây?,,- Personal Digital Assistant: Thiết bị kỹ thuật số hỗ trợ cá nhân
+a29a18d7-791c-4050-97b4-ceaaff0f4cf4,Port Address Translation,IT - Acronyms: PAT là viết tắt của từ nào sau đây?,,- Port Address Translation: Chuyển đổi địa chỉ cổng
 e17eb3bf-87e8-45d3-b233-eb7b0229a2e7,Power Supply Unit,IT - Acronyms: PSU là viết tắt của từ nào sau đây?,,- Power Supply Unit: Bộ cấp nguồn điện
+2b7f669c-49a8-4755-acfa-1959161bddc2,Programmable Read-Only Memory,IT - Acronyms: PROM là viết tắt của từ nào sau đây?,,- Programmable Read-Only Memory: Bộ nhớ chỉ đọc có thể lập trình
+50df613d-9cfe-422d-ad45-d6422389278d,Quality of Service,IT - Acronyms: QoS là viết tắt của từ nào sau đây?,,- Quality of Service: Chất lượng dịch vụ
 c1600933-951b-4d0d-8f8d-63b8caa8194a,Random Access Memory,IT - Acronyms: RAM là viết tắt của từ nào sau đây?,,- Random Access Memory: Bộ nhớ truy cập ngẫu nhiên
+95c32073-3680-4caa-8632-47958751a179,Read-Only Memory,IT - Acronyms: ROM là viết tắt của từ nào sau đây?,,- Read-Only Memory: Bộ nhớ chỉ đọc
+b1e6612b-a9ab-4910-9065-191ae7486f97,Remote Authentication Dial-In User Service,IT - Acronyms: RADIUS là viết tắt của từ nào sau đây?,,- Remote Authentication Dial-In User Service: Dịch vụ xác thực từ xa cho người dùng truy cập qua đường dây điện thoại
 d4545ed4-80c4-4a57-b3be-1ad22feeff5e,Remote Desktop Protocol,IT - Acronyms: RDP là viết tắt của từ nào sau đây?,,- Remote Desktop Protocol: Giao thức truy cập máy tính từ xa
+4bc70d5f-c655-4955-a217-84d039cdfab4,Routing Information Protocol,IT - Acronyms: RIP là viết tắt của từ nào sau đây?,,- Routing Information Protocol: Giao thức thông tin định tuyến
+e5f63c19-570b-4dd7-aadf-38a44cdadc11,Secure Shell,IT - Acronyms: SSH là viết tắt của từ nào sau đây?,,- Secure Shell: Vỏ bảo mật
+abb6297a-7c21-415a-a811-dae3f7576e82,Secure Sockets Layer,IT - Acronyms: SSL là viết tắt của từ nào sau đây?,,- Secure Sockets Layer: Lớp bảo mật đa phiên
+22062ff1-3438-4b5b-9eb3-4036012f39b2,Simple Mail Transfer Protocol,IT - Acronyms: SMTP là viết tắt của từ nào sau đây?,,- Simple Mail Transfer Protocol: Giao thức truyền tải thư điện tử
+95b88577-92ef-46e7-80f0-20f5596ddd72,Single Sign-On,IT - Acronyms: SSO là viết tắt của từ nào sau đây?,,- Single Sign-On: Đăng nhập một lần
 221f62a0-0e1a-48e6-b20e-158da0ed723a,Software Development Kit,IT - Acronyms: SDK là viết tắt của từ nào sau đây?,,- Software Development Kit: Bộ phát triển phần mềm
 d4cf2c42-7678-4bf6-8c02-4c0fcca8b232,Solid State Drive,IT - Acronyms: SSD là viết tắt của từ nào sau đây?,,- Solid State Drive: Ổ đĩa thể rắn
+bcaa3adf-97ff-493a-be28-ae52f6d29492,SSH File Transfer Protocol,IT - Acronyms: sFTP là viết tắt của từ nào sau đây?,,- SSH File Transfer Protocol: Giao thức bảo mật truyền tải tệp
+2307b7f4-a289-459e-8492-fbdddbc2507a,Storage Area Network,IT - Acronyms: SAN là viết tắt của từ nào sau đây?,,- Storage Area Network: Mạng lưu trữ
+2687585a-ddcd-42d3-9360-fa6a216bb468,Time To Live,IT - Acronyms: TTL là viết tắt của từ nào sau đây?,,- Time To Live: Thời gian tồn tại
+8ad60880-5609-454f-b2d6-8f57bef6f83a,Transmission Control Protocol,IT - Acronyms: TCP là viết tắt của từ nào sau đây?,,- Transmission Control Protocol: Giao thức kiểm soát truyền tải
+972bc303-0a1c-46d3-b0a1-dc3fd3216129,Transmission Control Protocol Synchronize,IT - Acronyms: TCP SYN là viết tắt của từ nào sau đây?,,- Transmission Control Protocol Synchronize: Giao thức kiểm soát đồng bộ hóa truyền tải
+29bc8d4e-344f-4c2d-8249-38586a081179,Transport Layer Security,IT - Acronyms: TLS là viết tắt của từ nào sau đây?,,- Transport Layer Security: Lớp bảo mật truyền tải
+3a87e149-472d-42bb-a424-17bb09a97a63,Two-Factor Authentication,IT - Acronyms: 2FA là viết tắt của từ nào sau đây?,,- Two-Factor Authentication: Xác thực hai yếu tố
+d06e2bd3-a019-4155-a54e-219c9dc8d326,User Datagram Protocol,IT - Acronyms: UDP là viết tắt của từ nào sau đây?,,- User Datagram Protocol: Giao thức dữ liệu người dùng
+1e045c7d-2399-4f68-983c-6816095065ad,Variable-Length Subnet Masking,IT - Acronyms: VLSM là viết tắt của từ nào sau đây?,,- Variable-Length Subnet Masking: Mặt nạ mạng con có độ dài biến đổi
+315a17e0-5cef-4af2-8963-615856a6e064,Virtual Local Area Network,IT - Acronyms: VLAN là viết tắt của từ nào sau đây?,,- Virtual Local Area Network: Mạng cục bộ ảo
 c50c4a2d-e0a1-4a19-979a-3a48a7380668,Virtual Machine,IT - Acronyms: VM là viết tắt của từ nào sau đây?,,- Virtual Machine: Máy ảo
 3a526cb2-eedf-424c-a18a-13d8fe950c90,Virtual Private Network,IT - Acronyms: VPN là viết tắt của từ nào sau đây?,,- Virtual Private Network: Mạng riêng ảo
+77d29853-8340-40eb-baf0-21842e8089b5,Virtual Private Network,IT - Acronyms: VPN là viết tắt của từ nào sau đây?,,- Virtual Private Network: Mạng riêng ảo
 9b9074d5-62ca-4016-b6b3-61d49d41f84c,VirtualBox Remote Desktop Protocol,IT - Acronyms: VRDP là viết tắt của từ nào sau đây?,,- VirtualBox Remote Desktop Protocol: Giao thức truy cập máy tính từ xa VirtualBox
 6987ca04-a4ec-4d06-9e67-a0fd85b81eba,Wide Area Network,IT - Acronyms: WAN là viết tắt của từ nào sau đây?,,- Wide Area Network: Mạng diện rộng
 ab23f7ec-db88-4d31-95c5-986316b857be,World Wide Web,IT - Acronyms: WWW là viết tắt của từ nào sau đây?,,- World Wide Web: Mạng lưới toàn cầu
