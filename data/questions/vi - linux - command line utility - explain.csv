@@ -1,0 +1,12 @@
+﻿id,answer,question,hint,desc
+f0c87a82-0c16-4bf5-9d9d-54ac75e8fa70,Di chuyển thư mục hoặc tập tin và dán chúng ở thư mục khác hoặc đổi tên,Linux: Lệnh [green]mv[/] dùng để làm gì?,,
+41c6bc6f-18b5-4e43-be2f-bc671daa48a5,Giúp điều hướng qua các thư mục được chỉ định,Linux: Lệnh [green]cd[/] dùng để làm gì?,,
+518b36c7-b263-486a-9b1e-a4cac20a86bb,In ra nội dung của tập tin được chỉ định hoặc đa tập tin được nối lại với nhau,Linux: Lệnh [green]cat[/] dùng để làm gì?,,
+24fbcbb1-9f4e-47aa-a0ea-fc34bda14ceb,In thư mục làm việc hiện tại lên terminal,Linux: Lệnh [green]pwd[/] dùng để làm gì?,,
+4c289091-2bce-44f7-ad84-f735771aecb7,Liệt kê các tệp và thư mục trong thư mục làm việc hiện tại hoặc thư mục được chỉ định.,Linux: Lệnh [green]ls[/] dùng để làm gì?,,
+99b446f2-01a4-49c8-900e-df9be4d2aa91,Làm sạch màn hình terminal,Linux: Lệnh [green]clear[/] dùng để làm gì?,,
+8b93da25-cd34-47ab-b223-8a5ae527347c,Sao chép thư mục hoặc tập tin và dán chúng ở thư mục khác hoặc có thể ở thự mục hiện tại (tên khác),Linux: Lệnh [green]cp[/] dùng để làm gì?,,
+2dc1080c-50c6-4ad7-8461-9527cf11e3a4,Tạo các thư mục từ terminal,Linux: Lệnh [green]mkdir[/] dùng để làm gì?,,
+8d1e163b-4936-4186-b3ea-9f3a62c09c4e,Tạo một liên kết đến một tập tin khác,Linux: Lệnh [green]ln[/] dùng để làm gì?,,
+f84b56e7-7cee-4ddb-8375-40e1627bee1d,Tạo một tệp trống hoặc cập nhật dấu thời gian của tệp hiện có.,Linux: Lệnh [green]touch[/] dùng để làm gì?,,
+25e273bb-7687-4d3f-ad39-8fa94e84a89d,Xóa thư mục hoặc tập tin được chỉ định,Linux: Lệnh [green]rm[/] dùng để làm gì?,,
