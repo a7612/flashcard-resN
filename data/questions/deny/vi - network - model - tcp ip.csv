@@ -1,9 +1,0 @@
-﻿id,answer,question,hint,desc
-5710acb8-b10a-4795-9534-a3459bb82fa4,Application Layer,Network: Lớp cuối cùng trong quá trình mở gói dữ liệu của mô hình TCP/IP có tên là gì?,,
-b79ac38b-167b-4ffb-9f61-f6012e7bba7b,Application Layer,Network: Lớp đầu tiên trong quá trình đóng gói dữ liệu của mô hình TCP/IP có tên là gì?,,
-1bdb90f4-9d6e-4e8e-bddf-873bf125f8aa,Internet Layer,Network: Lớp thứ ba trong quá trình đóng gói dữ liệu của mô hình TCP/IP có tên là gì?,,
-04cf385e-5672-4a33-8071-fea8b8af00f7,Internet Layer,Network: Lớp thứ hai trong quá trình mở gói dữ liệu của mô hình TCP/IP có tên là gì?,,
-81c854b1-b40c-478f-a698-8933c17ff1f3,Link Layer,Network: Lớp cuối cùng trong quá trình đóng gói dữ liệu của mô hình TCP/IP có tên là gì?,,
-cdc23aaa-6551-4822-98fc-4ac2892fbfa5,Link Layer,Network: Lớp đầu tiên trong quá trình mở gói dữ liệu của mô hình TCP/IP có tên là gì?,,
-80b920ba-16f3-4c54-9c43-ce1f9b64089d,Transport Layer,Network: Lớp thứ ba trong quá trình mở gói dữ liệu của mô hình TCP/IP có tên là gì?,,
-c6d5564d-a93c-4451-ab86-af7d36be2c10,Transport Layer,Network: Lớp thứ hai trong quá trình đóng gói dữ liệu của mô hình TCP/IP có tên là gì?,,
