@@ -1,17 +1,25 @@
+ai thường là người
 biện pháp bảo mật nào
+chiến lược sao lưu nào
+chiến lược xử lý rủi ro nào
+cuộc tấn công nào
 câu nào sau đây là một ví dụ
 câu nào sau đây là định nghĩa
 cơ chế xác thực nào
+fill in the blanks
 giao thức bảo mật không dây nào
 giao thức nào
+hàm băm mật mã nào
 khác biệt
 khác nhau ở điểm nào
 loại biện pháp kiểm soát an ninh nào
 loại hình kiểm soát an ninh nào
 loại hình kiểm soát nào
+loại kiểm soát truy cập nào
 loại tấn công nào
 loại yếu tố xác thực nào
 là gì
+lớp nào
 mô hình kiểm soát truy cập nào
 mối lo ngại chính
 mối quan hệ giữa
@@ -27,7 +35,9 @@ thao tác bảo mật nào
 thiết bị bảo mật nào
 thuật ngữ nào
 thành phần nào
+translate to english
 tấn công không dây nào
 yêu cầu nào
 yếu tố nào
 điều nào sau đây
+điểm yếu nào
