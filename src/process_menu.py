@@ -93,13 +93,13 @@ class MenuManager:
         """Chạy menu CRUD cho các câu hỏi trong một file cụ thể."""
         m = self.card_mgr
         opts = {
-            "1": (lambda: (m.add_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "📝 Thêm câu"),
-            "2": (lambda: (m.delete_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "🗑️ Xoá câu"),
-            "3": (lambda: m.edit_question(path), "🛠️ Sửa tổng lực"),
-            "4": (lambda: m.edit_question(path, 2), "🔍 Sửa câu hỏi"),
-            "5": (lambda: m.edit_question(path, 1), "✅ Sửa đáp án"),
-            "6": (lambda: m.edit_question(path, 3), "💡 Sửa gợi ý"),
-            "7": (lambda: m.edit_question(path, 4), "📖 Sửa mô tả"),
+            "1": (lambda: (m.add_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "Thêm câu"),
+            "2": (lambda: (m.delete_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "Xoá câu"),
+            "3": (lambda: m.edit_question(path), "Sửa tổng lực"),
+            "4": (lambda: m.edit_question(path, 2), "Sửa câu hỏi"),
+            "5": (lambda: m.edit_question(path, 1), "Sửa đáp án"),
+            "6": (lambda: m.edit_question(path, 3), "Sửa gợi ý"),
+            "7": (lambda: m.edit_question(path, 4), "Sửa mô tả"),
             "0": (lambda: None, "Quay lại")
         }
         self.run_menu(f"⚙️ BIÊN TẬP: {os.path.basename(path)}", opts, show_file_list=False, show_sidebar=False, clear=False)
@@ -108,14 +108,14 @@ class MenuManager:
         self.file_mgr.search_keyword = None # Reset tìm kiếm khi bắt đầu vào menu
         is_num = _CONFIG.MENU_MODE == "numeric"
         opts = {
-            ("1" if is_num else "/c"): (self._handle_manage_questions_for_path, "📂 Biên tập nội dung"),
-            ("2" if is_num else "/keyword"): (lambda: _manage_filter_categories_util(self.file_mgr, self.card_mgr), f"🏷️ Quản lý từ khóa\n"),
-            ("3" if is_num else "/create"): (self._handle_create_file_flow, "🆕 Tạo bộ đề mới"),
-            ("4" if is_num else "/rename"): (self._handle_rename_flow, "🏷️ Đổi tên bộ đề"),
-            ("5" if is_num else "/delete"): (lambda: (self._handle_file_deletion(show_list=False), self.card_mgr.clear_cache()), f"⚠️ Xoá bộ đề"),           
-            ("6" if is_num else "/search"): (self._handle_search_files, f"🔍 Tìm kiếm bộ đề"),
-            ("7" if is_num else "/disable"): (self._handle_toggle_disable_flow, "🚫 Vô hiệu hóa/Mở lại\n"),
-            ("8" if is_num else "/check"): (self.check_all_integrity, "🔍 Kiểm tra lỗi dữ liệu\n"), 
+            ("1" if is_num else "/c"): (self._handle_manage_questions_for_path, "[green]Biên tập nội dung[/]"),
+            ("2" if is_num else "/keyword"): (lambda: _manage_filter_categories_util(self.file_mgr, self.card_mgr), f"[yellow]Quản lý từ khóa[/]\n"),
+            ("3" if is_num else "/create"): (self._handle_create_file_flow, "[green]Tạo bộ đề mới[/]"),
+            ("4" if is_num else "/rename"): (self._handle_rename_flow, "[yellow]Đổi tên bộ đề[/]"),
+            ("5" if is_num else "/delete"): (lambda: (self._handle_file_deletion(show_list=False), self.card_mgr.clear_cache()), f"[red]Xoá bộ đề[/]"),           
+            ("6" if is_num else "/search"): (self._handle_search_files, f"[cyan]Tìm kiếm bộ đề[/]"),
+            ("7" if is_num else "/disable"): (self._handle_toggle_disable_flow, "[red]Vô hiệu hóa/[yellow]Mở lại[/]"),
+            ("8" if is_num else "/check"): (self.check_all_integrity, "[cyan]Kiểm tra lỗi dữ liệu[/]"), 
             ("0" if is_num else "/exit"): (lambda: None, "Quay lại")
         }
         self.run_menu("📦 QUẢN LÝ HỆ THỐNG", opts, show_file_list=True, show_sidebar=True, clear=True)

@@ -33,7 +33,7 @@ def _move_to_trash(path):
         shutil.move(path, os.path.join(_CONFIG.TRASH_DIR, trash_fname))
         return True
     except Exception as e:
-        console.print(f"[red]❌ Không thể di chuyển vào thùng rác: {e}[/]")
+        console.print(f"[red]Không thể di chuyển vào thùng rác: {e}[/]")
         return False
 
 def _safe_input(prompt, validator=None, allow_exit=True):

@@ -52,13 +52,13 @@ def _show_stats_util(file_mgr):
         log_count, hist_count, trash_count = 0, 0, 0
 
     table = Table(box=box.ROUNDED, show_header=False, min_width=28, border_style=_CONFIG.COLOR_STATS) 
-    table.add_row("📂 Bộ đề", str(len(files)))
-    table.add_row("❓ Tổng câu", f"[bold green]{total_q}[/]")
-    table.add_row("📁 File tạm", str(log_count + hist_count))
-    table.add_row("🗑️ Thùng rác", str(trash_count))
-    table.add_row("💾 Lưu trữ bộ đề", f"[bold cyan]{f_size(q_size)}[/]")
-    table.add_row("🧹 Lưu trữ nên xóa", f"[bold yellow]{f_size(clean_size)}[/]")
-    table.add_row("📊 Lưu trữ thực tế", f"[bold magenta]{f_size(q_size + clean_size)}[/]")
+    table.add_row("Bộ đề", str(len(files)))
+    table.add_row("Tổng câu", f"[bold green]{total_q}[/]")
+    table.add_row("[yellow]File tạm[/]", str(log_count + hist_count))
+    table.add_row("[red]Thùng rác[/]", str(trash_count))
+    table.add_row("Lưu trữ bộ đề", f"[bold cyan]{f_size(q_size)}[/]")
+    table.add_row("Lưu trữ nên xóa", f"[bold yellow]{f_size(clean_size)}[/]")
+    table.add_row("Lưu trữ thực tế", f"[bold magenta]{f_size(q_size + clean_size)}[/]")
 
     return Panel(table, title=f"[bold {_CONFIG.COLOR_STATS}]📊 THỐNG KÊ[/]", border_style=_CONFIG.COLOR_STATS, expand=False)
 

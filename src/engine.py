@@ -296,7 +296,7 @@ class QuizGame:
             return
 
         wrong, pct = total - score, (score / total * 100) if total else 0.0
-        table = Table(title="🏆 BẢNG VÀNG THÀNH TÍCH", box=box.DOUBLE_EDGE)
+        table = Table(title="BẢNG VÀNG THÀNH TÍCH", box=box.DOUBLE_EDGE)
         table.add_column("STT", justify="right", style="cyan")
         table.add_column("TRẠNG THÁI", justify="center")
         table.add_column("ĐÁP ÁN CHUẨN", style="green")
@@ -322,12 +322,12 @@ class QuizGame:
         table = Table(title="⚡ CHỌN MỨC ĐỘ THỬ THÁCH", box=box.SIMPLE)
         table.add_column("Key", style="bold cyan", justify="right"); table.add_column("Chế độ", style="white")
         modes = [
-            ("1", "🍃 Dễ (10 câu, 3 đáp án)"),
-            ("2", "🔥 Vừa (20 câu, 4 đáp án)"),
-            ("3", "💀 Khó (50 câu, 6 đáp án)"),
-            ("4", "👑 Hardcore (100 câu, 10 đáp án)"),
-            ("5", "⚡ Sinh tồn (Sai là dừng, 4 đáp án)"),
-            ("6", "🛠️ Tùy chỉnh (Tự thiết lập)")
+            ("1", "[green]Dễ (10 câu, 3 đáp án)[/]"),
+            ("2", "[yellow]Vừa (20 câu, 4 đáp án)[/]"),
+            ("3", "[red]Khó (50 câu, 6 đáp án)[/]"),
+            ("4", "[magenta]Hardcore (100 câu, 10 đáp án)[/]"),
+            ("5", "Sinh tồn (Sai là dừng, 4 đáp án)"),
+            ("6", "Tùy chỉnh (Tự thiết lập)")
         ]
         for k, v in modes: table.add_row(k, v)
         console.print(table)
@@ -347,7 +347,7 @@ class QuizGame:
 
     def run(self, data, n_opts=None, max_qs=None, survival=False):
         if not data:
-            console.print("[yellow]⚠️ Không có dữ liệu câu hỏi để bắt đầu.[/]")
+            console.print("[yellow]Không có dữ liệu câu hỏi để bắt đầu.[/]")
             return
 
         try:
@@ -393,7 +393,7 @@ class QuizGame:
                     if not self._wait_next(qid): break
 
                     if survival and not ok:
-                        console.print(f"\n[bold red]💀 GAME OVER![/] Bạn đã dừng bước tại câu {i} trong chế độ Sinh tồn.")
+                        console.print(f"\n[bold red]GAME OVER![/] Bạn đã dừng bước tại câu {i} trong chế độ Sinh tồn.")
                         break
             except (KeyboardInterrupt, EOFError):
                 console.print("\n[bold yellow]⏹️ Đã dừng lượt chơi giữa chừng.[/]")
@@ -417,7 +417,7 @@ class QuizGame:
 
     def _ask_question(self, i, total, qid, a, q, d, r, data, n_opts, current_score):
         _clear_screen()
-        console.rule(f"[bold white on blue] 📝 QUIZ [/] [cyan]{i}/{total}[/] │ [green]Score: {current_score}[/]")
+        console.rule(f"[bold white on blue]QUIZ [/] [cyan]{i}/{total}[/] │ [green]Score: {current_score}[/]")
         
         q_d, a_d, d_d, r_d = map(_replace_colors, (q, a, d or "", r or ""))
         # Sử dụng Text.from_markup để style bold white bao phủ toàn bộ question kể cả khi có tag reset
