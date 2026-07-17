@@ -18,7 +18,6 @@ loại hình kiểm soát nào
 loại kiểm soát truy cập nào
 loại tấn công nào
 loại yếu tố xác thực nào
-là gì
 lớp nào
 mô hình kiểm soát truy cập nào
 mối lo ngại chính
