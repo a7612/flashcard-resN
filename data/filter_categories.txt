@@ -3,12 +3,14 @@ bảo mật không tin tưởng
 chiến lược ứng phó rủi ro
 câu nào sau đây liệt kê
 giai đoạn ứng phó sự cố
-giải pháp bảo mật điểm cuối
+giải pháp
 kết hợp
 kỹ thuật tấn công
 loại kiểm thử xâm nhập
 loại phân tích
+loại phần mềm độc hại
 loại tấn công
+lợi thế chính
 nguyên tắc kỹ thuật xã hội
 nguồn nhật ký
 phương án
@@ -17,4 +19,5 @@ thông tin
 thực thể
 thực tiễn bảo mật
 tài liệu
+tác nhân đe dọa
 yếu tố
