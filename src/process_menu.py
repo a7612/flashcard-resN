@@ -93,13 +93,13 @@ class MenuManager:
         """Chạy menu CRUD cho các câu hỏi trong một file cụ thể."""
         m = self.card_mgr
         opts = {
-            "1": (lambda: (m.add_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "Thêm câu"),
-            "2": (lambda: (m.delete_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "Xoá câu"),
-            "3": (lambda: m.edit_question(path), "Sửa tổng lực"),
-            "4": (lambda: m.edit_question(path, 2), "Sửa câu hỏi"),
-            "5": (lambda: m.edit_question(path, 1), "Sửa đáp án"),
-            "6": (lambda: m.edit_question(path, 3), "Sửa gợi ý"),
-            "7": (lambda: m.edit_question(path, 4), "Sửa mô tả"),
+            "1": (lambda: (m.add_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "[green]Thêm câu[/]"),
+            "2": (lambda: (m.delete_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "[red]Xoá câu[/]"),
+            "3": (lambda: m.edit_question(path), "[yellow]Sửa tổng lực[/]"),
+            "4": (lambda: m.edit_question(path, 2), "[yellow]Sửa câu hỏi[/]"),
+            "5": (lambda: m.edit_question(path, 1), "[yellow]Sửa đáp án[/]"),
+            "6": (lambda: m.edit_question(path, 3), "[yellow]Sửa gợi ý[/]"),
+            "7": (lambda: m.edit_question(path, 4), "[yellow]Sửa mô tả[/]"),
             "0": (lambda: None, "Quay lại")
         }
         self.run_menu(f"⚙️ BIÊN TẬP: {os.path.basename(path)}", opts, show_file_list=False, show_sidebar=False, clear=False)

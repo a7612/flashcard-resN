@@ -21,7 +21,7 @@ def input_question_details(old_q="", old_a="", old_d="", old_r="", is_edit=False
 
     # Nhập Câu hỏi (Bắt buộc nếu thêm mới)
     while True:
-        q = _safe_input(f"{prefix}Câu hỏi{f' ({old_q})' if old_q else ''}: ")
+        q = _safe_input(f"{prefix}[red]Câu hỏi[/]{f' ({old_q})' if old_q else ''}: ")
         if q is None: return None, None, None, None
         if not q and not is_edit:
             console.print("[red]❌ Câu hỏi không được để trống![/]")
@@ -30,17 +30,17 @@ def input_question_details(old_q="", old_a="", old_d="", old_r="", is_edit=False
 
     # Nhập Đáp án (Bắt buộc nếu thêm mới)
     while True:
-        a = _safe_input(f"✅ Đáp án chuẩn{f' ({old_a})' if old_a else ''}: ")
+        a = _safe_input(f"✅ [green]Đáp án chuẩn[/]{f' ({old_a})' if old_a else ''}: ")
         if a is None: return q, None, None, None
         if not a and not is_edit:
             console.print("[red]❌ Đáp án không được để trống![/]")
             continue
         break
 
-    d = _safe_input(f"💡 Gợi ý{f' ({old_d})' if old_d else ''} (Enter để bỏ qua): ")
+    d = _safe_input(f"💡 [yellow]Gợi ý[/]{f' ({old_d})' if old_d else ''} (Enter để bỏ qua): ")
     if d is None: return q, a, None, None
     
-    r = _safe_input(f"📖 Mô tả thêm{f' ({old_r})' if old_r else ''} (Enter để bỏ qua): ")
+    r = _safe_input(f"📖 [blue]Mô tả thêm[/]{f' ({old_r})' if old_r else ''} (Enter để bỏ qua): ")
     return q, a, d, r
 
 def input_selection(prompt, max_val=None, allow_all=False):
