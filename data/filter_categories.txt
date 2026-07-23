@@ -1,23 +1,37 @@
-biện pháp quản lý rủi ro
-bảo mật không tin tưởng
-chiến lược ứng phó rủi ro
-câu nào sau đây liệt kê
-giai đoạn ứng phó sự cố
-giải pháp
-kết hợp
-kỹ thuật tấn công
-loại kiểm thử xâm nhập
-loại phân tích
-loại phần mềm độc hại
-loại tấn công
-lợi thế chính
-nguyên tắc kỹ thuật xã hội
-nguồn nhật ký
-phương án
-quốc gia
-thông tin
-thực thể
-thực tiễn bảo mật
-tài liệu
-tác nhân đe dọa
-yếu tố
+bao nhiêu
+biện pháp kiểm soát bù trừ nào
+câu nào sau đây là ví dụ
+có quyền gì
+công nghệ nào
+cơ chế nào
+giai đoạn nào
+giai đoạn đầu tiên nào
+giải pháp nào
+hành động nào
+khái niệm pháp y nào
+khả năng nào
+loại bằng chứng nào
+loại chứng chỉ ssl/tls nào
+loại kiểm soát chính
+loại kỹ thuật tấn công nào
+loại mã hóa nào
+loại phần mềm độc hại nào
+loại thông tin nhạy cảm nào
+loại tường lửa nào
+loại tấn công không dây nào
+loại tấn công kỹ thuật xã hội nào
+loại tấn công mật khẩu nào
+loại tấn công nào
+nguyên tắc bảo mật nào
+nguyên tắc kỹ thuật xã hội nào
+phương án nào
+quy định nào
+quốc gia nào
+thuật toán nào
+thuộc loại nào
+thực hiện hành động gì
+trách nhiệm nào
+tác nhân đe dọa nào
+tại sao
+yếu tố nào
+được gọi là gì
