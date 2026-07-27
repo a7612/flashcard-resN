@@ -20,6 +20,7 @@ loại thông tin nhạy cảm nào
 loại tường lửa nào
 loại tấn công không dây nào
 loại tấn công kỹ thuật xã hội nào
+loại tấn công kỹ thuật xã hội vật lý nào
 loại tấn công mật khẩu nào
 loại tấn công nào
 nguyên tắc bảo mật nào
@@ -30,6 +31,7 @@ quốc gia nào
 thuật toán nào
 thuộc loại nào
 thực hiện hành động gì
+tiêu chuẩn nào
 trách nhiệm nào
 tác nhân đe dọa nào
 tại sao
