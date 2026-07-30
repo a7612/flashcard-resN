@@ -1,0 +1,9 @@
+﻿id,answer,question,hint,desc
+a38f8b34-409b-41ef-9d6c-975440582a22,Application Layer,"Khi đang thực hiện quá trình mở gói tin trong mô hình TCP/IP, tầng nào là tầng cuối cùng?",,
+afc3ae0b-e732-4194-82d9-ffa34bb9cbdc,Application Layer,"Khi đang thực hiện quá trình đóng gói tin trong mô hình TCP/IP, tầng nào là tầng đầu tiên?",,
+25552c0a-1a94-4681-85ca-e6cc2c8f1471,Internet Layer,"Khi đang thực hiện quá trình mở gói tin trong mô hình TCP/IP, tầng nào là tầng thứ hai?",,
+02c084a8-9598-4b20-863a-42b7a13ddaa9,Internet Layer,"Khi đang thực hiện quá trình đóng gói tin trong mô hình TCP/IP, tầng nào là tầng thứ ba?",,
+792113c5-23dd-4ce9-8411-922b9ee53013,Network Access Layer,"Khi đang thực hiện quá trình mở gói tin trong mô hình TCP/IP, tầng nào là tầng đầu tiên?",,
+ac208d49-1b33-4214-b36c-a3ec97244f8e,Network Access Layer,"Khi đang thực hiện quá trình đóng gói tin trong mô hình TCP/IP, tầng nào là tầng cuối cùng?",,
+c36745a4-dd1e-4f67-b4de-a8f0f7bb6c50,Transport Layer,"Khi đang thực hiện quá trình mở gói tin trong mô hình TCP/IP, tầng nào là tầng thứ ba?",,
+e414bad5-73e7-4ebe-87e7-c2b006d25d86,Transport Layer,"Khi đang thực hiện quá trình đóng gói tin trong mô hình TCP/IP, tầng nào là tầng thứ hai?",,
