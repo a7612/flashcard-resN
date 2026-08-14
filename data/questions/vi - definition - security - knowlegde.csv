@@ -1,0 +1,8 @@
+﻿id,answer,question,hint,desc
+f5cd77be-9879-4607-a4a9-2f35bc664448,Là khi hệ thống bảo mật xác định chính xác một mối đe dọa thực sự tồn tại.,Định nghĩa: True positive là gì?,,
+382ea571-8191-444c-9093-9219eb7ae824,"Là khi hệ thống nhầm lẫn xác định một hoạt động bình thường là độc hại, từ đó phát ra cảnh báo trong khi thực tế không có mối đe dọa nào.",Định nghĩa: False positive là gì?,,
+9f776594-55ae-4e9e-9409-143ab80e5fd4,Là một nhóm có nhiệm vụ bảo vệ hệ thống của tổ chức bằng cách xác định các lỗ hổng và triển khai các biện pháp bảo mật.,Định nghĩa: Blue Team là gì?,,
+60a246f2-e611-4bee-9a8b-8b4c202640a5,"Là một nhóm đóng vai trò là cầu nối, thúc đẩy sự giao tiếp và hợp tác giữa Blue và Red nhằm tối đa hóa hiệu quả học hỏi và nâng cao mức độ an ninh tổng thể.",Định nghĩa: Purple Team là gì?,,
+a430ff8a-ce1b-4724-90b7-e1cc1396d280,"Là một nhóm đóng vai trò là kẻ tấn công, mô phỏng các mối đe dọa trong thực tế để kiểm tra hiệu quả hoạt động của Blue và xác định các điểm yếu trong hệ thống bảo mật.",Định nghĩa: Red Team là gì?,,
+e1e0dfe0-2a9f-446b-96ed-f37f7eb4eb3d,"Là tình huống xảy ra khi hệ thống không phát hiện được một hoạt động độc hại thực sự, khiến mối đe dọa lọt qua mà không bị phát hiện.",Định nghĩa: False negative là gì?,,
+cab86860-880f-4aa2-8a94-a27c0f380ef1,Là tình huống xảy ra khi hệ thống xác định chính xác rằng không có mối đe dọa nào tồn tại trong khi trên thực tế.,Định nghĩa: True negative là gì?,,
