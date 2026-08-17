@@ -7,7 +7,8 @@ from src.utils import (
     _handle_manage_questions_for_path_util, _handle_file_deletion_util,
     _clear_logs_util,
     _manage_filter_categories_util,
-    _show_mistake_stats_util
+    _show_mistake_stats_util,
+    _play_mistake_review_util
 )
 from src.process_file import FileManager
 from src.process_flashcard import FlashcardManager
@@ -80,7 +81,10 @@ class MenuManager:
         _play_action_util(self.file_mgr, self.card_mgr, self, all_files)
 
     def show_mistake_stats(self):
-        _show_mistake_stats_util()
+        _show_mistake_stats_util(self.file_mgr, self.card_mgr)
+
+    def play_mistake_review(self, target_score=10):
+        _play_mistake_review_util(self.file_mgr, self.card_mgr, target_score=target_score)
 
     def check_all_integrity(self):
         log_action("SYSTEM_CHECK", "Started comprehensive integrity scan")
@@ -102,7 +106,7 @@ class MenuManager:
             "7": (lambda: m.edit_question(path, 4), "[yellow]Sửa mô tả[/]"),
             "0": (lambda: None, "Quay lại")
         }
-        self.run_menu(f"⚙️ BIÊN TẬP: {os.path.basename(path)}", opts, show_file_list=False, show_sidebar=False, clear=False)
+        self.run_menu(f"⚙️ BIÊN TẬP: {os.path.basename(path)}", opts, show_file_list=False, show_sidebar=False, clear=True, show_questions_path=path)
 
     def manage_q_menu(self):
         self.file_mgr.search_keyword = None # Reset tìm kiếm khi bắt đầu vào menu

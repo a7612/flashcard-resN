@@ -123,8 +123,8 @@ class QuizGame:
 
     def _clean_text(self, text):
         """Loại bỏ Rich Markup [style]...[/style] để so sánh đáp án."""
-        # Thay đổi dấu + thành * để nhận diện và loại bỏ cả thẻ đóng [/] của Rich
-        clean = re.sub(r'\[/?[a-zA-Z #0-9,._-]*\]', '', str(text))
+        t = str(text).replace("{BREAK}", "\n").replace("\\n", "\n").replace("{TAB}", "\t").replace("{BACKSLASH}", "\\")
+        clean = re.sub(r'\[/?[a-zA-Z #0-9,._-]*\]', '', t)
         return clean.strip().lower().rstrip('.')
 
     def _check_correctness(self, user_input, correct_answer):

@@ -85,15 +85,17 @@ class FlashcardManager:
                 if highlight_type == 'add': stt_style = "bold green"
                 elif highlight_type == 'edit': stt_style = "bold yellow"
             
-            # Tách biệt icon và nội dung để lệnh reset [/] không làm hỏng style icon
+            # Tách biệt icon và nội dung
             qa = Text.from_markup("[bold blue]❓ [/]")
             qa.append(Text.from_markup(_replace_colors(q)))
             qa.append(Text.from_markup("\n[bold green]✅ [/]"))
             qa.append(Text.from_markup(_replace_colors(a)))
             
             extra = Text()
-            if d: extra.append(Text.from_markup("[yellow]💡 [/]")).append(Text.from_markup(_replace_colors(d) + "\n"))
-            if r: extra.append(Text.from_markup("[cyan]📖 [/]")).append(Text.from_markup(_replace_colors(r)))
+            if d:
+                extra.append(Text.from_markup("[yellow]💡 [/]")).append(Text.from_markup(_replace_colors(d) + "\n"))
+            if r:
+                extra.append(Text.from_markup("[cyan]📖 [/]")).append(Text.from_markup(_replace_colors(r)))
             table.add_row(Text(str(i), style=stt_style), qa, extra)
         console.print(table)
         return data
@@ -163,19 +165,20 @@ class FlashcardManager:
                 last_id = row[0]
                 if field_idx is None: # Sửa toàn bộ
                     # Hiển thị toàn bộ nội dung cũ để copy
-                    console.print("\n[dim]📝 Nội dung cũ (Raw) để copy:[/]")
-                    console.print(f"  [blue]Q:[/] {row[2]}")
-                    console.print(f"  [green]A:[/] {row[1]}")
-                    if row[3]: console.print(f"  [yellow]H:[/] {row[3]}")
-                    if row[4]: console.print(f"  [cyan]D:[/] {row[4]}")
-                    console.print("")
+                    console.print("\n[dim]📝 Nội dung cũ (Formatted):[/]")
+                    console.print(Text.from_markup("  [blue]Q:[/] ").append(Text.from_markup(_replace_colors(row[2]))))
+                    console.print(Text.from_markup("  [green]A:[/] ").append(Text.from_markup(_replace_colors(row[1]))))
+                    if row[3]: console.print(Text.from_markup("  [yellow]H:[/] ").append(Text.from_markup(_replace_colors(row[3]))))
+                    if row[4]: console.print(Text.from_markup("  [cyan]D:[/] ").append(Text.from_markup(_replace_colors(row[4]))))
+                    console.print(f"[dim]  (Raw text để edit/copy: Q={row[2]} | A={row[1]})[/]\n")
 
                     q, a, d, r = inp.input_question_details(row[2], row[1], row[3], row[4], is_edit=True)
                     if q is None: return
                     row[2], row[1], row[3], row[4] = q or row[2], a or row[1], d or row[3], r or row[4]
                 else:
-                    # Hiển thị giá trị của trường đang chọn ở dạng thô
-                    console.print(f"\n[dim]📝 Nội dung cũ (Raw):[/] {row[field_idx]}")
+                    # Hiển thị giá trị của trường đang chọn ở dạng thô & formatted
+                    console.print(Text.from_markup(f"\n[dim]📝 Nội dung cũ:[/] ").append(Text.from_markup(_replace_colors(row[field_idx]))))
+                    console.print(f"[dim]  (Raw text: {row[field_idx]})[/]")
                     new_v = _safe_input("✏️ Nhập nội dung mới (Enter để giữ nguyên): ")
                     if new_v is None: break
                     if new_v: row[field_idx] = new_v

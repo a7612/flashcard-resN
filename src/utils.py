@@ -1,4 +1,4 @@
-import os, datetime, time, csv
+import os, datetime, time, csv, re
 from rich.table import Table
 from rich.panel import Panel
 from rich.align import Align
@@ -12,11 +12,26 @@ def _replace_colors(text):
     if isinstance(text, (tuple, list)):
         text = text[1] if len(text) > 1 else text[0]
     
-    # Xử lý các ký tự đặc biệt
-    t = str(text).replace("{BREAK}", "\n").replace("{TAB}", "\t").replace("{BACKSLASH}", "\\")
-    
-    # Nếu chuỗi đã được bọc màu rồi thì không bọc thêm [white] nữa để tránh chồng chéo tag
-    if t.startswith("[") and t.endswith("[/]") and "[/][" in t:
+    t = str(text)
+    # 1. Chuyển đổi các dạng BREAK thành chuỗi hiển thị '\n'
+    for kw in ["{BREAK}", "{break}", "{Break}", "{ BREAK }", "{ break }"]:
+        t = t.replace(kw, "\\n")
+        
+    # 2. Chuyển đổi các dạng TAB
+    for kw in ["{TAB}", "{tab}", "{Tab}", "{ TAB }", "{ tab }"]:
+        t = t.replace(kw, "\\t")
+        
+    # 3. Chuyển đổi các dạng BACKSLASH
+    for kw in ["{BACKSLASH}", "{backslash}", "{Backslash}", "{ BACKSLASH }", "{ backslash }"]:
+        t = t.replace(kw, "\\")
+
+    # 4. Chuyển đổi các dạng SPACE
+    for kw in ["{SPACE}", "{space}", "{Space}", "{ SPACE }", "{ space }"]:
+        t = t.replace(kw, " ")
+
+    # Nếu chuỗi đã được bọc tag màu Rich rồi thì không bọc thêm [white] nữa
+    trimmed = t.strip()
+    if trimmed.startswith("[") and "]" in trimmed and (trimmed.endswith("[/]") or trimmed.endswith("]")):
         return t
     return f"[white]{t.replace('[/]', '[/][white]')}[/]"
 
@@ -211,21 +226,110 @@ def _manage_filter_categories_util(file_mgr, card_mgr):
         with open(f_path, "w", encoding="utf-8") as f:
             f.write("\n".join(kws))
 
-def _show_mistake_stats_util():
+def _get_mistake_history_data():
+    """Hàm bổ trợ thu thập thống kê số lần sai/đúng của tất cả các câu hỏi từ lịch sử exports/."""
+    mistakes = {} # {question_text: [wrong_count, correct_count, correct_answer, last_wrong_ts, last_correct_ts]}
+    export_dir = _CONFIG.EXPORT_DIR
+    if not os.path.exists(export_dir):
+        return mistakes
+
+    h_files = [f for f in os.listdir(export_dir) if f.startswith("quiz_results_")]
+    for f_name in h_files:
+        try:
+            with open(os.path.join(export_dir, f_name), encoding="utf-8-sig") as f:
+                reader = list(csv.reader(f))
+                if len(reader) < 8 or len(reader[0]) < 2: continue
+                file_ts = reader[0][1]
+                for row in reader[7:]:
+                    if len(row) >= 4:
+                        q_text, ans_text, is_ok = row[1], row[2], row[3].strip().lower() == "true"
+                        if q_text not in mistakes:
+                            mistakes[q_text] = [0, 0, ans_text, None, None] # [w, c, ans, last_w, last_c]
+                        
+                        if is_ok:
+                            mistakes[q_text][1] += 1
+                            if not mistakes[q_text][4] or file_ts > mistakes[q_text][4]:
+                                mistakes[q_text][4] = file_ts
+                        else:
+                            mistakes[q_text][0] += 1
+                            if not mistakes[q_text][3] or file_ts > mistakes[q_text][3]:
+                                mistakes[q_text][3] = file_ts
+        except: pass
+    return mistakes
+
+def _play_mistake_review_util(file_mgr, card_mgr, target_score=10):
+    """Lọc và tạo lượt Quiz ôn tập các câu hỏi từng sai có Hiệu số < target_score (mặc định +10)."""
+    _clear_screen()
+    console.print(Panel(Align.center(f"[bold red]🔥 CHẾ ĐỘ ÔN TẬP CHINH PHỤC LỖI SAI (TARGET NET SCORE +{target_score})[/]"), border_style="red"))
+
+    mistakes = _get_mistake_history_data()
+    if not mistakes:
+        console.print("[yellow]⚠️ Chưa có dữ liệu lịch sử làm sai để phân tích.[/]")
+        time.sleep(2)
+        return
+
+    # 1. Thu thập tất cả các câu hỏi từ các bộ đề đang hoạt động
+    all_questions = []
+    files = file_mgr.get_files()
+    for f_name in files:
+        path = os.path.join(file_mgr.qdir, f_name)
+        data = card_mgr.load_data(path)
+        for row in data:
+            if len(row) >= 3:
+                all_questions.append(row)
+
+    if not all_questions:
+        console.print("[yellow]⚠️ Không tìm thấy câu hỏi nào trong các bộ đề.[/]")
+        time.sleep(2)
+        return
+
+    # 2. Lọc các câu hỏi có w > 0 và diff = (c - w) < target_score
+    review_pool = []
+    for row in all_questions:
+        q = row[2]
+        q_styled = _replace_colors(q)
+        
+        m_info = mistakes.get(q_styled)
+        if not m_info:
+            clean_q = re.sub(r'\[/?[a-zA-Z #0-9,._-]*\]', '', str(q)).strip().lower()
+            for mk, mv in mistakes.items():
+                clean_mk = re.sub(r'\[/?[a-zA-Z #0-9,._-]*\]', '', str(mk)).strip().lower()
+                if clean_q == clean_mk:
+                    m_info = mv
+                    break
+
+        if m_info:
+            w, c = m_info[0], m_info[1]
+            diff = c - w
+            if w > 0 and diff < target_score:
+                review_pool.append((diff, row))
+
+    if not review_pool:
+        console.print(f"\n[bold green]🎉 Tuyệt vời! Tất cả các câu hỏi bị sai trước đây đều đã đạt Hiệu số >= +{target_score}.[/]")
+        console.print("[cyan]Bạn đã thuộc lòng và chinh phục thành công toàn bộ danh sách câu hỏi này![/]")
+        console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
+        return
+
+    # Sắp xếp ưu tiên theo Hiệu số (c - w) tăng dần (câu có hiệu số kém nhất xếp đầu)
+    review_pool.sort(key=lambda x: x[0])
+    quiz_data = [x[1] for x in review_pool]
+
+    console.print(f"\n[bold cyan]📊 Tìm thấy [green]{len(quiz_data)}[/] câu hỏi sai chưa đạt mốc Hiệu số +{target_score}.[/]")
+    console.print("[dim]Hệ thống sẽ sắp xếp các câu có hiệu số thấp nhất lên trước để bạn ôn luyện.[/]\n")
+    
+    from src.engine import QuizGame
+    game = QuizGame()
+    opts, max_qs, survival = game.get_difficulty()
+    game.run(quiz_data, n_opts=opts, max_qs=max_qs, survival=survival)
+
+def _show_mistake_stats_util(file_mgr=None, card_mgr=None):
     """Thống kê các câu hỏi thường xuyên bị trả lời sai từ lịch sử."""
     _clear_screen()
     console.print(Panel(Align.center("[bold red]❌ THỐNG KÊ LỖI SAI PHỔ BIẾN[/]"), border_style="red"))
     
-    mistakes = {} # {question_text: [wrong_count, correct_count, correct_answer]}
-    export_dir = _CONFIG.EXPORT_DIR
-    if not os.path.exists(export_dir):
+    mistakes = _get_mistake_history_data()
+    if not mistakes:
         console.print("[yellow]⚠️ Chưa có dữ liệu lịch sử để phân tích.[/]")
-        console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
-        return
-
-    h_files = [f for f in os.listdir(export_dir) if f.startswith("quiz_results_")]
-    if not h_files:
-        console.print("[yellow]⚠️ Chưa có kết quả lượt chơi nào được lưu lại.[/]")
         console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
         return
 
@@ -260,33 +364,8 @@ def _show_mistake_stats_util():
                         next(reader, None) # Bỏ qua header
                         for row in reader:
                             if len(row) >= 3:
-                                # Engine lưu log question đã qua xử lý màu, nên ta map theo key đó
                                 text_to_id[_replace_colors(row[2])] = row[0]
                 except: pass
-
-    with console.status("[bold red]Đang tổng hợp dữ liệu lỗi...[/]"):
-        for f_name in h_files:
-            try:
-                with open(os.path.join(export_dir, f_name), encoding="utf-8-sig") as f:
-                    reader = list(csv.reader(f))
-                    # Dữ liệu kết quả bắt đầu từ dòng index 7
-                    if len(reader) < 8 or len(reader[0]) < 2: continue
-                    file_ts = reader[0][1]
-                    for row in reader[7:]:
-                        if len(row) >= 4:
-                            q_text, ans_text, is_ok = row[1], row[2], row[3].strip().lower() == "true"
-                            if q_text not in mistakes:
-                                mistakes[q_text] = [0, 0, ans_text, None, None] # [w, c, ans, last_w, last_c]
-                            
-                            if is_ok:
-                                mistakes[q_text][1] += 1
-                                if not mistakes[q_text][4] or file_ts > mistakes[q_text][4]:
-                                    mistakes[q_text][4] = file_ts
-                            else:
-                                mistakes[q_text][0] += 1
-                                if not mistakes[q_text][3] or file_ts > mistakes[q_text][3]:
-                                    mistakes[q_text][3] = file_ts
-            except: pass
 
     # Chỉ hiển thị những câu đã từng sai ít nhất 1 lần
     stats = {q: v for q, v in mistakes.items() if v[0] > 0}
@@ -332,9 +411,26 @@ def _show_mistake_stats_util():
             
             table.add_row(str(w), fmt_ts(lw), str(c), fmt_ts(lc), diff_str, score_str, _replace_colors(q), _replace_colors(ans))
         console.print(table)
-        console.print(f"\n[dim]💡 Hệ thống hiển thị toàn bộ danh sách các câu hỏi bạn đã từng trả lời sai.[/]")
+        console.print(f"\n[dim]💡 Danh sách thống kê tất cả các câu hỏi bạn đã từng làm sai.[/]")
 
-    console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
+    console.print("\n[bold yellow]🔥 Bắt đầu lượt Ôn tập Chinh phục Lỗi sai (Target Hiệu số +10)?[/]")
+    choice = _safe_input("👉 Nhập số điểm mục tiêu (Mặc định 10), 'y' để chơi ngay, hoặc Enter để quay lại: ")
+    if choice:
+        target = 10
+        if choice.isdigit() and int(choice) > 0:
+            target = int(choice)
+        elif choice.lower() in ['y', 'yes', '1']:
+            target = 10
+        else:
+            return
+        
+        if not file_mgr or not card_mgr:
+            from src.process_file import FileManager
+            from src.process_flashcard import FlashcardManager
+            file_mgr = file_mgr or FileManager()
+            card_mgr = card_mgr or FlashcardManager()
+
+        _play_mistake_review_util(file_mgr, card_mgr, target_score=target)
 
 def _handle_file_deletion_util(file_mgr, show_list=True):
     p = _choose_file_path_util(file_mgr, allow_all=True, show=show_list, context_name="Xoá bộ đề")
