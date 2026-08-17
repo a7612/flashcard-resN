@@ -1,0 +1,3 @@
+﻿id,answer,question,hint,desc
+bbf752c6-e0b7-4637-81bb-0d84e66fd8e8,awk '{ print $0 }' access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
+07c232e2-1faf-4d11-a5e1-c4e0c543eeaf,awk '{print $0}' access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,

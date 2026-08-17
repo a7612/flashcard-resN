@@ -1,0 +1,2 @@
+﻿id,answer,question,hint,desc
+5cf5d2ee-8767-4ecb-adbe-8a58c0ce98c1,"rm -rf *; touch ""hello world"" | ls | cat","Lệnh nào in dòng chữ ""hello world"" lên màn hình terminal chỉ bằng một lệnh duy nhất?","Có nhiều cách để in văn bản trên dòng lệnh, một trong số đó là sử dụng lệnh 'echo'",

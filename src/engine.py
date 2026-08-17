@@ -166,69 +166,112 @@ class QuizGame:
             return ratio >= getattr(_CONFIG, 'FUZZY_MATCHING_THRESHOLD', 0.9), ratio
         return False, 0.0
 
+    def _multi_shuffle(self, lst, times=25):
+        """Trộn danh sách 20-30 lần để triệt tiêu tính định hình ban đầu."""
+        if not lst: return lst
+        for _ in range(times):
+            random.shuffle(lst)
+        return lst
+
     def _get_options(self, qid, q, a, data, all_ans, n_opts):
         tf_kws = getattr(_CONFIG, 'KEYWORD_BOOL', [])
         if any(kw.lower() in q.lower() for kw in tf_kws): return ["Đúng", "Sai"]
         
         # Thiết lập mục tiêu
-        n_target, a_clean = n_opts if (n_opts is not None and n_opts >= 1) else 4, a.strip().lower()
-        pool, match_k = [], None
+        n_target = n_opts if (n_opts is not None and n_opts >= 1) else 4
+        a_clean = self._clean_text(a)
+        q_clean = self._clean_text(q)
+        n_needed = n_target - 1
+        
+        pool = []
 
         # 2. Kiểm tra xem có phải dạng câu hỏi viết tắt/giải nghĩa (acronym) không
         is_acronym_q = any(kw.lower() in q.lower() for kw in getattr(_CONFIG, 'KEYWORD_Q_INPUT', []))
         target_initials = self._get_initials(a)
 
-        # 3. Gom pool distractors
-        # Ưu tiên 1: Nếu là câu hỏi acronym (stand for, viết tắt), sinh phương án NGHIÊM NGẶT theo chữ cái đầu
+        # 3. Gom pool distractors cho câu hỏi acronym
         if is_acronym_q and len(target_initials) > 1:
             # Tìm các đáp án THỰC TẾ có cùng initials trong data trước
             pool = list(set(str(x[1]).strip() for x in all_ans 
-                            if self._get_initials(str(x[1])) == target_initials and str(x[1]).strip().lower() != a_clean))
+                            if self._get_initials(str(x[1])) == target_initials and self._clean_text(str(x[1])) != a_clean))
             
             # Luôn cố gắng sinh thêm phương án giả để đạt độ đa dạng, sử dụng bank từ vựng và lịch sử
             bank = self._get_word_bank(all_ans)
             h_bank = self._get_history_word_bank()
             
-            for _ in range(100): # Tăng số lần thử
+            for _ in range(100):
                 fake = self._generate_fake_phrase(a, bank, h_bank)
-                if fake and fake.lower() != a_clean and fake not in pool:
-                    # Kiểm tra lại một lần nữa để chắc chắn initials khớp hoàn toàn
+                if fake and self._clean_text(fake) != a_clean and fake not in pool:
                     if self._get_initials(fake) == target_initials:
                         pool.append(fake)
                 if len(pool) >= 20: break
             
-            # QUAN TRỌNG: Với câu hỏi viết tắt, nếu không tìm/sinh đủ initials, 
-            # chúng ta CHỈ lấy những gì đã có, không fallback sang các đáp án ngẫu nhiên khác.
-        
-        # Ưu tiên 2: Nếu KHÔNG PHẢI acronym, hoặc pool vẫn trống (không tìm thấy initials nào)
-        if not pool:
-            kws = self._get_kws()
-            match_k = next((k for k in kws if k in q.lower()), None)
-            
-            if match_k:
-                keyword_matches = [str(x[1]).strip() for x in data 
-                                  if match_k in str(x[2]).lower() and str(x[1]).strip().lower() != a_clean]
-                pool = list(set(pool + keyword_matches))
+            pool = [o for o in pool if o not in ["Đúng", "Sai"]]
+            if pool:
+                self._multi_shuffle(pool, 25)
+                chosen_distractors = random.sample(pool, min(len(pool), n_needed))
+                opts = chosen_distractors + [a]
+                self._multi_shuffle(opts, 25)
+                return [_replace_colors(o) for o in dict.fromkeys(opts)]
 
-        # Ưu tiên 3: Fallback lấy ngẫu nhiên cho các dạng câu hỏi thông thường
-        if not is_acronym_q and len(pool) < (n_target - 1):
-            all_remaining = [str(x[1]).strip() for x in all_ans if str(x[1]).strip().lower() != a_clean]
-            pool = list(set(pool + all_remaining))
+        # 4. Loại bỏ đáp án a VÀ tất cả các đáp án khác của CÙNG CÂU HỎI q
+        # (Để đảm bảo câu hỏi trắc nghiệm chỉ có 1 ĐÁP ÁN ĐÚNG và 3 ĐÁP ÁN SAI cùng dạng từ khóa)
+        seen_answers = set()
+        seen_answers.add(a_clean)
+        for x in all_ans:
+            if self._clean_text(x[2]) == q_clean:
+                seen_answers.add(self._clean_text(x[1]))
 
-        # 4. Lọc bỏ các giá trị Boolean và thực hiện "có nhiêu trả nhiêu" trong giới hạn n_target
-        pool = [o for o in pool if o not in ["Đúng", "Sai"]]
-
-        # 5. Thuật toán lọc theo độ dài (Length Similarity)
-        # Sắp xếp pool theo trị tuyệt đối độ chênh lệch chiều dài so với đáp án đúng 'a'
+        chosen_distractors = []
+        still_needed = n_needed
         target_len = len(str(a))
-        pool.sort(key=lambda x: abs(len(str(x)) - target_len))
 
-        # Lấy một nhóm các câu có độ dài gần nhất (ví dụ top 20 câu hoặc gấp 3 số lượng cần lấy)
-        # để vẫn đảm bảo tính ngẫu nhiên khi sample, tránh việc 10 lần chơi đều ra 3 phương án y hệt nhau.
-        candidate_pool = pool[:max(20, (n_target - 1) * 3)]
-        
-        opts = random.sample(candidate_pool, min(len(candidate_pool), n_target - 1)) + [a]
-        random.shuffle(opts)
+        # 5. Tầng 1 - Ưu tiên rút 3 ĐÁP ÁN SAI từ các câu hỏi KHÁC có CÙNG KEYWORD (filter_categories.txt)
+        kws = self._get_kws()
+        match_k = next((k for k in kws if k in q.lower()), None)
+        if match_k and still_needed > 0:
+            kw_answers = []
+            for x in data:
+                ans_str = str(x[1]).strip()
+                ans_clean = self._clean_text(ans_str)
+                # Chỉ lấy đáp án từ các câu hỏi KHÁC có cùng từ khóa
+                if match_k in str(x[2]).lower() and self._clean_text(x[2]) != q_clean and ans_clean not in seen_answers:
+                    kw_answers.append(ans_str)
+                    seen_answers.add(ans_clean)
+            
+            kw_answers = [o for o in kw_answers if o not in ["Đúng", "Sai"]]
+            if kw_answers:
+                self._multi_shuffle(kw_answers, 25)
+                kw_answers.sort(key=lambda x: abs(len(str(x)) - target_len))
+                candidate_kw = kw_answers[:max(100, still_needed * 3)]
+                self._multi_shuffle(candidate_kw, 25)
+                kw_sample = random.sample(candidate_kw, min(len(candidate_kw), still_needed))
+                chosen_distractors.extend(kw_sample)
+                still_needed = n_needed - len(chosen_distractors)
+
+        # 6. Tầng 2 - Global Fallback: Lấy đáp án sai từ các câu hỏi KHÁC còn lại nếu chưa đủ phương án nhiễu
+        if still_needed > 0:
+            fallback_pool = []
+            for x in all_ans:
+                ans_str = str(x[1]).strip()
+                ans_clean = self._clean_text(ans_str)
+                if self._clean_text(x[2]) != q_clean and ans_clean not in seen_answers:
+                    fallback_pool.append(ans_str)
+                    seen_answers.add(ans_clean)
+
+            fallback_pool = [o for o in fallback_pool if o not in ["Đúng", "Sai"]]
+
+            if fallback_pool:
+                self._multi_shuffle(fallback_pool, 25)
+                fallback_pool.sort(key=lambda x: abs(len(str(x)) - target_len))
+                candidate_pool = fallback_pool[:max(100, still_needed * 3)]
+                self._multi_shuffle(candidate_pool, 25)
+                extra_sample = random.sample(candidate_pool, min(len(candidate_pool), still_needed))
+                chosen_distractors.extend(extra_sample)
+
+        # 7. Tổng hợp 1 ĐÁP ÁN ĐÚNG + 3 ĐÁP ÁN SAI, xáo trộn 25 lần và trả về
+        opts = chosen_distractors + [a]
+        self._multi_shuffle(opts, 25)
         return [_replace_colors(o) for o in dict.fromkeys(opts)]
 
     def _get_diff_visual(self, u_input, c_answer):
@@ -355,7 +398,7 @@ class QuizGame:
             data = self._deduplicate_data(data)
             
             # Thuật toán giới hạn tần suất keyword: Ưu tiên đa dạng hóa bộ đề
-            random.shuffle(data)
+            self._multi_shuffle(data, 25)
             kws = self._get_kws()
             limit = getattr(_CONFIG, 'MAX_SAME_KEYWORD_PER_QUIZ', 5)
             
@@ -378,7 +421,7 @@ class QuizGame:
                     pool.extend(overflow[:max_qs - len(pool)])
                 pool = pool[:max_qs]
             
-            random.shuffle(pool)
+            self._multi_shuffle(pool, 25)
             results, score = [], 0
 
             try:

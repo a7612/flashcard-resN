@@ -35,7 +35,7 @@ COLOR_INFO    = "cyan"
 # --- Trùng lặp câu hỏi ---
 # 0: Theo ID (row[0]) - Khuyến nghị
 # 2: Theo Nội dung câu hỏi (row[2])
-DEDUPLICATE_COLUMN_INDEX = 2 
+DEDUPLICATE_COLUMN_INDEX = 0 
 
 # --- Giới hạn tần suất Keyword ---
 MAX_SAME_KEYWORD_PER_QUIZ = 5 # Số câu hỏi tối đa có cùng keyword trong một lượt chơi

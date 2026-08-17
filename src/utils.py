@@ -13,7 +13,7 @@ def _replace_colors(text):
         text = text[1] if len(text) > 1 else text[0]
     
     # Xử lý các ký tự đặc biệt
-    t = str(text).replace("\\n", "\n").replace("\\t", "\t").replace("{BACKSLASH}", "\\")
+    t = str(text).replace("{BREAK}", "\n").replace("{TAB}", "\t").replace("{BACKSLASH}", "\\")
     
     # Nếu chuỗi đã được bọc màu rồi thì không bọc thêm [white] nữa để tránh chồng chéo tag
     if t.startswith("[") and t.endswith("[/]") and "[/][" in t:

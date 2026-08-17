@@ -1,0 +1,5 @@
+﻿id,answer,question,hint,desc
+b5358542-2cfd-4069-9356-30abe24e677c,head *,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
+06085293-5032-4f87-b8d4-0d479875f833,head -n 1000 access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
+8f12062e-e110-4fab-9c19-09e8a642d4aa,head ./access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
+4c835c5c-85e5-4b5f-9fe0-f3264a504edf,head access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
