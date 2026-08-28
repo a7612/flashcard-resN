@@ -1,4 +1,0 @@
-﻿id,answer,question,hint,desc
-616a6c5f-f50c-4167-9334-612aee0399e5,while read -r LOG; do echo $LOG; done < ./access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
-72bb2d1d-5d43-4b63-9f0f-7cf727dea5e5,while read n; do echo $n; done < access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
-ca9a7705-f959-4af5-b9a2-4749d582f509,while read n; do echo $n;done < access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,

@@ -1,6 +1,0 @@
-﻿id,answer,question,hint,desc
-22f164d4-4c5a-4b60-9a4e-706f5d4bdd0d,for entry in `ls $search_dir`; do echo $entry; done,"Lệnh nào liệt kê tên của tất cả các tệp trong thư mục hiện tại, mỗi tệp một dòng?",,
-b3c36726-e112-4b3f-85e1-52ac5260d537,for f in *; do echo $f; done,"Lệnh nào liệt kê tên của tất cả các tệp trong thư mục hiện tại, mỗi tệp một dòng?",,
-38cb2fcd-f5f7-4dd7-bd31-db9c7c6acb92,for file in  *; do echo $file; done,"Lệnh nào liệt kê tên của tất cả các tệp trong thư mục hiện tại, mỗi tệp một dòng?",,
-89e97ece-73c7-4869-9aad-6dcdc56c427e,for file in *; do echo $file; done,"Lệnh nào liệt kê tên của tất cả các tệp trong thư mục hiện tại, mỗi tệp một dòng?",,
-d390da3a-20a4-4f74-bc55-41dcbecff858,for file in *; do echo $file;done,"Lệnh nào liệt kê tên của tất cả các tệp trong thư mục hiện tại, mỗi tệp một dòng?",,

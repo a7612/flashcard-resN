@@ -1,4 +1,0 @@
-﻿id,answer,question,hint,desc
-3ae016ac-d6be-4ac4-89f3-19dc34d0d413,"grep """" access.log",Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
-751b84a3-cd65-4831-804e-9bd4952ea845,"grep ""."" access.log",Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
-13d2ac90-dab9-434d-90b9-733b54c48feb,grep -E '.' access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,

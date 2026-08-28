@@ -123,7 +123,9 @@ class QuizGame:
 
     def _clean_text(self, text):
         """Loại bỏ Rich Markup [style]...[/style] để so sánh đáp án."""
-        t = str(text).replace("{BREAK}", "\n").replace("\\n", "\n").replace("{TAB}", "\t").replace("{BACKSLASH}", "\\")
+        t = str(text).replace("\\n", "\n").replace("\r\n", "\n")
+        for kw in ["{BREAK}", "{break}", "{Break}", "{ BREAK }", "{ break }", "{BRAKE}", "{brake}", "{Brake}", "{ BRAKE }"]:
+            t = t.replace(kw, "\n")
         clean = re.sub(r'\[/?[a-zA-Z #0-9,._-]*\]', '', t)
         return clean.strip().lower().rstrip('.')
 
@@ -470,8 +472,9 @@ class QuizGame:
         opts = self._get_options(qid, q, a, data, data, n_opts)
         mapping = {k: v for k, v in zip(string.ascii_uppercase[:len(opts)], opts)}
         for k, v in mapping.items():
-            # Cô lập phần (A), (B) để không bị ảnh hưởng bởi reset màu trong v
-            console.print(Text.from_markup(f"  [bold cyan]({k})[/] ").append(Text.from_markup(v)))
+            # Căn lề các dòng tiếp theo trong phương án nếu có xuống dòng (\n từ {BREAK} hoặc \n)
+            v_indented = v.replace("\n", "\n      ")
+            console.print(Text.from_markup(f"  [bold cyan]({k})[/] ").append(Text.from_markup(v_indented)))
 
         while True:
             u = inp.input_quiz_choice(mapping, has_hint=bool(d))

@@ -85,17 +85,22 @@ class FlashcardManager:
                 if highlight_type == 'add': stt_style = "bold green"
                 elif highlight_type == 'edit': stt_style = "bold yellow"
             
-            # Tách biệt icon và nội dung
+            # Tách biệt icon và nội dung, đồng thời căn lề các dòng phụ sau \n
             qa = Text.from_markup("[bold blue]❓ [/]")
-            qa.append(Text.from_markup(_replace_colors(q)))
+            q_fmt = _replace_colors(q).replace("\n", "\n   ")
+            qa.append(Text.from_markup(q_fmt))
+            
+            a_fmt = _replace_colors(a).replace("\n", "\n   ")
             qa.append(Text.from_markup("\n[bold green]✅ [/]"))
-            qa.append(Text.from_markup(_replace_colors(a)))
+            qa.append(Text.from_markup(a_fmt))
             
             extra = Text()
             if d:
-                extra.append(Text.from_markup("[yellow]💡 [/]")).append(Text.from_markup(_replace_colors(d) + "\n"))
+                d_fmt = _replace_colors(d).replace("\n", "\n   ")
+                extra.append(Text.from_markup("[yellow]💡 [/]")).append(Text.from_markup(d_fmt + "\n"))
             if r:
-                extra.append(Text.from_markup("[cyan]📖 [/]")).append(Text.from_markup(_replace_colors(r)))
+                r_fmt = _replace_colors(r).replace("\n", "\n   ")
+                extra.append(Text.from_markup("[cyan]📖 [/]")).append(Text.from_markup(r_fmt))
             table.add_row(Text(str(i), style=stt_style), qa, extra)
         console.print(table)
         return data

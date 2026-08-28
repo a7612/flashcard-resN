@@ -1,6 +1,0 @@
-﻿id,answer,question,hint,desc
-2b3936b1-39ae-43f5-82b7-af6d539dd978,"sed -n ""/./p"" access.log",Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
-a64b3ae5-5542-410e-83ae-a5330eb60d0d,sed -n '/./p' access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
-53856291-7e35-4524-bf2d-db37772b9518,"sed -n '6,10p' access.log","Lệnh nào in 5 dòng cuối cùng của tệp ""access.log""?",,
-7e15e168-dcea-4837-8aef-3d6b144fb9ee,sed -n 'p' access.log,Trong thư mục hiện tại có một tệp tên là access.log. Lệnh nào in nội dung của tệp đó ra?,,
-8770a712-7a3f-4031-ba3f-fc4f32646574,"sed -n 6,10p access.log","Lệnh nào in 5 dòng cuối cùng của tệp ""access.log""?",,

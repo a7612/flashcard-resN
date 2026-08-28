@@ -13,13 +13,15 @@ def _replace_colors(text):
         text = text[1] if len(text) > 1 else text[0]
     
     t = str(text)
-    # 1. Chuyển đổi các dạng BREAK thành chuỗi hiển thị '\n'
-    for kw in ["{BREAK}", "{break}", "{Break}", "{ BREAK }", "{ break }"]:
-        t = t.replace(kw, "\\n")
+    # 1. Chuyển đổi các dạng BREAK / \n / {BRAKE} thành ký tự xuống dòng thực tế "\n"
+    t = t.replace("\\n", "\n").replace("\r\n", "\n")
+    for kw in ["{BREAK}", "{break}", "{Break}", "{ BREAK }", "{ break }", "{BRAKE}", "{brake}", "{Brake}", "{ BRAKE }"]:
+        t = t.replace(kw, "\n")
         
     # 2. Chuyển đổi các dạng TAB
+    t = t.replace("\\t", "\t")
     for kw in ["{TAB}", "{tab}", "{Tab}", "{ TAB }", "{ tab }"]:
-        t = t.replace(kw, "\\t")
+        t = t.replace(kw, "\t")
         
     # 3. Chuyển đổi các dạng BACKSLASH
     for kw in ["{BACKSLASH}", "{backslash}", "{Backslash}", "{ BACKSLASH }", "{ backslash }"]:
@@ -28,6 +30,20 @@ def _replace_colors(text):
     # 4. Chuyển đổi các dạng SPACE
     for kw in ["{SPACE}", "{space}", "{Space}", "{ SPACE }", "{ space }"]:
         t = t.replace(kw, " ")
+
+    # 5. Escape các cặp ngoặc vuông không phải tag màu Rich (vd: [u-v], [0-9], [a-z])
+    # để thư viện Rich không hiểu nhầm là tag style và nuốt mất chữ khi render
+    def _escape_non_style_tags(m):
+        inner = m.group(1).strip()
+        if inner == '/' or inner.startswith('/'):
+            return m.group(0)
+        valid_words = {'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white', 'black', 'bold', 'dim', 'italic', 'underline', 'bright'}
+        tokens = inner.lower().split()
+        if any(tok in valid_words for tok in tokens):
+            return m.group(0)
+        return r'\[' + m.group(1) + ']'
+        
+    t = re.sub(r'\[(.*?)\]', _escape_non_style_tags, t)
 
     # Nếu chuỗi đã được bọc tag màu Rich rồi thì không bọc thêm [white] nữa
     trimmed = t.strip()
