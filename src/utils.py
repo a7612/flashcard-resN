@@ -15,21 +15,17 @@ def _replace_colors(text):
     t = str(text)
     # 1. Chuyển đổi các dạng BREAK / \n / {BRAKE} thành ký tự xuống dòng thực tế "\n"
     t = t.replace("\\n", "\n").replace("\r\n", "\n")
-    for kw in ["{BREAK}", "{break}", "{Break}", "{ BREAK }", "{ break }", "{BRAKE}", "{brake}", "{Brake}", "{ BRAKE }"]:
+    for kw in ["{br}", "{break}"]:
         t = t.replace(kw, "\n")
         
     # 2. Chuyển đổi các dạng TAB
     t = t.replace("\\t", "\t")
-    for kw in ["{TAB}", "{tab}", "{Tab}", "{ TAB }", "{ tab }"]:
+    for kw in ["{tab}", "{TAB}"]:
         t = t.replace(kw, "\t")
         
     # 3. Chuyển đổi các dạng BACKSLASH
-    for kw in ["{BACKSLASH}", "{backslash}", "{Backslash}", "{ BACKSLASH }", "{ backslash }"]:
+    for kw in ["{bs}", "{backslash}", "{BACKSLASH}"]:
         t = t.replace(kw, "\\")
-
-    # 4. Chuyển đổi các dạng SPACE
-    for kw in ["{SPACE}", "{space}", "{Space}", "{ SPACE }", "{ space }"]:
-        t = t.replace(kw, " ")
 
     # 5. Escape các cặp ngoặc vuông không phải tag màu Rich (vd: [u-v], [0-9], [a-z])
     # để thư viện Rich không hiểu nhầm là tag style và nuốt mất chữ khi render
