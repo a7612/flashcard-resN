@@ -64,3 +64,13 @@ QUESTION_SORT_BY = 'answer_asc'
 # --- Sắp xếp thống kê lỗi sai ---
 # 'wrong_desc' (Số lần sai), 'correct_asc' (Số lần đúng), 'diff_asc' (Hiệu số)
 MISTAKE_SORT_BY = 'diff_asc' 
+
+# --- Giới hạn thời gian làm bài mỗi câu (giây) ---
+# 0: Không giới hạn thời gian (vô hạn)
+# > 0: Số giây đếm ngược cho mỗi câu (vd: 15, 20, 30)
+QUIZ_TIME_LIMIT = 15
+
+# --- Bật/Tắt đánh giá độ khó sau mỗi câu hỏi ---
+# True (1): Bật hỏi đánh giá độ khó sau mỗi câu
+# False (0): Tắt để chơi liền mạch không bị ngắt quãng
+ENABLE_DIFFICULTY_RATING = False 

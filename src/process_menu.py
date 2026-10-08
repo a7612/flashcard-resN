@@ -176,6 +176,8 @@ class MenuManager:
                 ("8", "Chế độ Menu (MENU_MODE)", str(_CONFIG.MENU_MODE).upper()),
                 ("9", "Độ dài tên file tối đa (MAX_FILENAME_LENGTH)", f"{_CONFIG.MAX_FILENAME_LENGTH}"),
                 ("10", "Sắp xếp lỗi sai (MISTAKE_SORT_BY)", str(_CONFIG.MISTAKE_SORT_BY)),
+                ("11", "Thời gian làm bài mỗi câu (QUIZ_TIME_LIMIT)", f"{getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 0)}s" if getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 0) > 0 else "Không giới hạn"),
+                ("12", "Đánh giá độ khó mỗi câu (ENABLE_DIFFICULTY_RATING)", "BẬT" if getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False) else "TẮT"),
                 ("0", "Quay lại", "")
             ]
             for k, label, val in opts_info:
@@ -234,6 +236,15 @@ class MenuManager:
                 idx = modes.index(_CONFIG.MISTAKE_SORT_BY) if _CONFIG.MISTAKE_SORT_BY in modes else 0
                 _CONFIG.MISTAKE_SORT_BY = modes[(idx + 1) % len(modes)]
                 self._update_config_persistence("MISTAKE_SORT_BY", _CONFIG.MISTAKE_SORT_BY)
+            elif ch == "11":
+                curr_limit = getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 15)
+                val = _safe_input(f"⏱️ Nhập số giây cho mỗi câu (0 để tắt giới hạn, hiện tại: {curr_limit}s): ")
+                if val and val.isdigit():
+                    _CONFIG.QUIZ_TIME_LIMIT = int(val)
+                    self._update_config_persistence("QUIZ_TIME_LIMIT", _CONFIG.QUIZ_TIME_LIMIT)
+            elif ch == "12":
+                _CONFIG.ENABLE_DIFFICULTY_RATING = not getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False)
+                self._update_config_persistence("ENABLE_DIFFICULTY_RATING", _CONFIG.ENABLE_DIFFICULTY_RATING)
             elif ch in ["0", "q", "exit"]:
                 break
 

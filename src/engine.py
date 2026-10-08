@@ -1,9 +1,14 @@
-import random, string, re, csv, os, getpass, difflib
+import random, string, re, csv, os, getpass, difflib, time
+try:
+    import msvcrt
+    HAS_MSVCRT = True
+except ImportError:
+    HAS_MSVCRT = False
 from rich.table import Table
 from rich.text import Text
 from rich import box
 from src.core import _CONFIG, console
-from src.utils import _replace_colors, _clear_screen, _handle_error, _get_now, _safe_input
+from src.utils import _replace_colors, _clear_screen, _handle_error, _get_now, _safe_input, _get_mistake_history_data
 from src.process_log import log_action, log_difficulty
 import src.process_input as inp
 
@@ -319,6 +324,10 @@ class QuizGame:
             p = Text.from_markup("\n[bold white on green] ✨ CHÍNH XÁC! [/] ")
             p.append(Text.from_markup(chosen))
             console.print(p)
+        elif chosen == "[HẾT GIỜ]":
+            p = Text.from_markup("\n[bold white on red] ⏰ HẾT THỜI GIAN LÀM BÀI! [/] Đáp án đúng: ")
+            p.append(Text.from_markup(a, style="bold yellow"))
+            console.print(p)
         else:
             p = Text.from_markup("\n[bold white on red] 🌪️ TIẾC QUÁ... [/] Đáp án đúng: ")
             p.append(Text.from_markup(a, style="bold yellow"))
@@ -363,32 +372,85 @@ class QuizGame:
         except Exception as e:
             console.print(f"[red]❌ Lỗi I/O khi xuất file CSV báo cáo: {e}[/]")
 
+    def _persist_config_value(self, key, val):
+        """Lưu giá trị cấu hình vào file config.py."""
+        path = "config.py"
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+            with open(path, "w", encoding="utf-8") as f:
+                for line in lines:
+                    if re.match(rf"^\s*{key}\s*=", line):
+                        comment = line[line.find("#"):].strip() if "#" in line else ""
+                        f.write(f"{key} = {repr(val)} {'# ' + comment if comment else ''}\n".replace(" # #", " #"))
+                    else:
+                        f.write(line)
+        except: pass
+
     def get_difficulty(self):
-        table = Table(title="⚡ CHỌN MỨC ĐỘ THỬ THÁCH", box=box.SIMPLE)
-        table.add_column("Key", style="bold cyan", justify="right"); table.add_column("Chế độ", style="white")
-        modes = [
-            ("1", "[green]Dễ (10 câu, 3 đáp án)[/]"),
-            ("2", "[yellow]Vừa (20 câu, 4 đáp án)[/]"),
-            ("3", "[red]Khó (50 câu, 6 đáp án)[/]"),
-            ("4", "[magenta]Hardcore (100 câu, 10 đáp án)[/]"),
-            ("5", "Sinh tồn (Sai là dừng, 4 đáp án)"),
-            ("6", "Tùy chỉnh (Tự thiết lập)")
-        ]
-        for k, v in modes: table.add_row(k, v)
-        console.print(table)
-        ch = inp.input_difficulty_mode()
-        
-        if ch == 5: return (4, 999, True) # Chế độ sinh tồn
-        if ch == 6:
-            opts, qs = inp.input_difficulty_custom()
-            return opts, qs, False
+        while True:
+            cur_limit = getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 15)
+            time_str = f"{cur_limit}s" if cur_limit > 0 else "Vô tận (0s)"
+            rating_enabled = getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False)
+            rating_str = "[bold green]Bật (1)[/]" if rating_enabled else "[bold red]Tắt (0)[/]"
+
+            table = Table(title="⚡ CHỌN MỨC ĐỘ THỬ THÁCH", box=box.SIMPLE)
+            table.add_column("Key", style="bold cyan", justify="right")
+            table.add_column("Chế độ", style="white")
+            modes = [
+                ("1", "[green]Dễ (10 câu, 3 đáp án)[/]"),
+                ("2", "[yellow]Vừa (20 câu, 4 đáp án)[/]"),
+                ("3", "[red]Khó (50 câu, 6 đáp án)[/]"),
+                ("4", "[magenta]Hardcore (100 câu, 10 đáp án)[/]"),
+                ("5", "Sinh tồn (Sai là dừng, 4 đáp án)"),
+                ("6", "Tùy chỉnh (Tự thiết lập)"),
+                ("7", f"[cyan]Thời gian trả lời: [bold yellow]{time_str}[/] [dim](0 vô tận, default = 15s)[/]"),
+                ("8", f"[cyan]Đánh giá độ khó: {rating_str} [dim](0 = tắt, 1 = bật)[/]")
+            ]
+            for k, v in modes: table.add_row(k, v)
+            console.print(table)
+            ch = inp.input_difficulty_mode()
             
-        return {
-            1: (3, 10, False), 
-            2: (4, 20, False), 
-            3: (6, 50, False), 
-            4: (10, 100, False)
-        }.get(ch, (4, 20, False))
+            if ch == 7:
+                val = _safe_input(f"⏱️ Nhập thời gian trả lời mỗi câu (0 vô tận, Enter = 15s, hiện tại: {cur_limit}s): ")
+                if val is not None:
+                    val_str = str(val).strip()
+                    if val_str == "":
+                        _CONFIG.QUIZ_TIME_LIMIT = 15
+                    elif val_str.isdigit():
+                        _CONFIG.QUIZ_TIME_LIMIT = int(val_str)
+                    
+                    self._persist_config_value("QUIZ_TIME_LIMIT", _CONFIG.QUIZ_TIME_LIMIT)
+                    console.print(f"[bold green]✅ Đã đặt thời gian: {f'{_CONFIG.QUIZ_TIME_LIMIT}s' if _CONFIG.QUIZ_TIME_LIMIT > 0 else 'Vô tận'}[/]\n")
+                continue
+
+            if ch == 8:
+                curr_status = "1" if rating_enabled else "0"
+                val = _safe_input(f"⭐ Đánh giá độ khó (0 = tắt, 1 = bật, Enter đổi trạng thái, hiện tại: {curr_status}): ")
+                if val is not None:
+                    val_str = str(val).strip()
+                    if val_str == "0":
+                        _CONFIG.ENABLE_DIFFICULTY_RATING = False
+                    elif val_str == "1":
+                        _CONFIG.ENABLE_DIFFICULTY_RATING = True
+                    elif val_str == "":
+                        _CONFIG.ENABLE_DIFFICULTY_RATING = not rating_enabled
+                    
+                    self._persist_config_value("ENABLE_DIFFICULTY_RATING", _CONFIG.ENABLE_DIFFICULTY_RATING)
+                    console.print(f"[bold green]✅ Đã {'bật' if _CONFIG.ENABLE_DIFFICULTY_RATING else 'tắt'} đánh giá độ khó.[/]\n")
+                continue
+
+            if ch == 5: return (4, 999, True) # Chế độ sinh tồn
+            if ch == 6:
+                opts, qs = inp.input_difficulty_custom()
+                return opts, qs, False
+                
+            return {
+                1: (3, 10, False), 
+                2: (4, 20, False), 
+                3: (6, 50, False), 
+                4: (10, 100, False)
+            }.get(ch, (4, 20, False))
 
     def run(self, data, n_opts=None, max_qs=None, survival=False):
         if not data:
@@ -399,30 +461,65 @@ class QuizGame:
             # Clean duplicates
             data = self._deduplicate_data(data)
             
-            # Thuật toán giới hạn tần suất keyword: Ưu tiên đa dạng hóa bộ đề
-            self._multi_shuffle(data, 25)
+            # Thuật toán Ưu tiên Câu hỏi Sai:
+            # Các câu đã từng làm sai (w > 0) và chưa đạt Hiệu số +10 (diff < 10)
+            # sẽ được tự động đưa vào thử thách, hiệu số càng âm càng được ưu tiên lên đầu
+            mistakes = _get_mistake_history_data()
+            mistake_items, normal_items = [], []
+
+            for row in data:
+                q_text = _replace_colors(row[2])
+                m_info = mistakes.get(q_text)
+                if not m_info:
+                    clean_q = re.sub(r'\[/?[a-zA-Z #0-9,._-]*\]', '', str(row[2])).strip().lower()
+                    for mk, mv in mistakes.items():
+                        clean_mk = re.sub(r'\[/?[a-zA-Z #0-9,._-]*\]', '', str(mk)).strip().lower()
+                        if clean_q == clean_mk:
+                            m_info = mv
+                            break
+
+                if m_info and m_info[0] > 0:
+                    w, c = m_info[0], m_info[1]
+                    diff = c - w
+                    if diff < 10:
+                        mistake_items.append((diff, row))
+                        continue
+                normal_items.append(row)
+
+            # Sắp xếp nhóm câu sai: hiệu số càng âm càng ưu tiên lên đầu
+            random.shuffle(mistake_items)
+            mistake_items.sort(key=lambda x: x[0])
+            sorted_mistake_rows = [x[1] for x in mistake_items]
+
+            # Xáo trộn nhóm câu bình thường và áp dụng đa dạng hóa keyword
+            self._multi_shuffle(normal_items, 25)
             kws = self._get_kws()
             limit = getattr(_CONFIG, 'MAX_SAME_KEYWORD_PER_QUIZ', 5)
-            
-            pool, overflow, kw_counts = [], [], {}
-            for row in data:
+            filtered_normal, overflow, kw_counts = [], [], {}
+            for row in normal_items:
                 match_k = next((k for k in kws if k in str(row[2]).lower()), None)
                 if match_k:
                     count = kw_counts.get(match_k, 0)
                     if count < limit:
-                        pool.append(row)
+                        filtered_normal.append(row)
                         kw_counts[match_k] = count + 1
                     else:
                         overflow.append(row)
                 else:
-                    pool.append(row)
-            
-            # Nếu chưa đủ số lượng yêu cầu, lấy thêm từ phần dư (overflow)
+                    filtered_normal.append(row)
+
+            available_normal = filtered_normal + overflow
+
+            # Ghép pool: ưu tiên tối đa nhóm câu sai chưa đạt +10, phần còn lại lấy từ câu bình thường
             if max_qs:
-                if len(pool) < max_qs:
-                    pool.extend(overflow[:max_qs - len(pool)])
-                pool = pool[:max_qs]
-            
+                if len(sorted_mistake_rows) >= max_qs:
+                    pool = sorted_mistake_rows[:max_qs]
+                else:
+                    needed = max_qs - len(sorted_mistake_rows)
+                    pool = sorted_mistake_rows + available_normal[:needed]
+            else:
+                pool = sorted_mistake_rows + available_normal
+
             self._multi_shuffle(pool, 25)
             results, score = [], 0
 
@@ -435,7 +532,7 @@ class QuizGame:
                     results.append({"index": i, "question": info[0], "correct": info[1], "hint": info[2], "desc": info[3], "ok": ok})
                     self._feedback(ok, chosen, *info, qid)
 
-                    if not self._wait_next(qid): break
+                    if not self._wait_next(qid, ok=ok): break
 
                     if survival and not ok:
                         console.print(f"\n[bold red]GAME OVER![/] Bạn đã dừng bước tại câu {i} trong chế độ Sinh tồn.")
@@ -462,6 +559,7 @@ class QuizGame:
 
     def _ask_question(self, i, total, qid, a, q, d, r, data, n_opts, current_score):
         _clear_screen()
+        time_limit = getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 0)
         console.rule(f"[bold white on blue]QUIZ [/] [cyan]{i}/{total}[/] │ [green]Score: {current_score}[/]")
         
         q_d, a_d, d_d, r_d = map(_replace_colors, (q, a, d or "", r or ""))
@@ -479,6 +577,9 @@ class QuizGame:
         while True:
             u = inp.input_quiz_choice(mapping, has_hint=bool(d))
             if u == "EXIT_SIGNAL": return False, "EXIT_SIGNAL", None
+            if u == "TIMEOUT_SIGNAL":
+                console.print(f"\n[bold red]⏰ Bạn không kịp đưa ra đáp án trong {time_limit} giây quy định![/]")
+                return False, "[HẾT GIỜ]", (q_d, a_d, d_d, r_d, 0.0)
             if u == "HINT_SIGNAL":
                 console.print(f"[yellow]💡 Gợi ý: {d_d}[/]")
                 continue
@@ -487,7 +588,18 @@ class QuizGame:
             ok, ratio = self._check_correctness(chosen, a)
             return ok, chosen, (q_d, a_d, d_d, r_d, ratio)
 
-    def _wait_next(self, qid=None):
+    def _wait_next(self, qid=None, ok=True):
+        if not getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False):
+            # Tự động chuyển câu liền mạch không ngắt quãng (nhấn phím bất kỳ để qua ngay)
+            delay = 0.8 if ok else min(getattr(_CONFIG, 'ERROR_DELAY', 2), 2.5)
+            end_t = time.time() + delay
+            while time.time() < end_t:
+                if HAS_MSVCRT and msvcrt.kbhit():
+                    msvcrt.getwch()
+                    break
+                time.sleep(0.04)
+            return True
+
         val = inp.input_difficulty_rating()
         if qid and val:
             log_action(f"RATING:{qid}", f"Difficulty: {val}")

@@ -52,17 +52,81 @@ def input_selection(prompt, max_val=None, allow_all=False):
         return False, x
     return _safe_input(prompt, validator)
 
-def input_quiz_choice(mapping, has_hint=False):
-    """Nhập đáp án A, B, C trong khi chơi Quiz."""
+import time, sys
+try:
+    import msvcrt
+    HAS_MSVCRT = True
+except ImportError:
+    HAS_MSVCRT = False
+from src.core import _CONFIG
+
+def input_quiz_choice(mapping, has_hint=False, timeout=None):
+    """Nhập đáp án A, B, C trong khi chơi Quiz, có hỗ trợ đếm ngược thời gian nếu được cấu hình."""
+    if timeout is None:
+        timeout = getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 0)
+
+    # Chế độ không giới hạn thời gian hoặc môi trường không hỗ trợ msvcrt
+    if not timeout or timeout <= 0 or not HAS_MSVCRT:
+        while True:
+            try:
+                prompt = "👉 Đáp án (? để nhận gợi ý): " if has_hint else "👉 Đáp án: "
+                u = console.input(f"\n{prompt}").strip().upper()
+                if u in ['/EXIT', 'EXIT']: return "EXIT_SIGNAL"
+                if u == '?': return "HINT_SIGNAL"
+                if u in mapping: return u
+                console.print("[red]❌ Sai cú pháp![/]")
+            except (EOFError, KeyboardInterrupt): return "EXIT_SIGNAL"
+
+    # Chế độ đếm ngược thời gian trực tiếp (Live Countdown Timer)
+    hint_str = "(? để nhận gợi ý) " if has_hint else ""
+    start_time = time.time()
+    buffer = ""
+    last_sec = -1
+
+    sys.stdout.write("\n")
+    sys.stdout.flush()
+
     while True:
-        try:
-            prompt = "👉 Đáp án (? để nhận gợi ý): " if has_hint else "👉 Đáp án: "
-            u = console.input(f"\n{prompt}").strip().upper()
-            if u in ['/EXIT', 'EXIT']: return "EXIT_SIGNAL"
-            if u == '?': return "HINT_SIGNAL"
-            if u in mapping: return u
-            console.print("[red]❌ Sai cú pháp![/]")
-        except (EOFError, KeyboardInterrupt): return "EXIT_SIGNAL"
+        elapsed = time.time() - start_time
+        remaining = int(timeout - elapsed)
+        if remaining <= 0:
+            sys.stdout.write(f"\r👉 Đáp án {hint_str}\033[91m[0s - HẾT GIỜ]\033[0m: {buffer}    \n")
+            sys.stdout.flush()
+            return "TIMEOUT_SIGNAL"
+
+        if remaining != last_sec:
+            # Màu cảnh báo: >10s màu xanh cyan, <=10s màu vàng, <=5s màu đỏ
+            color = "\033[91m" if remaining <= 5 else ("\033[93m" if remaining <= 10 else "\033[96m")
+            timer_text = f"{color}[{remaining}s]\033[0m"
+            prompt_line = f"\r👉 Đáp án {hint_str}{timer_text}: {buffer}"
+            sys.stdout.write(prompt_line + " \033[K")
+            sys.stdout.flush()
+            last_sec = remaining
+
+        if msvcrt.kbhit():
+            ch = msvcrt.getwch()
+            if ch == '\x03': # Ctrl+C
+                sys.stdout.write("\n")
+                return "EXIT_SIGNAL"
+            elif ch in ('\r', '\n'): # Enter
+                sys.stdout.write("\n")
+                sys.stdout.flush()
+                val = buffer.strip().upper()
+                if val in ['/EXIT', 'EXIT']: return "EXIT_SIGNAL"
+                if val == '?': return "HINT_SIGNAL"
+                if val in mapping: return val
+                console.print("[red]❌ Sai cú pháp![/]")
+                buffer = ""
+                last_sec = -1
+            elif ch == '\x08': # Backspace
+                if buffer:
+                    buffer = buffer[:-1]
+                    last_sec = -1
+            elif ch.isprintable():
+                buffer += ch
+                last_sec = -1
+        else:
+            time.sleep(0.04)
 
 def input_difficulty_rating():
     """Nhập đánh giá độ khó sau mỗi câu hỏi."""

@@ -425,24 +425,7 @@ def _show_mistake_stats_util(file_mgr=None, card_mgr=None):
         console.print(table)
         console.print(f"\n[dim]💡 Danh sách thống kê tất cả các câu hỏi bạn đã từng làm sai.[/]")
 
-    console.print("\n[bold yellow]🔥 Bắt đầu lượt Ôn tập Chinh phục Lỗi sai (Target Hiệu số +10)?[/]")
-    choice = _safe_input("👉 Nhập số điểm mục tiêu (Mặc định 10), 'y' để chơi ngay, hoặc Enter để quay lại: ")
-    if choice:
-        target = 10
-        if choice.isdigit() and int(choice) > 0:
-            target = int(choice)
-        elif choice.lower() in ['y', 'yes', '1']:
-            target = 10
-        else:
-            return
-        
-        if not file_mgr or not card_mgr:
-            from src.process_file import FileManager
-            from src.process_flashcard import FlashcardManager
-            file_mgr = file_mgr or FileManager()
-            card_mgr = card_mgr or FlashcardManager()
-
-        _play_mistake_review_util(file_mgr, card_mgr, target_score=target)
+    console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
 
 def _handle_file_deletion_util(file_mgr, show_list=True):
     p = _choose_file_path_util(file_mgr, allow_all=True, show=show_list, context_name="Xoá bộ đề")
