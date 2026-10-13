@@ -97,8 +97,8 @@ class MenuManager:
         """Chạy menu CRUD cho các câu hỏi trong một file cụ thể."""
         m = self.card_mgr
         opts = {
-            "1": (lambda: (m.add_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "[green]Thêm câu[/]"),
-            "2": (lambda: (m.delete_question(path), self.file_mgr._count_cache.pop(os.path.basename(path), None)), "[red]Xoá câu[/]"),
+            "1": (lambda: m.add_question(path), "[green]Thêm câu[/]"),
+            "2": (lambda: m.delete_question(path), "[red]Xoá câu[/]"),
             "3": (lambda: m.edit_question(path), "[yellow]Sửa tổng lực[/]"),
             "4": (lambda: m.edit_question(path, 2), "[yellow]Sửa câu hỏi[/]"),
             "5": (lambda: m.edit_question(path, 1), "[yellow]Sửa đáp án[/]"),
@@ -158,110 +158,108 @@ class MenuManager:
             self.card_mgr.clear_cache(path) # Xoá cache đường dẫn cũ
 
     def settings_menu(self):
-        """Menu quản lý các cài đặt trong config.py."""
+        """Menu quản lý các cài đặt trong settings.json."""
         while True:
             _clear_screen()
-            header = f"[bold white]⚙️ CÀI ĐẶT HỆ THỐNG ⚙️[/]\n[{_CONFIG.COLOR_INFO}]Cấu hình hiện tại có hiệu lực ngay lập tức[/]"
+            header = f"[bold white]⚙️ CÀI ĐẶT HỆ THỐNG ⚙️[/]\n[{_CONFIG.COLOR_INFO}]Cấu hình được lưu trong settings.json[/]"
             console.print(Panel(Align.center(header), box=box.DOUBLE, border_style=_CONFIG.COLOR_HEADER))
 
-            table = Table(show_header=False, box=box.ROUNDED, border_style=_CONFIG.COLOR_MENU)
-            opts_info = [
-                ("1", "Tự động xoá màn hình (CLEAR_SCREEN)", str(_CONFIG.CLEAR_SCREEN)),
-                ("2", "Thời gian chờ thông báo (ERROR_DELAY)", f"{_CONFIG.ERROR_DELAY} giây"),
-                ("3", "Cột lọc trùng lặp (DEDUPLICATE_INDEX)", "ID (0)" if _CONFIG.DEDUPLICATE_COLUMN_INDEX == 0 else "Nội dung (2)"),
-                ("4", "Hiển thị Thống kê (SHOW_STATS)", str(_CONFIG.SHOW_STATS)),
-                ("5", "Hiển thị Lịch sử (SHOW_HISTORY)", str(_CONFIG.SHOW_HISTORY)),
-                ("6", "Sắp xếp hiển thị (FILE_DISPLAY_SORT_BY)", str(_CONFIG.FILE_DISPLAY_SORT_BY)),
-                ("7", "Sắp xếp câu hỏi (QUESTION_SORT_BY)", str(_CONFIG.QUESTION_SORT_BY)),
-                ("8", "Chế độ Menu (MENU_MODE)", str(_CONFIG.MENU_MODE).upper()),
-                ("9", "Độ dài tên file tối đa (MAX_FILENAME_LENGTH)", f"{_CONFIG.MAX_FILENAME_LENGTH}"),
-                ("10", "Sắp xếp lỗi sai (MISTAKE_SORT_BY)", str(_CONFIG.MISTAKE_SORT_BY)),
-                ("11", "Thời gian làm bài mỗi câu (QUIZ_TIME_LIMIT)", f"{getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 0)}s" if getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 0) > 0 else "Không giới hạn"),
-                ("12", "Đánh giá độ khó mỗi câu (ENABLE_DIFFICULTY_RATING)", "BẬT" if getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False) else "TẮT"),
-                ("0", "Quay lại", "")
+            # Nhóm 1: Hệ thống & Tệp tin
+            group1 = [
+                ("1", "Độ dài tên file tối đa", str(_CONFIG.MAX_FILENAME_LENGTH)),
+                ("2", "Cột lọc trùng lặp (ID=0, Nội dung=2)", str(_CONFIG.DEDUPLICATE_COLUMN_INDEX)),
+                ("3", "Thời gian chờ thông báo (giây)", str(_CONFIG.ERROR_DELAY))
             ]
-            for k, label, val in opts_info:
-                table.add_row(k, f"{label}: [bold green]{val}[/]" if val else label)
 
-            console.print(Panel(table, title=f"[bold {_CONFIG.COLOR_MENU}]🛠️ TÙY CHỈNH[/]", border_style=_CONFIG.COLOR_MENU, expand=False))
-            
+            # Nhóm 2: Giao diện & Hiển thị (Đã bổ sung Sắp xếp)
+            group2 = [
+                ("4", "Tự động xoá màn hình", str(_CONFIG.CLEAR_SCREEN)),
+                ("5", "Hiển thị Thống kê", str(_CONFIG.SHOW_STATS)),
+                ("6", "Hiển thị Lịch sử", str(_CONFIG.SHOW_HISTORY)),
+                ("7", "Sắp xếp bộ đề (File)", str(_CONFIG.FILE_DISPLAY_SORT_BY)),
+                ("8", "Sắp xếp câu hỏi (Flashcard)", str(_CONFIG.QUESTION_SORT_BY)),
+                ("9", "Chế độ Menu", str(_CONFIG.MENU_MODE).upper())
+            ]
+
+            # Nhóm 3: Quiz & Nội dung (Cập nhật bổ sung Fuzzy Matching)
+            group3 = [
+                ("10", "Thời gian làm bài mỗi câu", f"{getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 0)}s"),
+                ("11", "Đánh giá độ khó", "BẬT" if getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False) else "TẮT"),
+                ("12", "Fuzzy Matching (Chấm gần đúng)", "BẬT" if getattr(_CONFIG, 'FUZZY_MATCHING_ENABLED', False) else "TẮT"),
+                ("13", "Ngưỡng Fuzzy (0.0 - 1.0)", str(_CONFIG.FUZZY_MATCHING_THRESHOLD)),
+                ("14", "Từ khóa ĐÚNG/SAI", str(_CONFIG.KEYWORD_BOOL)),
+                ("15", "Từ khóa câu hỏi nhập liệu", str(_CONFIG.KEYWORD_Q_INPUT))
+            ]
+
+            table = Table(show_header=False, box=box.ROUNDED, border_style=_CONFIG.COLOR_MENU)
+            table.add_row("[bold cyan]=== HỆ THỐNG ===[/]", "", "")
+            for k, l, v in group1: table.add_row(k, l, f"[bold green]{v}[/]")
+            table.add_row("[bold cyan]=== GIAO DIỆN ===[/]", "", "")
+            for k, l, v in group2: table.add_row(k, l, f"[bold green]{v}[/]")
+            table.add_row("[bold cyan]=== NỘI DUNG/QUIZ ===[/]", "", "")
+            for k, l, v in group3: table.add_row(k, l, f"[bold green]{v}[/]")
+            table.add_row("0", "[bold red]Quay lại[/]", "")
+
+            console.print(Panel(table, title="🛠️ TÙY CHỈNH", border_style=_CONFIG.COLOR_MENU, expand=False))
+
             ch = inp.input_menu_choice()
             if ch == "1":
-                _CONFIG.CLEAR_SCREEN = not _CONFIG.CLEAR_SCREEN
-                self._update_config_persistence("CLEAR_SCREEN", _CONFIG.CLEAR_SCREEN)
+                val = _safe_input("📏 Độ dài mới: ")
+                if val and val.isdigit(): self._update_config_persistence("MAX_FILENAME_LENGTH", int(val))
             elif ch == "2":
-                val = inp.input_setting_delay()
-                if val and val.isdigit():
-                    _CONFIG.ERROR_DELAY = int(val)
-                    self._update_config_persistence("ERROR_DELAY", _CONFIG.ERROR_DELAY)
+                val = _safe_input("🔍 Cột trùng lặp (0/2): ")
+                if val in ["0", "2"]: self._update_config_persistence("DEDUPLICATE_COLUMN_INDEX", int(val))
             elif ch == "3":
-                val = inp.input_setting_dedup()
-                if val in ["0", "2"]:
-                    _CONFIG.DEDUPLICATE_COLUMN_INDEX = int(val)
-                    self._update_config_persistence("DEDUPLICATE_COLUMN_INDEX", _CONFIG.DEDUPLICATE_COLUMN_INDEX)
+                val = _safe_input("⏳ Thời gian (giây): ")
+                if val and val.isdigit(): self._update_config_persistence("ERROR_DELAY", int(val))
             elif ch == "4":
-                _CONFIG.SHOW_STATS = not _CONFIG.SHOW_STATS
-                self._update_config_persistence("SHOW_STATS", _CONFIG.SHOW_STATS)
+                self._update_config_persistence("CLEAR_SCREEN", not _CONFIG.CLEAR_SCREEN)
             elif ch == "5":
-                _CONFIG.SHOW_HISTORY = not _CONFIG.SHOW_HISTORY
-                self._update_config_persistence("SHOW_HISTORY", _CONFIG.SHOW_HISTORY)
+                self._update_config_persistence("SHOW_STATS", not _CONFIG.SHOW_STATS)
             elif ch == "6":
+                self._update_config_persistence("SHOW_HISTORY", not _CONFIG.SHOW_HISTORY)
+            elif ch == "7":
                 modes = ["count_desc", "count_asc", "name_asc", "name_desc", "mtime_desc", "mtime_asc"]
                 idx = modes.index(_CONFIG.FILE_DISPLAY_SORT_BY) if _CONFIG.FILE_DISPLAY_SORT_BY in modes else 0
-                _CONFIG.FILE_DISPLAY_SORT_BY = modes[(idx + 1) % len(modes)]
-                self._update_config_persistence("FILE_DISPLAY_SORT_BY", _CONFIG.FILE_DISPLAY_SORT_BY)
-            elif ch == "7":
-                modes = [
-                    "id_asc", "id_desc", 
-                    "answer_asc", "answer_desc", 
-                    "question_asc", "question_desc",
-                    "hint_asc", "hint_desc",
-                    "desc_asc", "desc_desc"
-                ]
-                idx = modes.index(_CONFIG.QUESTION_SORT_BY) if _CONFIG.QUESTION_SORT_BY in modes else 0
-                _CONFIG.QUESTION_SORT_BY = modes[(idx + 1) % len(modes)]
-                self._update_config_persistence("QUESTION_SORT_BY", _CONFIG.QUESTION_SORT_BY)
-                self.card_mgr.clear_cache() # Xóa cache để nạp lại và sắp xếp theo chuẩn mới
+                self._update_config_persistence("FILE_DISPLAY_SORT_BY", modes[(idx + 1) % len(modes)])
             elif ch == "8":
-                _CONFIG.MENU_MODE = "numeric" if _CONFIG.MENU_MODE == "command" else "command"
-                self._update_config_persistence("MENU_MODE", _CONFIG.MENU_MODE)
-                _handle_error("⚠️ Vui lòng khởi động lại để áp dụng thay đổi cho Menu chính!", delay=2)
+                modes = ["id_asc", "id_desc", "answer_asc", "answer_desc", "question_asc", "question_desc"]
+                idx = modes.index(_CONFIG.QUESTION_SORT_BY) if _CONFIG.QUESTION_SORT_BY in modes else 0
+                self._update_config_persistence("QUESTION_SORT_BY", modes[(idx + 1) % len(modes)])
             elif ch == "9":
-                val = _safe_input(f"📏 Nhập độ dài mới (hiện tại: {_CONFIG.MAX_FILENAME_LENGTH}): ")
-                if val and val.isdigit():
-                    _CONFIG.MAX_FILENAME_LENGTH = int(val)
-                    self._update_config_persistence("MAX_FILENAME_LENGTH", _CONFIG.MAX_FILENAME_LENGTH)
+                self._update_config_persistence("MENU_MODE", "numeric" if _CONFIG.MENU_MODE == "command" else "command")
             elif ch == "10":
-                modes = ["wrong_desc", "correct_asc", "diff_asc"]
-                idx = modes.index(_CONFIG.MISTAKE_SORT_BY) if _CONFIG.MISTAKE_SORT_BY in modes else 0
-                _CONFIG.MISTAKE_SORT_BY = modes[(idx + 1) % len(modes)]
-                self._update_config_persistence("MISTAKE_SORT_BY", _CONFIG.MISTAKE_SORT_BY)
+                val = _safe_input("⏱️ Giới hạn (giây): ")
+                if val and val.isdigit(): self._update_config_persistence("QUIZ_TIME_LIMIT", int(val))
             elif ch == "11":
-                curr_limit = getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 15)
-                val = _safe_input(f"⏱️ Nhập số giây cho mỗi câu (0 để tắt giới hạn, hiện tại: {curr_limit}s): ")
-                if val and val.isdigit():
-                    _CONFIG.QUIZ_TIME_LIMIT = int(val)
-                    self._update_config_persistence("QUIZ_TIME_LIMIT", _CONFIG.QUIZ_TIME_LIMIT)
+                self._update_config_persistence("ENABLE_DIFFICULTY_RATING", not getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False))
             elif ch == "12":
-                _CONFIG.ENABLE_DIFFICULTY_RATING = not getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False)
-                self._update_config_persistence("ENABLE_DIFFICULTY_RATING", _CONFIG.ENABLE_DIFFICULTY_RATING)
+                self._update_config_persistence("FUZZY_MATCHING_ENABLED", not getattr(_CONFIG, 'FUZZY_MATCHING_ENABLED', False))
+            elif ch == "13":
+                val = _safe_input("🎯 Nhập ngưỡng (VD: 0.9): ")
+                if val:
+                    try: self._update_config_persistence("FUZZY_MATCHING_THRESHOLD", float(val))
+                    except: _handle_error("❌ Giá trị không hợp lệ!")
+            elif ch == "14":
+                val = _safe_input("📝 Danh sách (cách nhau bởi dấu phẩy): ")
+                if val: self._update_config_persistence("KEYWORD_BOOL", [k.strip() for k in val.split(',')])
+            elif ch == "15":
+                val = _safe_input("📝 Danh sách (cách nhau bởi dấu phẩy): ")
+                if val: self._update_config_persistence("KEYWORD_Q_INPUT", [k.strip() for k in val.split(',')])
             elif ch in ["0", "q", "exit"]:
                 break
 
     def _update_config_persistence(self, key, value):
-        """Cập nhật giá trị vào file config.py để lưu lại sau khi thoát."""
-        path = "config.py"
+        import json
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                lines = f.readlines()
-            with open(path, "w", encoding="utf-8") as f:
-                for line in lines:
-                    if re.match(rf"^\s*{key}\s*=", line):
-                        # Giữ lại comment nếu có
-                        comment = line[line.find("#"):].strip() if "#" in line else ""
-                        f.write(f"{key} = {repr(value)} {'# ' + comment if comment else ''}\n".replace(" # #", " #"))
-                    else:
-                        f.write(line)
+            # 1. Cập nhật vào memory
+            setattr(_CONFIG, key, value)
+
+            # 2. Lưu lại toàn bộ object _CONFIG vào file settings.json
+            with open("settings.json", "w", encoding="utf-8") as f:
+                json.dump(_CONFIG.__dict__, f, indent=4)
+
             log_action("CONFIG_CHANGE", f"{key} set to {value}")
         except Exception as e:
             _handle_error(f"Lỗi khi lưu cấu hình: {e}")
+

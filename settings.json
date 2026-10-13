@@ -1,0 +1,38 @@
+{
+    "QUESTIONS_DIR": "data/questions",
+    "LOG_DIR": "logs",
+    "EXPORT_DIR": "exports",
+    "TRASH_DIR": "trash",
+    "CLEAR_SCREEN": true,
+    "ERROR_DELAY": 3,
+    "SHOW_STATS": true,
+    "SHOW_HISTORY": true,
+    "MENU_MODE": "numeric",
+    "MAX_FILENAME_LENGTH": 100,
+    "COLOR_HEADER": "bright_blue",
+    "COLOR_MENU": "magenta",
+    "COLOR_STATS": "cyan",
+    "COLOR_HISTORY": "yellow",
+    "COLOR_ERROR": "red",
+    "COLOR_SUCCESS": "green",
+    "COLOR_WARNING": "yellow",
+    "COLOR_INFO": "cyan",
+    "DEDUPLICATE_COLUMN_INDEX": 2,
+    "MAX_SAME_KEYWORD_PER_QUIZ": 4,
+    "KEYWORD_BOOL": [
+        "\u0111\u00fang hay sai"
+    ],
+    "KEYWORD_Q_INPUT": [
+        "stand for",
+        "t\u00ean \u0111\u1ea7y \u0111\u1ee7",
+        "vi\u1ebft t\u1eaft c\u1ee7a"
+    ],
+    "FUZZY_MATCHING_ENABLED": false,
+    "FUZZY_MATCHING_THRESHOLD": 0.9,
+    "FILE_SORT_BY": "name_asc",
+    "FILE_DISPLAY_SORT_BY": "name_asc",
+    "QUESTION_SORT_BY": "answer_asc",
+    "MISTAKE_SORT_BY": "diff_asc",
+    "QUIZ_TIME_LIMIT": 30,
+    "ENABLE_DIFFICULTY_RATING": false
+}

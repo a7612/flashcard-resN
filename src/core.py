@@ -1,12 +1,17 @@
-import os, datetime, time, shutil, csv
+import os, datetime, time, shutil, csv, json
 from types import SimpleNamespace
 from rich.console import Console
-from config import *
 
-# Khởi tạo cấu hình và thư mục
-_CONFIG = SimpleNamespace(**{k: v for k, v in globals().items() if k.isupper()})
-for d in [_CONFIG.LOG_DIR, _CONFIG.EXPORT_DIR, _CONFIG.QUESTIONS_DIR, _CONFIG.TRASH_DIR, "data"]: os.makedirs(d, exist_ok=True)
+# Nạp trực tiếp từ settings.json
+def load_config():
+    with open("settings.json", "r", encoding="utf-8") as f:
+        return SimpleNamespace(**json.load(f))
 
+_CONFIG = load_config()
+
+# Khởi tạo thư mục dựa trên _CONFIG mới
+for d in [_CONFIG.LOG_DIR, _CONFIG.EXPORT_DIR, _CONFIG.QUESTIONS_DIR, _CONFIG.TRASH_DIR, "data"]:
+    os.makedirs(d, exist_ok=True)
 console = Console(highlight=False)
 
 # Định nghĩa múi giờ GMT+7 dùng chung cho toàn hệ thống

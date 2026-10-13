@@ -9,8 +9,7 @@ import src.process_input as inp
 class FileManager:
     def __init__(self):
         self.qdir = _CONFIG.QUESTIONS_DIR
-        # Cache lưu cấu trúc: { filename: (last_mtime, last_size, last_count) }
-        self._count_cache = {}
+        # Đã xóa self._count_cache
         # Dễ dàng chỉnh sửa các mốc phân loại tại đây
         self.thresholds = [
             (1, "[red]🌑 Trống[/]", "red"),
@@ -58,19 +57,8 @@ class FileManager:
     def count_questions(self, fname):
         path = self._get_full_path(fname)
         try: 
-            # 1. Kiểm tra Metadata của file
-            stat = os.stat(path)
-            mtime, size = stat.st_mtime, stat.st_size
-
-            # 2. Nếu file không đổi, trả về kết quả trong cache ngay lập tức (O(1))
-            if fname in self._count_cache:
-                c_mtime, c_size, c_count = self._count_cache[fname]
-                if mtime == c_mtime and size == c_size:
-                    return c_count
-
-            if size == 0: return 0
-
-            # 3. Nếu file đổi hoặc chưa có trong cache, đếm cực nhanh bằng khối nhị phân
+            # Đã xóa logic kiểm tra stat.st_mtime và cache
+            if os.path.getsize(path) == 0: return 0
             with open(path, "rb") as f:
                 count = sum(buf.count(b'\n') for buf in iter(lambda: f.read(1024 * 1024), b''))
                 
@@ -80,9 +68,7 @@ class FileManager:
                     count += 1
                 
             # Trừ 1 dòng header (Giả định file CSV chuẩn luôn có header và kết thúc bằng newline)
-            final_count = max(0, count - 1)
-            self._count_cache[fname] = (mtime, size, final_count)
-            return final_count
+            return max(0, count - 1)
         except Exception as e:
             # Đừng dùng _handle_error ở đây để tránh làm gián đoạn luồng hiển thị danh sách
             return 0
