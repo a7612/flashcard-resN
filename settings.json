@@ -27,12 +27,12 @@
         "t\u00ean \u0111\u1ea7y \u0111\u1ee7",
         "vi\u1ebft t\u1eaft c\u1ee7a"
     ],
-    "FUZZY_MATCHING_ENABLED": false,
-    "FUZZY_MATCHING_THRESHOLD": 0.9,
+    "FUZZY_MATCHING_ENABLED": true,
+    "FUZZY_MATCHING_THRESHOLD": 1.0,
     "FILE_SORT_BY": "name_asc",
     "FILE_DISPLAY_SORT_BY": "name_asc",
     "QUESTION_SORT_BY": "answer_asc",
     "MISTAKE_SORT_BY": "diff_asc",
     "QUIZ_TIME_LIMIT": 30,
-    "ENABLE_DIFFICULTY_RATING": true
+    "ENABLE_DIFFICULTY_RATING": false
 }
