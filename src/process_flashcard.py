@@ -4,6 +4,7 @@ from src.utils import _replace_colors, _safe_input, _clear_screen, _handle_error
 from src.process_log import log_action
 from rich.table import Table
 from rich.text import Text
+from rich.panel import Panel
 from rich import box
 import src.process_input as inp
 
@@ -67,9 +68,12 @@ class FlashcardManager:
         except Exception as e:
             _handle_error(f"❌ Không thể ghi dữ liệu xuống file '{os.path.basename(path)}': {e}")
 
-    def show_questions(self, path, highlight_id=None, highlight_type=None):
+    def show_questions(self, path, highlight_id=None, highlight_type=None, return_table=False):
         data = self.load_data(path)
         if not data:
+            if return_table:
+                p = Panel(f"[yellow]⚠️ Bộ đề '{os.path.basename(path)}' hiện đang trống. Hãy thêm câu hỏi mới![/]", title=f"📋 CHI TIẾT: {os.path.basename(path)}", box=box.ROUNDED)
+                return data, p
             console.print(f"\n[yellow]⚠️ Bộ đề '{os.path.basename(path)}' hiện đang trống. Hãy thêm câu hỏi mới![/]")
             return []
         table = Table(title=f"📋 CHI TIẾT: {os.path.basename(path)}", box=box.ROUNDED, show_lines=True)
@@ -102,6 +106,8 @@ class FlashcardManager:
                 r_fmt = _replace_colors(r).replace("\n", "\n   ")
                 extra.append(Text.from_markup("[cyan]📖 [/]")).append(Text.from_markup(r_fmt))
             table.add_row(Text(str(i), style=stt_style), qa, extra)
+        if return_table:
+            return data, table
         console.print(table)
         return data
 

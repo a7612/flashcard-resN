@@ -17,6 +17,7 @@ from src.process_log import LogManager, log_action
 from rich.table import Table
 from rich.panel import Panel
 from rich.align import Align
+from rich.text import Text
 from rich import box
 from rich.console import Group
 from rich.columns import Columns
@@ -42,8 +43,8 @@ class MenuManager:
         while True:
             if clear: _clear_screen()
             
-            header = f"[bold white]🚀 {title} 🚀[/]\n[{_CONFIG.COLOR_INFO}]User: {getpass.getuser()} | {_get_now().strftime('%d/%m/%Y %H:%M')}[/]"
-            console.print(Panel(Align.center(header), box=box.DOUBLE, border_style=_CONFIG.COLOR_HEADER))
+            header_text = Text.from_markup(f"[bold white]🚀 {title} 🚀[/]\n[{_CONFIG.COLOR_INFO}]User: {getpass.getuser()} | {_get_now().strftime('%d/%m/%Y %H:%M')}[/]", justify="center")
+            console.print(Panel(header_text, box=box.DOUBLE, border_style=_CONFIG.COLOR_HEADER))
             opt_table = Table(show_header=False, box=box.ROUNDED, border_style=_CONFIG.COLOR_MENU)
             for k, v in options.items():
                 # Xác định màu sắc: /exit hoặc 0 đỏ, lệnh bắt đầu bằng / xanh lá, còn lại (số) xanh lơ
@@ -52,16 +53,18 @@ class MenuManager:
 
             menu_panel = Panel(opt_table, title=f"[bold {_CONFIG.COLOR_MENU}]🎮 MENU[/]", border_style=_CONFIG.COLOR_MENU, expand=False)
             
-            # Chuẩn bị nội dung bên phải (Ưu tiên File List, sau đó tới History)
+            # Chuẩn bị nội dung bên phải (Ưu tiên File List, Chi tiết câu hỏi, sau đó tới History)
             right_content = None
             if show_file_list:
                 _, right_content = self.file_mgr.list_files(show=False, return_table=True)
+            elif show_questions_path:
+                _, right_content = self.card_mgr.show_questions(show_questions_path, return_table=True)
             elif show_sidebar and _CONFIG.SHOW_HISTORY:
                 right_content = self.get_history_table()
 
-            if show_sidebar or show_file_list:
+            if show_sidebar or show_file_list or show_questions_path:
                 left_elements = [menu_panel]
-                if show_sidebar and _CONFIG.SHOW_STATS:
+                if show_sidebar and _CONFIG.SHOW_STATS and not show_questions_path:
                     left_elements.append(self.show_stats())
                 
                 left_col = Group(*left_elements)
@@ -71,8 +74,6 @@ class MenuManager:
                     console.print(left_col)
             else:
                 console.print(menu_panel)
-
-            if show_questions_path: self.card_mgr.show_questions(show_questions_path)
             ch = inp.input_menu_choice()
             if ch in options: options[ch][0]()
             if ch in ["0", "exit", "/exit"]: 
