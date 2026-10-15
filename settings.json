@@ -34,5 +34,5 @@
     "QUESTION_SORT_BY": "answer_asc",
     "MISTAKE_SORT_BY": "diff_asc",
     "QUIZ_TIME_LIMIT": 30,
-    "ENABLE_DIFFICULTY_RATING": false
+    "ENABLE_DIFFICULTY_RATING": true
 }

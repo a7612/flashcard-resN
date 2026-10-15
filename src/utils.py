@@ -238,6 +238,43 @@ def _manage_filter_categories_util(file_mgr, card_mgr):
         with open(f_path, "w", encoding="utf-8") as f:
             f.write("\n".join(kws))
 
+def _manage_filter_wordbank_util(file_mgr=None, card_mgr=None):
+    import src.process_input as inp
+    f_path = os.path.join("data", "filter_wordbank.txt")
+    os.makedirs("data", exist_ok=True)
+
+    while True:
+        _clear_screen()
+        words = []
+        if os.path.exists(f_path):
+            with open(f_path, "r", encoding="utf-8") as f:
+                words = [l.strip().lower() for l in f if l.strip() and not l.startswith("#")]
+
+        # Sắp xếp và deduplicate danh sách từ
+        unique_words = sorted(list(set(words)))
+
+        table = Table(title="📚 QUẢN LÝ WORD BANK", box=box.ROUNDED)
+        table.add_column("STT", justify="right", style="cyan", width=6)
+        table.add_column("Từ", style="bold white", min_width=25)
+        table.add_column("Trạng thái", justify="center", style="green", width=15)
+
+        for i, w in enumerate(unique_words, 1):
+            table.add_row(str(i), w, "[green]Đang lọc[/]")
+        console.print(table)
+
+        console.print("\n[bold cyan][F][/] Lọc  [bold white][Q][/] Thoát")
+        cmd = _safe_input("👉 Lựa chọn: ")
+        if not cmd or cmd.lower() in ['q', '0']: break
+
+        action = cmd.lower()
+        if action == 'f':
+            # Thực hiện lọc: dọn dẹp khoảng trắng, loại bỏ trùng lặp, sắp xếp A-Z
+            cleaned = sorted(list(set(w.strip().lower() for w in words if w.strip())))
+            with open(f_path, "w", encoding="utf-8") as f:
+                f.write("\n".join(cleaned))
+            console.print(f"[green]✅ Đã lọc và chuẩn hóa {len(cleaned)} từ trong Word Bank![/]")
+            time.sleep(1)
+
 def _get_mistake_history_data():
     """Hàm bổ trợ thu thập thống kê số lần sai/đúng của tất cả các câu hỏi từ lịch sử exports/."""
     mistakes = {} # {question_text: [wrong_count, correct_count, correct_answer, last_wrong_ts, last_correct_ts]}

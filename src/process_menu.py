@@ -7,6 +7,7 @@ from src.utils import (
     _handle_manage_questions_for_path_util, _handle_file_deletion_util,
     _clear_logs_util,
     _manage_filter_categories_util,
+    _manage_filter_wordbank_util,
     _show_mistake_stats_util,
     _play_mistake_review_util
 )
@@ -113,13 +114,14 @@ class MenuManager:
         is_num = _CONFIG.MENU_MODE == "numeric"
         opts = {
             ("1" if is_num else "/c"): (self._handle_manage_questions_for_path, "[green]Biên tập nội dung[/]"),
-            ("2" if is_num else "/keyword"): (lambda: _manage_filter_categories_util(self.file_mgr, self.card_mgr), f"[yellow]Quản lý từ khóa[/]\n"),
-            ("3" if is_num else "/create"): (self._handle_create_file_flow, "[green]Tạo bộ đề mới[/]"),
-            ("4" if is_num else "/rename"): (self._handle_rename_flow, "[yellow]Đổi tên bộ đề[/]"),
-            ("5" if is_num else "/delete"): (lambda: (self._handle_file_deletion(show_list=False), self.card_mgr.clear_cache()), f"[red]Xoá bộ đề[/]"),           
-            ("6" if is_num else "/search"): (self._handle_search_files, f"[cyan]Tìm kiếm bộ đề[/]"),
-            ("7" if is_num else "/disable"): (self._handle_toggle_disable_flow, "[red]Vô hiệu hóa/[yellow]Mở lại[/]"),
-            ("8" if is_num else "/check"): (self.check_all_integrity, "[cyan]Kiểm tra lỗi dữ liệu[/]"), 
+            ("2" if is_num else "/keyword"): (lambda: _manage_filter_categories_util(self.file_mgr, self.card_mgr), f"[yellow]Quản lý từ khóa[/]"),
+            ("3" if is_num else "/wordbank"): (lambda: _manage_filter_wordbank_util(self.file_mgr, self.card_mgr), f"[yellow]Quản lý Word Bank[/]\n"),
+            ("4" if is_num else "/create"): (self._handle_create_file_flow, "[green]Tạo bộ đề mới[/]"),
+            ("5" if is_num else "/rename"): (self._handle_rename_flow, "[yellow]Đổi tên bộ đề[/]"),
+            ("6" if is_num else "/delete"): (lambda: (self._handle_file_deletion(show_list=False), self.card_mgr.clear_cache()), f"[red]Xoá bộ đề[/]"),           
+            ("7" if is_num else "/search"): (self._handle_search_files, f"[cyan]Tìm kiếm bộ đề[/]"),
+            ("8" if is_num else "/disable"): (self._handle_toggle_disable_flow, "[red]Vô hiệu hóa/[yellow]Mở lại[/]"),
+            ("9" if is_num else "/check"): (self.check_all_integrity, "[cyan]Kiểm tra lỗi dữ liệu[/]"), 
             ("0" if is_num else "/exit"): (lambda: None, "Quay lại")
         }
         self.run_menu("📦 QUẢN LÝ HỆ THỐNG", opts, show_file_list=True, show_sidebar=True, clear=True)

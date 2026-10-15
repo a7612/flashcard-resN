@@ -15,6 +15,27 @@ import src.process_input as inp
 class QuizGame:
     def __init__(self): pass
 
+    def _get_all_dataset_answers(self):
+        """Tải toàn bộ dữ liệu từ tất cả các file câu hỏi trong QUESTIONS_DIR để làm kho đáp án chung."""
+        if hasattr(self, '_cached_all_data'): return self._cached_all_data
+        all_data = []
+        qdir = _CONFIG.QUESTIONS_DIR
+        if os.path.exists(qdir):
+            try:
+                for f_name in os.listdir(qdir):
+                    if f_name.endswith(".csv"):
+                        path = os.path.join(qdir, f_name)
+                        with open(path, "r", encoding="utf-8-sig") as f:
+                            reader = csv.reader(f)
+                            for row in reader:
+                                if len(row) >= 3 and row[0].strip() and row[0].strip().lower() != "id":
+                                    # Chuẩn hóa row có đủ 5 cột (id, answer, question, hint, desc)
+                                    row_ext = [row[0], row[1], row[2], row[3] if len(row) > 3 else "", row[4] if len(row) > 4 else ""]
+                                    all_data.append(row_ext)
+            except: pass
+        self._cached_all_data = all_data
+        return self._cached_all_data
+
     def _get_kws(self):
         """Đọc và cache danh sách từ khóa từ filter_categories.txt."""
         if hasattr(self, '_cached_kws'): return self._cached_kws
@@ -27,16 +48,35 @@ class QuizGame:
             except: pass
         return self._cached_kws
 
+    def _get_filter_wordbank(self):
+        """Đọc danh sách từ bị cấm/lọc từ data/filter_wordbank.txt."""
+        f_path = os.path.join("data", "filter_wordbank.txt")
+        if not os.path.exists(f_path): return set()
+        try:
+            with open(f_path, "r", encoding="utf-8") as f:
+                return set(l.strip().lower() for l in f if l.strip() and not l.startswith("#"))
+        except:
+            return set()
+
     def _get_word_bank(self, all_ans):
-        """Tạo ngân hàng từ vựng phân loại theo chữ cái đầu từ toàn bộ bộ đề."""
+        """Tạo ngân hàng từ vựng chuyên ngành cho câu hỏi viết tắt dựa trên KEYWORD_Q_INPUT.
+        Chỉ bóc tách các từ tiếng Anh chuẩn trong đáp án của các câu hỏi viết tắt để tránh lẫn lộn tên riêng hay nội dung file khác.
+        """
         if hasattr(self, '_cached_bank'): return self._cached_bank
+        blacklist = self._get_filter_wordbank()
+        acronym_kws = getattr(_CONFIG, 'KEYWORD_Q_INPUT', [])
         bank = {}
         for row in all_ans:
-            # Lấy text từ cả Answer, Question, Hint và Desc để làm phong phú từ vựng
-            text = self._clean_text(f"{row[1]} {row[2]} {row[3] or ''} {row[4] or ''}")
-            # Tìm các từ có độ dài >= 2 (bỏ qua các từ đơn lẻ không nghĩa)
-            words = re.findall(r'\b[a-zA-Z]{2,}\b', text)
+            # Kiểm tra câu hỏi có chứa từ khóa quy định trong KEYWORD_Q_INPUT (VD: 'viết tắt của', 'stand for', 'tên đầy đủ')
+            q_text = str(row[2]).lower() if len(row) > 2 else ""
+            if not any(kw.lower() in q_text for kw in acronym_kws):
+                continue
+            
+            # Chỉ lấy các từ vựng từ Answer (loại bỏ chú thích trong ngoặc đơn nếu có)
+            clean_ans = re.sub(r'\(.*?\)', '', self._clean_text(str(row[1]))).strip()
+            words = re.findall(r'\b[a-zA-Z]{2,}\b', clean_ans)
             for w in words:
+                if w.lower() in blacklist: continue
                 first = w[0].upper()
                 if first not in bank: bank[first] = set()
                 bank[first].add(w.capitalize())
@@ -44,8 +84,10 @@ class QuizGame:
         return self._cached_bank
 
     def _get_history_word_bank(self):
-        """Quét lịch sử các lần làm sai để lấy từ vựng ưu tiên làm phương án nhiễu."""
+        """Quét lịch sử các lần làm sai của các câu hỏi viết tắt (KEYWORD_Q_INPUT) để lấy từ vựng ưu tiên làm phương án nhiễu."""
         if hasattr(self, '_cached_history_bank'): return self._cached_history_bank
+        blacklist = self._get_filter_wordbank()
+        acronym_kws = getattr(_CONFIG, 'KEYWORD_Q_INPUT', [])
         bank = {}
         export_dir = _CONFIG.EXPORT_DIR
         if not os.path.exists(export_dir): return {}
@@ -56,13 +98,18 @@ class QuizGame:
                 path = os.path.join(export_dir, f_name)
                 with open(path, encoding="utf-8-sig") as f:
                     reader = list(csv.reader(f))
-                    # Dữ liệu bắt đầu từ dòng index 7 (sau metadata và header)
+                    # Dữ liệu bắt đầu từ dòng index 7 (sau metadata và header: idx, question, correct, ok, hint, desc)
                     if len(reader) < 8: continue
                     for row in reader[7:]:
                         if len(row) >= 4 and row[3].strip().lower() == "false":
-                            text = self._clean_text(row[2]) # Cột 'correct'
-                            words = re.findall(r'\b[a-zA-Z]{2,}\b', text)
+                            q_text = row[1].lower() if len(row) > 1 else ""
+                            # Chỉ lấy từ lịch sử nếu câu hỏi thuộc dạng viết tắt (KEYWORD_Q_INPUT)
+                            if not any(kw.lower() in q_text for kw in acronym_kws):
+                                continue
+                            clean_ans = re.sub(r'\(.*?\)', '', self._clean_text(row[2])).strip()
+                            words = re.findall(r'\b[a-zA-Z]{2,}\b', clean_ans)
                             for w in words:
+                                if w.lower() in blacklist: continue
                                 first = w[0].upper()
                                 if first not in bank: bank[first] = set()
                                 bank[first].add(w.capitalize())
@@ -70,8 +117,12 @@ class QuizGame:
         self._cached_history_bank = {k: list(v) for k, v in bank.items()}
         return self._cached_history_bank
 
-    def _generate_fake_phrase(self, original_a, bank, h_bank=None):
-        """Sinh cụm từ giả thông minh hơn bằng cách khớp độ dài từ gốc."""
+    def _generate_fake_phrase(self, original_a, bank, h_bank=None, forbidden_words=None):
+        """Sinh cụm từ giả thông minh hơn bằng cách khớp độ dài từ gốc và loại trừ từ cấm/từ trong câu hỏi."""
+        blacklist = self._get_filter_wordbank()
+        forbidden = set(w.lower() for w in forbidden_words) if forbidden_words else set()
+        forbidden.update(blacklist)
+
         # Làm sạch và tách các từ gốc
         clean_a = re.sub(r'\(.*?\)', '', self._clean_text(original_a)).strip()
         words = [w for w in re.split(r'[\s\-_]+', clean_a) if w]
@@ -91,8 +142,13 @@ class QuizGame:
         
         for target in processing_targets:
             first = target[0].upper()
-            # Ưu tiên lấy từ ngân hàng lịch sử sai (h_bank), nếu không có mới lấy từ bank hiện tại
-            candidates = h_bank.get(first, []) if h_bank and h_bank.get(first) else bank.get(first, [])
+            # Gom candidates từ cả bank và h_bank để đảm bảo độ phong phú của kho từ
+            raw_set = set(bank.get(first, []))
+            if h_bank and h_bank.get(first):
+                raw_set.update(h_bank.get(first, []))
+            
+            # Lọc bỏ các từ nằm trong forbidden (từ cấm hoặc từ trong câu hỏi)
+            candidates = [c for c in raw_set if c.lower() not in forbidden]
             if not candidates:
                 fake_phrase.append(first)
                 continue
@@ -128,19 +184,33 @@ class QuizGame:
 
     def _clean_text(self, text):
         """Loại bỏ Rich Markup [style]...[/style] để so sánh đáp án."""
-        t = str(text).replace("\\n", "\n").replace("\r\n", "\n")
-        for kw in ["{BREAK}", "{break}", "{Break}", "{ BREAK }", "{ break }", "{BRAKE}", "{brake}", "{Brake}", "{ BRAKE }"]:
+        t = str(text)
+        for kw in ["{bs}", "{backslash}", "{BACKSLASH}"]:
+            t = t.replace(kw, "\\")
+        for kw in ["{tab}", "{TAB}"]:
+            t = t.replace(kw, "\t")
+        for kw in ["{br}", "{break}", "{BREAK}", "{Break}", "{ BREAK }", "{ break }", "{BRAKE}", "{brake}"]:
             t = t.replace(kw, "\n")
+        t = t.replace("\\n", "\n").replace("\r\n", "\n").replace("\\t", "\t")
         clean = re.sub(r'\[/?[a-zA-Z #0-9,._-]*\]', '', t)
         return clean.strip().lower().rstrip('.')
 
     def _check_correctness(self, user_input, correct_answer):
         """So sánh đáp án có hỗ trợ Fuzzy Matching."""
+        # 1. Trực tiếp kiểm tra nếu phương án chọn trùng với đáp án chuẩn (hoặc bản đã format màu/ký tự của nó)
+        if user_input == correct_answer or user_input == _replace_colors(correct_answer):
+            return True, 1.0
+
         u_clean = self._clean_text(user_input)
         c_clean = self._clean_text(correct_answer)
 
-        # 1. Kiểm tra khớp chính xác sau khi làm sạch
+        # 2. Kiểm tra khớp chính xác sau khi làm sạch
         if u_clean == c_clean:
+            return True, 1.0
+
+        # 3. So khớp với cả bản đã qua _replace_colors của đáp án chuẩn
+        c_fmt_clean = self._clean_text(_replace_colors(correct_answer))
+        if u_clean == c_fmt_clean:
             return True, 1.0
         
         if getattr(_CONFIG, 'FUZZY_MATCHING_ENABLED', False):
@@ -198,18 +268,31 @@ class QuizGame:
 
         # 3. Gom pool distractors cho câu hỏi acronym
         if is_acronym_q and len(target_initials) > 1:
-            # Tìm các đáp án THỰC TẾ có cùng initials trong data trước
-            pool = list(set(str(x[1]).strip() for x in all_ans 
-                            if self._get_initials(str(x[1])) == target_initials and self._clean_text(str(x[1])) != a_clean))
+            # Thu thập các từ xuất hiện trong câu hỏi q và target initials để cấm xuất hiện trong fake options
+            q_tokens = set(re.findall(r'\b[a-zA-Z0-9]+\b', q.lower()))
+            q_tokens.add(target_initials.lower())
+            blacklist = self._get_filter_wordbank()
+            forbidden = q_tokens | blacklist
+
+            # Tìm các đáp án THỰC TẾ có cùng initials trong data trước (loại trừ nếu chứa từ cấm hoặc từ trong câu hỏi)
+            raw_pool = set(str(x[1]).strip() for x in all_ans 
+                           if self._get_initials(str(x[1])) == target_initials and self._clean_text(str(x[1])) != a_clean)
+            pool = []
+            for item in raw_pool:
+                words_in_item = set(re.findall(r'\b[a-zA-Z0-9]+\b', item.lower()))
+                if not (words_in_item & forbidden):
+                    pool.append(item)
             
             # Luôn cố gắng sinh thêm phương án giả để đạt độ đa dạng, sử dụng bank từ vựng và lịch sử
-            bank = self._get_word_bank(all_ans)
+            acronym_data_source = self._get_all_dataset_answers() if (all_ans is data or len(all_ans) <= 1) else all_ans
+            bank = self._get_word_bank(acronym_data_source)
             h_bank = self._get_history_word_bank()
             
             for _ in range(100):
-                fake = self._generate_fake_phrase(a, bank, h_bank)
+                fake = self._generate_fake_phrase(a, bank, h_bank, forbidden_words=forbidden)
                 if fake and self._clean_text(fake) != a_clean and fake not in pool:
-                    if self._get_initials(fake) == target_initials:
+                    fake_words = set(re.findall(r'\b[a-zA-Z0-9]+\b', fake.lower()))
+                    if not (fake_words & forbidden) and self._get_initials(fake) == target_initials:
                         pool.append(fake)
                 if len(pool) >= 20: break
             
@@ -223,9 +306,11 @@ class QuizGame:
 
         # 4. Loại bỏ đáp án a VÀ tất cả các đáp án khác của CÙNG CÂU HỎI q
         # (Để đảm bảo câu hỏi trắc nghiệm chỉ có 1 ĐÁP ÁN ĐÚNG và 3 ĐÁP ÁN SAI cùng dạng từ khóa)
+        global_ans = self._get_all_dataset_answers() if (all_ans is data or len(all_ans) <= 1) else all_ans
         seen_answers = set()
         seen_answers.add(a_clean)
-        for x in all_ans:
+        pool_for_seen = global_ans if global_ans else all_ans
+        for x in pool_for_seen:
             if self._clean_text(x[2]) == q_clean:
                 seen_answers.add(self._clean_text(x[1]))
 
@@ -238,13 +323,22 @@ class QuizGame:
         match_k = next((k for k in kws if k in q.lower()), None)
         if match_k and still_needed > 0:
             kw_answers = []
+            # 5.1 Ưu tiên tìm trong bộ đề hiện tại (data)
             for x in data:
                 ans_str = str(x[1]).strip()
                 ans_clean = self._clean_text(ans_str)
-                # Chỉ lấy đáp án từ các câu hỏi KHÁC có cùng từ khóa
                 if match_k in str(x[2]).lower() and self._clean_text(x[2]) != q_clean and ans_clean not in seen_answers:
                     kw_answers.append(ans_str)
                     seen_answers.add(ans_clean)
+            
+            # 5.2 Nếu chưa đủ, tìm tiếp các câu hỏi có cùng KEYWORD trên toàn bộ hệ thống (global_ans)
+            if len(kw_answers) < still_needed and global_ans:
+                for x in global_ans:
+                    ans_str = str(x[1]).strip()
+                    ans_clean = self._clean_text(ans_str)
+                    if match_k in str(x[2]).lower() and self._clean_text(x[2]) != q_clean and ans_clean not in seen_answers:
+                        kw_answers.append(ans_str)
+                        seen_answers.add(ans_clean)
             
             kw_answers = [o for o in kw_answers if o not in ["Đúng", "Sai"]]
             if kw_answers:
@@ -259,7 +353,8 @@ class QuizGame:
         # 6. Tầng 2 - Global Fallback: Lấy đáp án sai từ các câu hỏi KHÁC còn lại nếu chưa đủ phương án nhiễu
         if still_needed > 0:
             fallback_pool = []
-            for x in all_ans:
+            pool_source = global_ans if global_ans else all_ans
+            for x in pool_source:
                 ans_str = str(x[1]).strip()
                 ans_clean = self._clean_text(ans_str)
                 if self._clean_text(x[2]) != q_clean and ans_clean not in seen_answers:
@@ -589,19 +684,32 @@ class QuizGame:
             return ok, chosen, (q_d, a_d, d_d, r_d, ratio)
 
     def _wait_next(self, qid=None, ok=True):
-        if not getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False):
-            # Tự động chuyển câu liền mạch không ngắt quãng (nhấn phím bất kỳ để qua ngay)
-            delay = 0.8 if ok else min(getattr(_CONFIG, 'ERROR_DELAY', 2), 2.5)
-            end_t = time.time() + delay
+        if getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False):
+            val = inp.input_difficulty_rating()
+            if qid and val:
+                log_action(f"RATING:{qid}", f"Difficulty: {val}")
+                log_difficulty(qid, val)
+            return True
+
+        # Nếu vừa trả lời sai, dừng 1s cho người chơi kịp nhìn đáp án đúng
+        if not ok:
+            time.sleep(1.0)
+
+        # Hiệu ứng chuyển câu 3... 2... 1... 💥 BÙM!
+        steps = [("3...", 0.45), ("2...", 0.45), ("1...", 0.45), ("💥 BÙM!", 0.25)]
+        for s_text, dur in steps:
+            console.print(f"\r[dim]⏳ Chuyển câu trong:[/] [bold yellow]{s_text}[/] ", end="")
+            end_t = time.time() + dur
+            skipped = False
             while time.time() < end_t:
                 if HAS_MSVCRT and msvcrt.kbhit():
                     msvcrt.getwch()
+                    skipped = True
                     break
-                time.sleep(0.04)
-            return True
-
-        val = inp.input_difficulty_rating()
-        if qid and val:
-            log_action(f"RATING:{qid}", f"Difficulty: {val}")
-            log_difficulty(qid, val)
+                time.sleep(0.03)
+            if skipped:
+                console.print("\r[bold magenta]🚀 💥 BÙM![/]                   ")
+                time.sleep(0.15)
+                break
+        console.print("")
         return True
