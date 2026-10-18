@@ -1,6 +1,0 @@
-﻿id,answer,question,hint,desc
-866b26b3-b167-458c-9e0f-37862a76051b,"Là giao thức mạng dùng để ánh xạ địa chỉ IP sang địa chỉ MAC, giúp các thiết bị trong mạng LAN giao tiếp chính xác với nhau.",Định nghĩa: Address Resolution Protocol (ARP) là gì?,,
-8f003508-218f-44e3-9b17-cc35d00125de,"Là giao thức truyền tải dữ liệu không kết nối, nhanh và hiệu quả, thường dùng cho các ứng dụng yêu cầu tốc độ cao và độ trễ thấp.",Định nghĩa: User Datagram Protocol (UDP) là gì?,,
-e6330c47-12cc-4c37-ba2f-3e7c2214bc56,"Là giao thức điều khiển truyền vận, đảm bảo dữ liệu được truyền đi một cách đáng tin cậy và theo đúng thứ tự giữa các thiết bị trên mạng.",Định nghĩa: Transmission Control Protocol (TCP) là gì?,,
-9da96ae9-99a1-47c2-9761-bacf9b2f1991,"Là một giao thức lớp ứng dụng, được sử dụng để truyền tải các tài nguyên trên WWW từ server đến client và ngược lại",Định nghĩa: Hypertext Transfer Protocol (HTTP) là gì?,,
-2c86d3c7-04f7-498c-8e62-323c098a6d91,"Là phiên bản an toàn của HTTP, kết hợp giữa giao thức HTTP và lớp bảo mật SSL/TLS để mã hóa dữ liệu khi truyền tải trên Internet.",Định nghĩa: Hypertext Transfer Protocol Secure (HTTPs) là gì?,,

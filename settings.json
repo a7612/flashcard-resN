@@ -33,6 +33,6 @@
     "FILE_DISPLAY_SORT_BY": "name_asc",
     "QUESTION_SORT_BY": "answer_asc",
     "MISTAKE_SORT_BY": "diff_asc",
-    "QUIZ_TIME_LIMIT": 30,
+    "QUIZ_TIME_LIMIT": 10,
     "ENABLE_DIFFICULTY_RATING": false
 }
