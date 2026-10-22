@@ -468,7 +468,21 @@ class QuizGame:
             console.print(f"[red]❌ Lỗi I/O khi xuất file CSV báo cáo: {e}[/]")
 
     def _persist_config_value(self, key, val):
-        """Lưu giá trị cấu hình vào file config.py."""
+        """Lưu giá trị cấu hình vào file settings.json và config.py (nếu có)."""
+        import json
+        setattr(_CONFIG, key, val)
+        try:
+            settings_path = "settings.json"
+            if os.path.exists(settings_path):
+                with open(settings_path, "r", encoding="utf-8") as f:
+                    settings_data = json.load(f)
+            else:
+                settings_data = {}
+            settings_data[key] = val
+            with open(settings_path, "w", encoding="utf-8") as f:
+                json.dump(settings_data, f, indent=4)
+        except: pass
+
         path = "config.py"
         try:
             with open(path, "r", encoding="utf-8") as f:
@@ -488,6 +502,8 @@ class QuizGame:
             time_str = f"{cur_limit}s" if cur_limit > 0 else "Vô tận (0s)"
             rating_enabled = getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False)
             rating_str = "[bold green]Bật (1)[/]" if rating_enabled else "[bold red]Tắt (0)[/]"
+            edit_enabled = getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False)
+            edit_str = "[bold green]Bật (1)[/]" if edit_enabled else "[bold red]Tắt (0)[/]"
 
             table = Table(title="⚡ CHỌN MỨC ĐỘ THỬ THÁCH", box=box.SIMPLE)
             table.add_column("Key", style="bold cyan", justify="right")
@@ -500,7 +516,8 @@ class QuizGame:
                 ("5", "Sinh tồn (Sai là dừng, 4 đáp án)"),
                 ("6", "Tùy chỉnh (Tự thiết lập)"),
                 ("7", f"[cyan]Thời gian trả lời: [bold yellow]{time_str}[/] [dim](0 vô tận, default = 15s)[/]"),
-                ("8", f"[cyan]Đánh giá độ khó: {rating_str} [dim](0 = tắt, 1 = bật)[/]")
+                ("8", f"[cyan]Đánh giá độ khó: {rating_str} [dim](0 = tắt, 1 = bật)[/]"),
+                ("9", f"[cyan]Chỉnh sửa sau khi trả lời: {edit_str} [dim](0 = tắt, 1 = bật)[/]")
             ]
             for k, v in modes: table.add_row(k, v)
             console.print(table)
@@ -533,6 +550,22 @@ class QuizGame:
                     
                     self._persist_config_value("ENABLE_DIFFICULTY_RATING", _CONFIG.ENABLE_DIFFICULTY_RATING)
                     console.print(f"[bold green]✅ Đã {'bật' if _CONFIG.ENABLE_DIFFICULTY_RATING else 'tắt'} đánh giá độ khó.[/]\n")
+                continue
+
+            if ch == 9:
+                curr_status = "1" if edit_enabled else "0"
+                val = _safe_input(f"✏️ Chỉnh sửa sau khi trả lời (0 = tắt, 1 = bật, Enter đổi trạng thái, hiện tại: {curr_status}): ")
+                if val is not None:
+                    val_str = str(val).strip()
+                    if val_str == "0":
+                        _CONFIG.EDIT_AFTER_ANSWER = False
+                    elif val_str == "1":
+                        _CONFIG.EDIT_AFTER_ANSWER = True
+                    elif val_str == "":
+                        _CONFIG.EDIT_AFTER_ANSWER = not edit_enabled
+
+                    self._persist_config_value("EDIT_AFTER_ANSWER", _CONFIG.EDIT_AFTER_ANSWER)
+                    console.print(f"[bold green]✅ Đã {'bật' if _CONFIG.EDIT_AFTER_ANSWER else 'tắt'} chỉnh sửa sau khi trả lời.[/]\n")
                 continue
 
             if ch == 5: return (4, 999, True) # Chế độ sinh tồn
@@ -627,7 +660,7 @@ class QuizGame:
                     results.append({"index": i, "question": info[0], "correct": info[1], "hint": info[2], "desc": info[3], "ok": ok})
                     self._feedback(ok, chosen, *info, qid)
 
-                    if not self._wait_next(qid, ok=ok): break
+                    if not self._wait_next(qid, ok=ok, current_item=(qid, a, q, d, r)): break
 
                     if survival and not ok:
                         console.print(f"\n[bold red]GAME OVER![/] Bạn đã dừng bước tại câu {i} trong chế độ Sinh tồn.")
@@ -683,7 +716,34 @@ class QuizGame:
             ok, ratio = self._check_correctness(chosen, a)
             return ok, chosen, (q_d, a_d, d_d, r_d, ratio)
 
-    def _wait_next(self, qid=None, ok=True):
+    def _wait_next(self, qid=None, ok=True, current_item=None):
+        if getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False) and qid and current_item:
+            try:
+                from src.process_flashcard import FlashcardManager
+                fm = FlashcardManager()
+                # current_item = (qid, a, q, d, r)
+                _, a_curr, q_curr, d_curr, r_curr = current_item
+                console.print("\n[bold cyan]✏️ Chỉnh sửa câu hỏi vừa làm (Nhấn Enter để giữ nguyên):[/]")
+                new_q = _safe_input(f"❓ Câu hỏi ({q_curr}): ")
+                if new_q == "": new_q = None
+                new_a = _safe_input(f"✅ Đáp án chuẩn ({a_curr}): ")
+                if new_a == "": new_a = None
+                new_d = _safe_input(f"💡 Gợi ý ({d_curr}): ")
+                if new_d == "": new_d = None
+                new_r = _safe_input(f"📖 Mô tả ({r_curr}): ")
+                if new_r == "": new_r = None
+
+                if any(x is not None for x in [new_q, new_a, new_d, new_r]):
+                    updated, updated_row = fm.update_question_by_id(qid, new_q=new_q, new_a=new_a, new_d=new_d, new_r=new_r)
+                    if updated:
+                        console.print("[bold green]✨ Đã cập nhật thành công câu hỏi![/]\n")
+                    else:
+                        console.print("[yellow]⚠️ Không tìm thấy file chứa ID câu hỏi để cập nhật.[/]\n")
+                else:
+                    console.print("[dim]⏩ Giữ nguyên, không có thay đổi.[/]\n")
+            except Exception as e:
+                console.print(f"[red]❌ Lỗi khi chỉnh sửa câu hỏi: {e}[/]\n")
+
         if getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False):
             val = inp.input_difficulty_rating()
             if qid and val:

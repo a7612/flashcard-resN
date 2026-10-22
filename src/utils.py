@@ -139,22 +139,6 @@ def _play_action_util(file_mgr, card_mgr, menu_mgr, all_files=False):
                 if data: game.run(data, n_opts=1) # Chế độ KISS: 1 đáp án, không hỏi mức độ
     except Exception as e: _handle_error(f"❌ Lỗi khi khởi tạo trò chơi: {e}")
 
-def _check_all_integrity_util(file_mgr, card_mgr):
-    _clear_screen()
-    console.print(Panel(Align.center("[bold cyan]🔍 KIỂM TRA TOÀN DIỆN HỆ THỐNG[/]"), border_style="cyan"))
-    files = file_mgr.get_files()
-    if not files: return console.print("[yellow]⚠️ Không có file để kiểm tra.[/]")
-    table = Table(box=box.MINIMAL_DOUBLE_HEAD, expand=True)
-    table.add_column("Bộ đề", style="bold white", width=30); table.add_column("Kết quả kiểm tra", justify="left")
-    
-    with console.status("[bold green]Đang quét dữ liệu...[/]"):
-        for f_name in files:
-            path = os.path.join(file_mgr.qdir, f_name)
-            errors = card_mgr.validate_file(path)
-            table.add_row(f_name, "\n".join([f"• {e}" for e in errors]) if errors else "[green]✅ Sạch sẽ[/]")
-    console.print(table)
-    console.input(f"\n[cyan]Nhấn Enter để quay lại...[/]")
-
 def _clear_history_util():
     files = [f for f in os.listdir(_CONFIG.EXPORT_DIR) if f.startswith("quiz_results_")]
     if not files: return console.print("[yellow]⚠️ Lịch sử hiện đang trống.[/]")

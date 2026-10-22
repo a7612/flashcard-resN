@@ -3,7 +3,7 @@ from src.core import _CONFIG, console, _clear_screen, _get_now
 from src.utils import (
     _handle_error, _move_to_trash,
     _show_stats_util, _get_history_table_util, _choose_file_path_util, _play_action_util,
-    _check_all_integrity_util, _clear_history_util, _empty_trash_util, _safe_input,
+    _clear_history_util, _empty_trash_util, _safe_input,
     _handle_manage_questions_for_path_util, _handle_file_deletion_util,
     _clear_logs_util,
     _manage_filter_categories_util,
@@ -88,10 +88,6 @@ class MenuManager:
     def play_mistake_review(self, target_score=10):
         _play_mistake_review_util(self.file_mgr, self.card_mgr, target_score=target_score)
 
-    def check_all_integrity(self):
-        log_action("SYSTEM_CHECK", "Started comprehensive integrity scan")
-        _check_all_integrity_util(self.file_mgr, self.card_mgr)
-
     def _handle_manage_questions_for_path(self):
         _handle_manage_questions_for_path_util(self.file_mgr, self.card_mgr, self)
 
@@ -122,7 +118,6 @@ class MenuManager:
             ("6" if is_num else "/delete"): (lambda: (self._handle_file_deletion(show_list=False), self.card_mgr.clear_cache()), f"[red]Xoá bộ đề[/]"),           
             ("7" if is_num else "/search"): (self._handle_search_files, f"[cyan]Tìm kiếm bộ đề[/]"),
             ("8" if is_num else "/disable"): (self._handle_toggle_disable_flow, "[red]Vô hiệu hóa/[yellow]Mở lại[/]"),
-            ("9" if is_num else "/check"): (self.check_all_integrity, "[cyan]Kiểm tra lỗi dữ liệu[/]"), 
             ("0" if is_num else "/exit"): (lambda: None, "Quay lại")
         }
         self.run_menu("📦 QUẢN LÝ HỆ THỐNG", opts, show_file_list=True, show_sidebar=True, clear=True)
@@ -191,7 +186,8 @@ class MenuManager:
                 ("12", "Fuzzy Matching (Chấm gần đúng)", "BẬT" if getattr(_CONFIG, 'FUZZY_MATCHING_ENABLED', False) else "TẮT"),
                 ("13", "Ngưỡng Fuzzy (0.0 - 1.0)", str(_CONFIG.FUZZY_MATCHING_THRESHOLD)),
                 ("14", "Từ khóa ĐÚNG/SAI", str(_CONFIG.KEYWORD_BOOL)),
-                ("15", "Từ khóa câu hỏi nhập liệu", str(_CONFIG.KEYWORD_Q_INPUT))
+                ("15", "Từ khóa câu hỏi nhập liệu", str(_CONFIG.KEYWORD_Q_INPUT)),
+                ("16", "Chỉnh sửa sau khi trả lời", "BẬT" if getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False) else "TẮT")
             ]
 
             table = Table(show_header=False, box=box.ROUNDED, border_style=_CONFIG.COLOR_MENU)
@@ -249,6 +245,8 @@ class MenuManager:
             elif ch == "15":
                 val = _safe_input("📝 Danh sách (cách nhau bởi dấu phẩy): ")
                 if val: self._update_config_persistence("KEYWORD_Q_INPUT", [k.strip() for k in val.split(',')])
+            elif ch == "16":
+                self._update_config_persistence("EDIT_AFTER_ANSWER", not getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False))
             elif ch in ["0", "q", "exit"]:
                 break
 

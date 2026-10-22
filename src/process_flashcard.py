@@ -202,17 +202,31 @@ class FlashcardManager:
                 _handle_error(f"❌ Lỗi khi cập nhật câu hỏi tại dòng {idx+1}: {e}")
                 break
 
-    def validate_file(self, path):
-        """Kiểm tra tính toàn vẹn và lỗi Markup Rich trong file."""
-        errors = []
-        data = self.load_data(path, force=True)
-        if not data: return []
+    def update_question_by_id(self, qid, new_q=None, new_a=None, new_d=None, new_r=None):
+        """Tìm và cập nhật câu hỏi theo ID trên tất cả file câu hỏi."""
+        qdir = _CONFIG.QUESTIONS_DIR
+        if not os.path.exists(qdir):
+            return False, None
+        for fname in os.listdir(qdir):
+            if not fname.endswith(".csv"):
+                continue
+            fpath = os.path.join(qdir, fname)
+            rows = self.load_data(fpath, force=True)
+            for idx, row in enumerate(rows):
+                if len(row) >= 3 and row[0] == qid:
+                    # Cập nhật các trường nếu có giá trị mới
+                    cur_q = row[2]
+                    cur_a = row[1]
+                    cur_d = row[3] if len(row) > 3 else ""
+                    cur_r = row[4] if len(row) > 4 else ""
 
-        for i, row in enumerate(data, 1):
-            if len(row) < 3: continue
-            q_text = str(row[2])
-            
-            if q_text.count('[') != q_text.count(']'):
-                errors.append(f"Dòng {i}: [magenta]Cú pháp Markup [[ ]] không cân xứng[/]")
-            
-        return errors
+                    row[2] = new_q if new_q is not None and new_q.strip() != "" else cur_q
+                    row[1] = new_a if new_a is not None and new_a.strip() != "" else cur_a
+                    row[3] = new_d if new_d is not None and new_d.strip() != "" else cur_d
+                    row[4] = new_r if new_r is not None and new_r.strip() != "" else cur_r
+
+                    rows[idx] = row
+                    self.save_data(fpath, rows)
+                    log_action("QUES_EDIT_QUIZ", f"File: {fname} | ID: {qid}")
+                    return True, row
+        return False, None
