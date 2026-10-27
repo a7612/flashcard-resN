@@ -1,6 +1,29 @@
-#!/usr/bin/env python3
+import json, os
 from src.process_menu import MenuManager
 from src.core import console, _clear_screen, _CONFIG, time
+
+SETTINGS_FILE = "settings.json"
+
+def load_settings():
+    """Load settings từ file JSON, nếu không có thì trả về rỗng hoặc settings mặc định"""
+    if not os.path.exists(SETTINGS_FILE):
+        return {}
+    with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_setting(key, value):
+    """Cập nhật giá trị cấu hình vào file JSON"""
+    if not os.path.exists(SETTINGS_FILE):
+        settings = {}
+    else:
+        with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
+            try:
+                settings = json.load(f)
+            except Exception:
+                settings = {}
+    settings[key] = value
+    with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
+        json.dump(settings, f, indent=4)
 
 if __name__ == "__main__":
     try:

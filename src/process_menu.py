@@ -44,8 +44,8 @@ class MenuManager:
             if clear: _clear_screen()
             
             header_text = Text.from_markup(f"[bold white]🚀 {title} 🚀[/]\n[{_CONFIG.COLOR_INFO}]User: {getpass.getuser()} | {_get_now().strftime('%d/%m/%Y %H:%M')}[/]", justify="center")
-            console.print(Panel(header_text, box=box.DOUBLE, border_style=_CONFIG.COLOR_HEADER))
-            opt_table = Table(show_header=False, box=box.ROUNDED, border_style=_CONFIG.COLOR_MENU)
+            console.print(Panel(header_text, box=box.ROUNDED, border_style=_CONFIG.COLOR_HEADER))
+            opt_table = Table(show_header=False, box=None, padding=(0, 1))
             for k, v in options.items():
                 # Xác định màu sắc: /exit hoặc 0 đỏ, lệnh bắt đầu bằng / xanh lá, còn lại (số) xanh lơ
                 style = "bold red" if k in ["/exit", "0"] else "bold green" if k.startswith("/") else "bold cyan"
@@ -159,8 +159,8 @@ class MenuManager:
         """Menu quản lý các cài đặt trong settings.json."""
         while True:
             _clear_screen()
-            header = f"[bold white]⚙️ CÀI ĐẶT HỆ THỐNG ⚙️[/]\n[{_CONFIG.COLOR_INFO}]Cấu hình được lưu trong settings.json[/]"
-            console.print(Panel(Align.center(header), box=box.DOUBLE, border_style=_CONFIG.COLOR_HEADER))
+            header_text = Text.from_markup(f"[bold white]⚙️ CÀI ĐẶT HỆ THỐNG ⚙️[/]\n[{_CONFIG.COLOR_INFO}]Cấu hình được lưu trong settings.json[/]", justify="center")
+            console.print(Panel(header_text, box=box.ROUNDED, border_style=_CONFIG.COLOR_HEADER))
 
             # Nhóm 1: Hệ thống & Tệp tin
             group1 = [
@@ -190,7 +190,7 @@ class MenuManager:
                 ("16", "Chỉnh sửa sau khi trả lời", "BẬT" if getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False) else "TẮT")
             ]
 
-            table = Table(show_header=False, box=box.ROUNDED, border_style=_CONFIG.COLOR_MENU)
+            table = Table(show_header=False, box=None, padding=(0, 1))
             table.add_row("[bold cyan]=== HỆ THỐNG ===[/]", "", "")
             for k, l, v in group1: table.add_row(k, l, f"[bold green]{v}[/]")
             table.add_row("[bold cyan]=== GIAO DIỆN ===[/]", "", "")
@@ -199,7 +199,7 @@ class MenuManager:
             for k, l, v in group3: table.add_row(k, l, f"[bold green]{v}[/]")
             table.add_row("0", "[bold red]Quay lại[/]", "")
 
-            console.print(Panel(table, title="🛠️ TÙY CHỈNH", border_style=_CONFIG.COLOR_MENU, expand=False))
+            console.print(Panel(table, title=f"[bold {_CONFIG.COLOR_MENU}]🛠️ TÙY CHỈNH[/]", border_style=_CONFIG.COLOR_MENU, box=box.ROUNDED, expand=False))
 
             ch = inp.input_menu_choice()
             if ch == "1":

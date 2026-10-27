@@ -33,7 +33,7 @@
     "FILE_DISPLAY_SORT_BY": "name_asc",
     "QUESTION_SORT_BY": "answer_asc",
     "MISTAKE_SORT_BY": "diff_asc",
-    "QUIZ_TIME_LIMIT": 10,
-    "ENABLE_DIFFICULTY_RATING": true,
+    "QUIZ_TIME_LIMIT": 0,
+    "ENABLE_DIFFICULTY_RATING": false,
     "EDIT_AFTER_ANSWER": true
 }

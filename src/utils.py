@@ -78,7 +78,7 @@ def _show_stats_util(file_mgr):
         total_q, q_size, clean_size, files = 0, 0, 0, []
         log_count, hist_count, trash_count = 0, 0, 0
 
-    table = Table(box=box.ROUNDED, show_header=False, min_width=28, border_style=_CONFIG.COLOR_STATS) 
+    table = Table(box=None, show_header=False, min_width=28, padding=(0, 1)) 
     table.add_row("Bộ đề", str(len(files)))
     table.add_row("Tổng câu", f"[bold green]{total_q}[/]")
     table.add_row("[yellow]File tạm[/]", str(log_count + hist_count))
@@ -87,10 +87,10 @@ def _show_stats_util(file_mgr):
     table.add_row("Lưu trữ nên xóa", f"[bold yellow]{f_size(clean_size)}[/]")
     table.add_row("Lưu trữ thực tế", f"[bold magenta]{f_size(q_size + clean_size)}[/]")
 
-    return Panel(table, title=f"[bold {_CONFIG.COLOR_STATS}]📊 THỐNG KÊ[/]", border_style=_CONFIG.COLOR_STATS, expand=False)
+    return Panel(table, title=f"[bold {_CONFIG.COLOR_STATS}]📊 THỐNG KÊ[/]", border_style=_CONFIG.COLOR_STATS, box=box.ROUNDED, expand=False)
 
 def _get_history_table_util():
-    table = Table(box=box.ROUNDED, border_style=_CONFIG.COLOR_HISTORY)
+    table = Table(box=box.SIMPLE, border_style=_CONFIG.COLOR_HISTORY)
     table.add_column("Thời gian", style="dim", width=11); table.add_column("Điểm", justify="center"); table.add_column("%", justify="right", style="bold yellow")
     history_pcts = []
     h_files = sorted([f for f in os.listdir(_CONFIG.EXPORT_DIR) if f.startswith("quiz_results_")], reverse=True)[:10]
@@ -106,7 +106,7 @@ def _get_history_table_util():
         avg = sum(history_pcts)/len(history_pcts)
         color = "bold green" if avg > 80 else "bold red" if avg < 50 else "bold yellow"
         table.caption = f"[bold white]🎯 Độ chính xác TB: [{color}]{avg:.1f}%[/{color}][/]"
-    return Panel(table, title=f"[bold {_CONFIG.COLOR_HISTORY}]📜 LỊCH SỬ[/]", border_style=_CONFIG.COLOR_HISTORY, expand=False)
+    return Panel(table, title=f"[bold {_CONFIG.COLOR_HISTORY}]📜 LỊCH SỬ[/]", border_style=_CONFIG.COLOR_HISTORY, box=box.ROUNDED, expand=False)
 
 def _choose_file_path_util(file_mgr, allow_all=False, show=True, exclude_disabled=False, context_name="", hide_empty=False):
     if context_name:
@@ -293,7 +293,8 @@ def _get_mistake_history_data():
 def _play_mistake_review_util(file_mgr, card_mgr, target_score=10):
     """Lọc và tạo lượt Quiz ôn tập các câu hỏi từng sai có Hiệu số < target_score (mặc định +10)."""
     _clear_screen()
-    console.print(Panel(Align.center(f"[bold red]🔥 CHẾ ĐỘ ÔN TẬP CHINH PHỤC LỖI SAI (TARGET NET SCORE +{target_score})[/]"), border_style="red"))
+    header_text = Text.from_markup(f"[bold red]🔥 CHẾ ĐỘ ÔN TẬP CHINH PHỤC LỖI SAI (TARGET NET SCORE +{target_score})[/]", justify="center")
+    console.print(Panel(header_text, box=box.ROUNDED, border_style="red"))
 
     mistakes = _get_mistake_history_data()
     if not mistakes:
@@ -358,7 +359,8 @@ def _play_mistake_review_util(file_mgr, card_mgr, target_score=10):
 def _show_mistake_stats_util(file_mgr=None, card_mgr=None):
     """Thống kê các câu hỏi thường xuyên bị trả lời sai từ lịch sử."""
     _clear_screen()
-    console.print(Panel(Align.center("[bold red]❌ THỐNG KÊ LỖI SAI PHỔ BIẾN[/]"), border_style="red"))
+    header_text = Text.from_markup("[bold red]❌ THỐNG KÊ LỖI SAI PHỔ BIẾN[/]", justify="center")
+    console.print(Panel(header_text, box=box.ROUNDED, border_style="red"))
     
     mistakes = _get_mistake_history_data()
     if not mistakes:

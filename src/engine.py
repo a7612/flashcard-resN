@@ -445,7 +445,7 @@ class QuizGame:
             return
 
         wrong, pct = total - score, (score / total * 100) if total else 0.0
-        table = Table(title="BẢNG VÀNG THÀNH TÍCH", box=box.DOUBLE_EDGE)
+        table = Table(title="🏆 BẢNG VÀNG THÀNH TÍCH 🏆", box=box.ROUNDED)
         table.add_column("STT", justify="right", style="cyan")
         table.add_column("TRẠNG THÁI", justify="center")
         table.add_column("ĐÁP ÁN CHUẨN", style="green")
@@ -501,11 +501,11 @@ class QuizGame:
             cur_limit = getattr(_CONFIG, 'QUIZ_TIME_LIMIT', 15)
             time_str = f"{cur_limit}s" if cur_limit > 0 else "Vô tận (0s)"
             rating_enabled = getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False)
-            rating_str = "[bold green]Bật (1)[/]" if rating_enabled else "[bold red]Tắt (0)[/]"
+            rating_str = "[bold green]Bật[/]" if rating_enabled else "[bold red]Tắt[/]"
             edit_enabled = getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False)
-            edit_str = "[bold green]Bật (1)[/]" if edit_enabled else "[bold red]Tắt (0)[/]"
+            edit_str = "[bold green]Bật[/]" if edit_enabled else "[bold red]Tắt[/]"
 
-            table = Table(title="⚡ CHỌN MỨC ĐỘ THỬ THÁCH", box=box.SIMPLE)
+            table = Table(title="⚡ CHỌN MỨC ĐỘ THỬ THÁCH", box=box.ROUNDED)
             table.add_column("Key", style="bold cyan", justify="right")
             table.add_column("Chế độ", style="white")
             modes = [
@@ -516,8 +516,8 @@ class QuizGame:
                 ("5", "Sinh tồn (Sai là dừng, 4 đáp án)"),
                 ("6", "Tùy chỉnh (Tự thiết lập)"),
                 ("7", f"[cyan]Thời gian trả lời: [bold yellow]{time_str}[/] [dim](0 vô tận, default = 15s)[/]"),
-                ("8", f"[cyan]Đánh giá độ khó: {rating_str} [dim](0 = tắt, 1 = bật)[/]"),
-                ("9", f"[cyan]Chỉnh sửa sau khi trả lời: {edit_str} [dim](0 = tắt, 1 = bật)[/]")
+                ("8", f"[cyan]Đánh giá độ khó: {rating_str} [dim](Bật/Tắt)[/]"),
+                ("9", f"[cyan]Chỉnh sửa sau khi trả lời: {edit_str} [dim](Bật/Tắt)[/]")
             ]
             for k, v in modes: table.add_row(k, v)
             console.print(table)
@@ -537,35 +537,15 @@ class QuizGame:
                 continue
 
             if ch == 8:
-                curr_status = "1" if rating_enabled else "0"
-                val = _safe_input(f"⭐ Đánh giá độ khó (0 = tắt, 1 = bật, Enter đổi trạng thái, hiện tại: {curr_status}): ")
-                if val is not None:
-                    val_str = str(val).strip()
-                    if val_str == "0":
-                        _CONFIG.ENABLE_DIFFICULTY_RATING = False
-                    elif val_str == "1":
-                        _CONFIG.ENABLE_DIFFICULTY_RATING = True
-                    elif val_str == "":
-                        _CONFIG.ENABLE_DIFFICULTY_RATING = not rating_enabled
-                    
-                    self._persist_config_value("ENABLE_DIFFICULTY_RATING", _CONFIG.ENABLE_DIFFICULTY_RATING)
-                    console.print(f"[bold green]✅ Đã {'bật' if _CONFIG.ENABLE_DIFFICULTY_RATING else 'tắt'} đánh giá độ khó.[/]\n")
+                _CONFIG.ENABLE_DIFFICULTY_RATING = not rating_enabled
+                self._persist_config_value("ENABLE_DIFFICULTY_RATING", _CONFIG.ENABLE_DIFFICULTY_RATING)
+                console.print(f"[bold green]✅ Đã {'bật' if _CONFIG.ENABLE_DIFFICULTY_RATING else 'tắt'} đánh giá độ khó.[/]\n")
                 continue
 
             if ch == 9:
-                curr_status = "1" if edit_enabled else "0"
-                val = _safe_input(f"✏️ Chỉnh sửa sau khi trả lời (0 = tắt, 1 = bật, Enter đổi trạng thái, hiện tại: {curr_status}): ")
-                if val is not None:
-                    val_str = str(val).strip()
-                    if val_str == "0":
-                        _CONFIG.EDIT_AFTER_ANSWER = False
-                    elif val_str == "1":
-                        _CONFIG.EDIT_AFTER_ANSWER = True
-                    elif val_str == "":
-                        _CONFIG.EDIT_AFTER_ANSWER = not edit_enabled
-
-                    self._persist_config_value("EDIT_AFTER_ANSWER", _CONFIG.EDIT_AFTER_ANSWER)
-                    console.print(f"[bold green]✅ Đã {'bật' if _CONFIG.EDIT_AFTER_ANSWER else 'tắt'} chỉnh sửa sau khi trả lời.[/]\n")
+                _CONFIG.EDIT_AFTER_ANSWER = not edit_enabled
+                self._persist_config_value("EDIT_AFTER_ANSWER", _CONFIG.EDIT_AFTER_ANSWER)
+                console.print(f"[bold green]✅ Đã {'bật' if _CONFIG.EDIT_AFTER_ANSWER else 'tắt'} chỉnh sửa sau khi trả lời.[/]\n")
                 continue
 
             if ch == 5: return (4, 999, True) # Chế độ sinh tồn

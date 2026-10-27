@@ -145,7 +145,7 @@ class FileManager:
 
         table = None
         if show or return_table:
-            table = Table(title="📂 KHO DỮ LIỆU HỆ THỐNG", box=box.SIMPLE_HEAD)
+            table = Table(title="📂 KHO DỮ LIỆU HỆ THỐNG", box=box.ROUNDED)
             table.add_column("ID", justify="right", style="cyan")
             table.add_column("Tên Bộ Đề", style="bold white")
             table.add_column("Số câu", justify="right")
