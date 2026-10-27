@@ -1,2 +1,3 @@
 # Thư viện chính để xây dựng giao diện Console (Bảng, Màu sắc, Panel)
-rich>=13.0.0    
+rich>=13.0.0
+flask>=2.2.0
