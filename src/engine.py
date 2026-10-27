@@ -504,6 +504,8 @@ class QuizGame:
             rating_str = "[bold green]Bật[/]" if rating_enabled else "[bold red]Tắt[/]"
             edit_enabled = getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False)
             edit_str = "[bold green]Bật[/]" if edit_enabled else "[bold red]Tắt[/]"
+            fill_missing_enabled = getattr(_CONFIG, 'FILL_MISSING_AFTER_ANSWER', False)
+            fill_missing_str = "[bold green]Bật[/]" if fill_missing_enabled else "[bold red]Tắt[/]"
 
             table = Table(title="⚡ CHỌN MỨC ĐỘ THỬ THÁCH", box=box.ROUNDED)
             table.add_column("Key", style="bold cyan", justify="right")
@@ -517,7 +519,8 @@ class QuizGame:
                 ("6", "Tùy chỉnh (Tự thiết lập)"),
                 ("7", f"[cyan]Thời gian trả lời: [bold yellow]{time_str}[/] [dim](0 vô tận, default = 15s)[/]"),
                 ("8", f"[cyan]Đánh giá độ khó: {rating_str} [dim](Bật/Tắt)[/]"),
-                ("9", f"[cyan]Chỉnh sửa sau khi trả lời: {edit_str} [dim](Bật/Tắt)[/]")
+                ("9", f"[cyan]Chỉnh sửa sau khi trả lời: {edit_str} [dim](Bật/Tắt)[/]"),
+                ("10", f"[cyan]Bổ sung phần thiếu: {fill_missing_str} [dim](Bật/Tắt)[/]")
             ]
             for k, v in modes: table.add_row(k, v)
             console.print(table)
@@ -544,8 +547,20 @@ class QuizGame:
 
             if ch == 9:
                 _CONFIG.EDIT_AFTER_ANSWER = not edit_enabled
+                if _CONFIG.EDIT_AFTER_ANSWER:
+                    _CONFIG.FILL_MISSING_AFTER_ANSWER = False
+                    self._persist_config_value("FILL_MISSING_AFTER_ANSWER", False)
                 self._persist_config_value("EDIT_AFTER_ANSWER", _CONFIG.EDIT_AFTER_ANSWER)
                 console.print(f"[bold green]✅ Đã {'bật' if _CONFIG.EDIT_AFTER_ANSWER else 'tắt'} chỉnh sửa sau khi trả lời.[/]\n")
+                continue
+
+            if ch == 10:
+                _CONFIG.FILL_MISSING_AFTER_ANSWER = not fill_missing_enabled
+                if _CONFIG.FILL_MISSING_AFTER_ANSWER:
+                    _CONFIG.EDIT_AFTER_ANSWER = False
+                    self._persist_config_value("EDIT_AFTER_ANSWER", False)
+                self._persist_config_value("FILL_MISSING_AFTER_ANSWER", _CONFIG.FILL_MISSING_AFTER_ANSWER)
+                console.print(f"[bold green]✅ Đã {'bật' if _CONFIG.FILL_MISSING_AFTER_ANSWER else 'tắt'} bổ sung phần thiếu.[/]\n")
                 continue
 
             if ch == 5: return (4, 999, True) # Chế độ sinh tồn
@@ -723,6 +738,42 @@ class QuizGame:
                     console.print("[dim]⏩ Giữ nguyên, không có thay đổi.[/]\n")
             except Exception as e:
                 console.print(f"[red]❌ Lỗi khi chỉnh sửa câu hỏi: {e}[/]\n")
+
+        elif getattr(_CONFIG, 'FILL_MISSING_AFTER_ANSWER', False) and qid and current_item:
+            try:
+                from src.process_flashcard import FlashcardManager
+                fm = FlashcardManager()
+                # current_item = (qid, a, q, d, r)
+                # q: câu hỏi, a: đáp án chuẩn, d: gợi ý (hint), r: mô tả (desc)
+                _, a_curr, q_curr, d_curr, r_curr = current_item
+
+                missing_prompts = []
+                if not q_curr or not str(q_curr).strip(): missing_prompts.append(('q', "❓ Câu hỏi"))
+                if not a_curr or not str(a_curr).strip(): missing_prompts.append(('a', "✅ Đáp án chuẩn"))
+                if not d_curr or not str(d_curr).strip(): missing_prompts.append(('d', "💡 Gợi ý"))
+                if not r_curr or not str(r_curr).strip(): missing_prompts.append(('r', "📖 Mô tả"))
+
+                if missing_prompts:
+                    console.print("\n[bold cyan]📝 Bổ sung phần còn thiếu (Nhấn Enter để bỏ qua):[/]")
+                    new_q, new_a, new_d, new_r = None, None, None, None
+                    for key, label in missing_prompts:
+                        val = _safe_input(f"{label}: ")
+                        if val is not None and val.strip() != "":
+                            if key == 'q': new_q = val.strip()
+                            elif key == 'a': new_a = val.strip()
+                            elif key == 'd': new_d = val.strip()
+                            elif key == 'r': new_r = val.strip()
+
+                    if any(x is not None for x in [new_q, new_a, new_d, new_r]):
+                        updated, updated_row = fm.update_question_by_id(qid, new_q=new_q, new_a=new_a, new_d=new_d, new_r=new_r)
+                        if updated:
+                            console.print("[bold green]✨ Đã bổ sung thành công![/]\n")
+                        else:
+                            console.print("[yellow]⚠️ Không tìm thấy file chứa ID câu hỏi để cập nhật.[/]\n")
+                    else:
+                        console.print("[dim]⏩ Giữ nguyên, không bổ sung.[/]\n")
+            except Exception as e:
+                console.print(f"[red]❌ Lỗi khi bổ sung câu hỏi: {e}[/]\n")
 
         if getattr(_CONFIG, 'ENABLE_DIFFICULTY_RATING', False):
             val = inp.input_difficulty_rating()

@@ -187,7 +187,8 @@ class MenuManager:
                 ("13", "Ngưỡng Fuzzy (0.0 - 1.0)", str(_CONFIG.FUZZY_MATCHING_THRESHOLD)),
                 ("14", "Từ khóa ĐÚNG/SAI", str(_CONFIG.KEYWORD_BOOL)),
                 ("15", "Từ khóa câu hỏi nhập liệu", str(_CONFIG.KEYWORD_Q_INPUT)),
-                ("16", "Chỉnh sửa sau khi trả lời", "BẬT" if getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False) else "TẮT")
+                ("16", "Chỉnh sửa sau khi trả lời", "BẬT" if getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False) else "TẮT"),
+                ("17", "Bổ sung phần thiếu", "BẬT" if getattr(_CONFIG, 'FILL_MISSING_AFTER_ANSWER', False) else "TẮT")
             ]
 
             table = Table(show_header=False, box=None, padding=(0, 1))
@@ -246,7 +247,15 @@ class MenuManager:
                 val = _safe_input("📝 Danh sách (cách nhau bởi dấu phẩy): ")
                 if val: self._update_config_persistence("KEYWORD_Q_INPUT", [k.strip() for k in val.split(',')])
             elif ch == "16":
-                self._update_config_persistence("EDIT_AFTER_ANSWER", not getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False))
+                new_val = not getattr(_CONFIG, 'EDIT_AFTER_ANSWER', False)
+                self._update_config_persistence("EDIT_AFTER_ANSWER", new_val)
+                if new_val:
+                    self._update_config_persistence("FILL_MISSING_AFTER_ANSWER", False)
+            elif ch == "17":
+                new_val = not getattr(_CONFIG, 'FILL_MISSING_AFTER_ANSWER', False)
+                self._update_config_persistence("FILL_MISSING_AFTER_ANSWER", new_val)
+                if new_val:
+                    self._update_config_persistence("EDIT_AFTER_ANSWER", False)
             elif ch in ["0", "q", "exit"]:
                 break
 
