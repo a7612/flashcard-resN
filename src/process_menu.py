@@ -1,4 +1,4 @@
-import os, getpass, re
+import os, getpass, re, time
 from src.core import _CONFIG, console, _clear_screen, _get_now
 from src.utils import (
     _handle_error, _move_to_trash,
@@ -75,7 +75,11 @@ class MenuManager:
             else:
                 console.print(menu_panel)
             ch = inp.input_menu_choice()
-            if ch in options: options[ch][0]()
+            if ch in options: 
+                options[ch][0]()
+            elif ch and (ch.lower().startswith("/fast:") or ch.lower().startswith("/fast ")):
+                kw = ch[6:].strip()
+                self._execute_fast_toggle(kw)
             if ch in ["0", "exit", "/exit"]: 
                 break
 
@@ -117,7 +121,7 @@ class MenuManager:
             ("5" if is_num else "/rename"): (self._handle_rename_flow, "[yellow]Đổi tên bộ đề[/]"),
             ("6" if is_num else "/delete"): (lambda: (self._handle_file_deletion(show_list=False), self.card_mgr.clear_cache()), f"[red]Xoá bộ đề[/]"),           
             ("7" if is_num else "/search"): (self._handle_search_files, f"[cyan]Tìm kiếm bộ đề[/]"),
-            ("8" if is_num else "/disable"): (self._handle_toggle_disable_flow, "[red]Vô hiệu hóa/[yellow]Mở lại[/]"),
+            ("8" if is_num else "/disable"): (self._handle_toggle_disable_flow, "[red]Vô hiệu hóa/[yellow]Mở lại[/] [dim](/fast:kw)[/]"),
             ("0" if is_num else "/exit"): (lambda: None, "Quay lại")
         }
         self.run_menu("📦 QUẢN LÝ HỆ THỐNG", opts, show_file_list=True, show_sidebar=True, clear=True)
@@ -128,10 +132,58 @@ class MenuManager:
         self.file_mgr.search_keyword = kw if kw else None
 
     def _handle_toggle_disable_flow(self):
-        """Xử lý bật/tắt trạng thái vô hiệu hóa bộ đề."""
-        path = self._choose_file_path(show=False, context_name="Vô hiệu hóa/Mở lại")
-        if path:
-            self.file_mgr.toggle_disable(os.path.basename(path))
+        """Xử lý bật/tắt trạng thái vô hiệu hóa bộ đề (hỗ trợ nhập ID hoặc /fast:[keyword])."""
+        console.print(f"\n[bold yellow]📍 ĐANG THỰC HIỆN:[/] [bold cyan]VÔ HIỆU HÓA/MỞ LẠI[/]")
+        files = self.file_mgr.list_files(show=False)
+        if not files:
+            console.print("[yellow]⚠️ Thư mục hiện đang trống.[/]")
+            time.sleep(1)
+            return
+
+        prompt = r"👉 Nhập ID bộ đề hoặc [cyan]/fast:\[keyword][/] (hoặc /exit): "
+        val = _safe_input(prompt)
+
+        if not val or val.lower() in ["exit", "/exit"]:
+            return
+
+        # Kiểm tra nếu là lệnh /fast:[keyword] hoặc /fast [keyword]
+        if val.lower().startswith("/fast:") or val.lower().startswith("/fast "):
+            kw = val[6:].strip()
+            self._execute_fast_toggle(kw)
+            return
+
+        # Nếu là ID số thông thường
+        if val.isdigit() and 1 <= int(val) <= len(files):
+            fname = files[int(val) - 1]
+            disabled_before = set(self.file_mgr._get_disabled_list())
+            self.file_mgr.toggle_disable(fname)
+            is_now_disabled = fname not in disabled_before
+            status_text = "[bold red]Vô hiệu hóa[/]" if is_now_disabled else "[bold green]Mở lại[/]"
+            console.print(f"[bold green]✅ Đã chuyển trạng thái:[/] [cyan]{fname}[/] ➔ {status_text}")
+            time.sleep(1.2)
+        else:
+            console.print(r"[red]❌ ID không hợp lệ hoặc sai cú pháp! (Dùng số ID hoặc /fast:\[keyword])[/]")
+            time.sleep(1.5)
+
+    def _execute_fast_toggle(self, kw):
+        """Thực thi vô hiệu hóa/mở lại nhanh các bộ đề theo từ khóa."""
+        if not kw:
+            console.print("[yellow]⚠️ Vui lòng cung cấp từ khóa sau /fast: (Ví dụ: /fast:network)[/]")
+            time.sleep(1.5)
+            return
+
+        results = self.file_mgr.toggle_disable_by_keyword(kw)
+        if not results:
+            console.print(f"[yellow]⚠️ Không tìm thấy bộ đề nào khớp với từ khóa: '{kw}'[/]")
+            time.sleep(1.5)
+            return
+
+        console.print(f"\n[bold cyan]🔄 Đã xử lý {len(results)} bộ đề khớp với '{kw}':[/]")
+        for fname, is_disabled in results:
+            status_text = "[bold red]Vô hiệu hóa[/]" if is_disabled else "[bold green]Mở lại[/]"
+            console.print(f"  • [cyan]{fname}[/] ➔ {status_text}")
+        console.print(f"[bold green]✨ Đã cập nhật thành công {len(results)} bộ đề![/]\n")
+        time.sleep(1.5)
 
     def clear_history(self):
         _clear_history_util()

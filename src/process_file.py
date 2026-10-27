@@ -98,6 +98,33 @@ class FileManager:
             for name in disabled:
                 writer.writerow({"Tên bộ đề": name})
 
+    def toggle_disable_by_keyword(self, keyword):
+        """Bật/Tắt trạng thái vô hiệu hóa hàng loạt bộ đề có tên khớp với từ khóa."""
+        files = self.get_files()
+        kw = keyword.lower().strip()
+        matched = [f for f in files if kw in f.lower()]
+        if not matched:
+            return []
+        
+        path = os.path.join("data", "disable_flashcard.csv")
+        disabled = set(self._get_disabled_list())
+        results = []
+        for f in matched:
+            if f in disabled:
+                disabled.remove(f)
+                results.append((f, False)) # False = Đã mở lại
+            else:
+                disabled.add(f)
+                results.append((f, True))  # True = Đã vô hiệu hóa
+
+        with open(path, "w", encoding="utf-8-sig", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["Tên bộ đề"])
+            writer.writeheader()
+            for name in sorted(disabled):
+                writer.writerow({"Tên bộ đề": name})
+
+        return results
+
     def _get_status_info(self, count):
         """Trả về (văn bản trạng thái, màu sắc) dựa trên số lượng câu hỏi."""
         for limit, label, color in self.thresholds:
